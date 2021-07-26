@@ -1,5 +1,5 @@
 <template>
-	<Form :fields=fields v-model=form @submit=submit>
+	<Form :fields=fields v-model=form @formSubmit=submit>
 		<template v-slot:title>
 			Создать игру
 		</template>
@@ -10,7 +10,6 @@
 </template>
 
 <script lang=ts>
-
 import Form from "../components/Form.vue";
 import {Options, Vue} from "vue-class-component"
 import {LOBBY_PROVIDER} from "../context/network.context";
@@ -23,9 +22,10 @@ class Props {
 
 @Options({
 	components: {Form},
-	inject: [LOBBY_PROVIDER],
+	inject: [LOBBY_PROVIDER]
 })
 export default class Create extends Vue.with(Props) {
+
 	get lobby(): AbstractLobby | null {
 		return unref(this[LOBBY_PROVIDER])
 	}
@@ -39,7 +39,6 @@ export default class Create extends Vue.with(Props) {
 	}
 
 	mounted() {
-		console.log('mounted')
 		this.setName()
 	}
 
@@ -70,15 +69,9 @@ export default class Create extends Vue.with(Props) {
 			this.form.errors.name = 'Long name'
 		} else if (this.lobby) {
 			try {
-
-				//await this.lobby.addBot()
-				const roomId = await this.lobby.createRoom();
-
-				await this.lobby.joinRoom(name, roomId);
-				await this.$router.push('/lobby/' + roomId)
-
-			} catch
-				 (e) {
+				await this.lobby.createRoom(name);
+				await this.$router.push('/lobby/' + this.lobby.roomId)
+			} catch (e) {
 				if (e instanceof RequestError) {
 					this.form.errors = e.data
 				} else {
@@ -91,7 +84,6 @@ export default class Create extends Vue.with(Props) {
 }
 </script>
 
-<style module="cs" lang=scss src="./common.scss"/>
 <style module lang=scss>
 
 </style>

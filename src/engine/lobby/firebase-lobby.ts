@@ -1,3 +1,4 @@
+/*
 import {AbstractLobby, RequestError} from "./abstract-lobby";
 import firebase from "firebase/app";
 import 'firebase/database';
@@ -57,10 +58,10 @@ export class FirebaseLobby extends AbstractLobby {
 			);
 	}
 
-	async createRoom(): Promise<string> {
+	async createRoom(): Promise<void> {
 		const res = await this.lobbiesRef.push()
 		if (!res.key) throw new Error('Impossible error')
-		return res.key
+	//	return res.key
 	}
 
 	async joinRoom(name: string, roomId: string): Promise<void> {
@@ -157,3 +158,4 @@ export class FirebaseLobby extends AbstractLobby {
 
 
 }
+*/

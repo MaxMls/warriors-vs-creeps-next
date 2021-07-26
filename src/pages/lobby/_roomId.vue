@@ -1,38 +1,49 @@
 <template>
-	{{ players }}
 	<div :class=cs.ctn>
-
 		<div :class="[$style.buttonsGroup, $style.buttonsTop, ]">
 
 			<div>
-				<button @click=addBot :class="[$style.buttonTop, $style.button]">
+				<button type=button @click="lobby.instance.addBot()" :class="[$style.buttonTop, $style.button]">
 					Создать бота
 				</button>
-				<button :class="[$style.buttonTop, $style.button]">
+				<button ref="shareBtn" type=button :class="[$style.buttonTop, $style.button]">
 					Копировать ссылку-приглашение
 				</button>
 			</div>
 			<div>
-				<router-link to='/' :class="[$style.buttonTop, $style.button]">
+				<button type=button @click=exit :class="[$style.buttonTop, $style.button]">
 					Выйти из лобби
-				</router-link>
-			</div>
-		</div>
-		<div :class="[$style.slotsGroup]">
-			<div v-for="i in 4" :class="[$style.slotCtn]">
-				<div :class="[$style.slotImage]">
-					<img/>
-				</div>
-				<div :class="[$style.slotName]">
-					Свободный слот
-				</div>
-				<button :class="[$style.slotKick]">
-					Удалить
 				</button>
 			</div>
 		</div>
+		<div :class="[$style.slotsGroup]">
+
+			<div v-for="(player, i) in lobby.players" :class="[$style.slotCtn]">
+				<div :class="[$style.slotImage, {[$style.slotImage_ready]: player.ready}]"
+				     :style='`background: ${colors[i]}`'>
+					<img/>
+				</div>
+				<div :class="[$style.slotName, {[$style.slotNameMe]: player.name === lobby.playerName}]">
+					{{ player.alias }}
+				</div>
+				<button type=button @click="lobby.instance.kick(player.name)" :class="[$style.slotKick]"
+				        :disabled="!player.bot">
+					Удалить
+				</button>
+			</div>
+
+			<div v-for="() in (4 - lobby.players.length)" :class="[$style.slotCtn]">
+				<div :class="[$style.slotImage]"/>
+				<div :class="[$style.slotName]">Свободный слот</div>
+			</div>
+
+		</div>
 		<div :class="[$style.buttonsGroup, $style.buttonsBot]">
-			<button :class="[$style.buttonStart, $style.button]">
+			<button @click="lobby.instance.ready(false)" v-if="lobby.player?.ready" type=button
+			        :class="[$style.buttonStart, $style.button,$style.buttonStart_ready]">
+				Ждем других игроков
+			</button>
+			<button @click="lobby.instance.ready(true)"  v-else type=button :class="[$style.buttonStart, $style.button]">
 				Готов начать игру
 			</button>
 		</div>
@@ -41,50 +52,94 @@
 
 <script lang=ts>
 
-import {unref} from "vue";
+import {inject, onBeforeUnmount, onMounted, ref, unref} from "vue";
 import {Vue, Options, setup} from "vue-class-component"
 import {LOBBY_PROVIDER} from "../../context/network.context";
-import {AbstractLobby} from "../../engine/lobby/abstract-lobby";
+import {AbstractLobby, ILobbyPlayer} from "../../engine/lobby/abstract-lobby";
+import ClipboardJS from "clipboard";
 
-class Props {
-	_lobbyId: String | undefined
-	lobbyId: String | undefined
+class Props {}
+
+const useInjectLobby = () => {
+	const lobby = unref(inject(LOBBY_PROVIDER) as AbstractLobby)
+
+	const players = ref<ILobbyPlayer[]>([])
+	const player = ref<ILobbyPlayer | null>(null)
+	const updatePlayers = () => {
+		console.log('updatePlayers')
+		players.value = [...lobby.players]
+		player.value = lobby.player
+	}
+
+	const playerName = ref<string | null>(null)
+	const updatePlayerName = () => {
+		console.log('updatePlayerName')
+		playerName.value = lobby.playerName
+	}
+
+	onMounted(async () => {
+		updatePlayers()
+		lobby.on('players', updatePlayers)
+		updatePlayerName()
+		lobby.on('playerName', updatePlayerName)
+	})
+
+	onBeforeUnmount(async () => {
+		lobby.off('players', updatePlayers)
+		lobby.off('playerName', updatePlayerName)
+	})
+
+	console.log(lobby.players)
+	return {
+		players,
+		playerName,
+		instance: lobby,
+		player
+	}
+
 }
 
 @Options({
 	components: {},
-	inject: [LOBBY_PROVIDER],
+	inheritAttrs: false
+	//inject: [LOBBY_PROVIDER],
 })
 export default class Lobby extends Vue.with(Props) {
-	get lobby() {
-		return unref(this[LOBBY_PROVIDER] as AbstractLobby)
-	}
+	lobby = setup(() => useInjectLobby())
+	colors = [/*'#FDC5F5', */'#F7AEF8', '#B388EB', '#8093F1', '#72DDF7']
 
 	get roomId() {
-		return this.$route.params['roomId']
+		return this.$route.params.roomId
 	}
 
-	get players() {
-		console.log(this.lobby.players)
-		return this.lobby.players
+
+	exit() {
+		this.lobby.instance.destroy()
+		this.$router.push('/')
 	}
 
-	addBot() {
-		this.lobby.addBot()
-	}
+	clipboard: ClipboardJS | null = null
 
 
 	mounted() {
-		console.log('inject', this.lobby)
-		console.log('props', this.roomId)
-		// console.log(this.lobby.roomId, this.roomId)
 		try {
-			if (this.lobby.roomId !== this.roomId) {
+			if (this.lobby.instance.roomId !== this.roomId) {
 				this.$router.push('/')
+			} else {
+				this.clipboard = new ClipboardJS(this.$refs.shareBtn as Element, {
+					text: (elem) => {
+						return this.roomId as string
+					}
+				});
 			}
 		} catch (e) {
+			console.error(e)
 			this.$router.push('/')
 		}
+	}
+
+	beforeUnmount() {
+		this.clipboard?.destroy()
 	}
 
 
@@ -127,7 +182,13 @@ export default class Lobby extends Vue.with(Props) {
 }
 
 .slotCtn {
-	width: 100px;
+	min-width: 100px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	max-width: 200px;
+	word-break: break-word;
 }
 
 .slotImage {
@@ -149,12 +210,30 @@ export default class Lobby extends Vue.with(Props) {
 	}
 }
 
+.slotNameMe {
+	font-weight: bold;
+}
+
 .slotKick {
 	text-align: center;
 	font-size: 16px;
 	color: #808080;
 	display: block;
 	margin: 0 auto;
+
+	border-bottom: 1px solid transparent;
+
+	&:not([disabled]) {
+		&:hover {
+			border-bottom-color: #808080;
+		}
+	}
+
+	&[disabled] {
+		color: #dedede;
+		cursor: default;
+		//opacity: 0;
+	}
 }
 
 .buttonsBot {
@@ -166,4 +245,14 @@ export default class Lobby extends Vue.with(Props) {
 	font-size: 20px;
 }
 
+
+.buttonStart_ready, .slotImage_ready {
+	outline: 2px solid #95f180;
+	outline-offset: -3px;
+	//border-color: #95f180;
+}
+
+.buttonStart_ready {
+	color: #2dc00a;
+}
 </style>

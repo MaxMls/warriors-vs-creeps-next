@@ -1,5 +1,7 @@
 <template>
 	<div>
+		<router-link to='/webtrctest/host'>host </router-link>
+		<router-link to='/webtrctest/member'>member</router-link>
 		<h1 :class="$style.title">
 			Warriors vs Creeps 2
 		</h1>
@@ -34,7 +36,7 @@ class Props {
 export default class Index extends Vue.with(Props) {
 
 	mounted() {
-		console.log('inject', this[LOBBY_PROVIDER])
+		 //console.log('inject', this[LOBBY_PROVIDER])
 	}
 
 
