@@ -508,7 +508,7 @@ export const cardsJSON: ICard[] = [
 	},
 	{
 		/*name: "Cyclotron",*/
-		name: "Волчок",
+		name: "Безумное вращение",
 		type: ECardType.Electro,
 		// +1 карта в раздачу, если ты первый игрок
 		effects: [],

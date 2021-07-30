@@ -2,7 +2,7 @@
 	<div :class=$style.c>
 
 		<div v-for="i in cards">
-			<CardComponent :idx="i"/>
+			<CardComponent :idx="i - 1"/>
 		</div>
 
 	</div>

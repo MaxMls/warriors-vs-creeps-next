@@ -44,7 +44,7 @@ import SvgIcon from "./SvgIcon.vue";
 
 class Props {
 	public stack = prop<TCardInd[]>({required: false, default: []});
-	public idx = prop<TCardInd>({required: false, default: null});
+	public idx = prop<TCardInd | null>({required: false, default: null});
 
 	// just outline
 	public select = prop<boolean>({required: false, default: false});
@@ -60,7 +60,7 @@ class Props {
 
 export default class CardComponent extends Vue.with(Props) {
 	get single() {
-		return this.idx ? cardsJSON[this.idx] : null
+		return this.idx !== null ? cardsJSON[this.idx] : null
 	}
 
 	get outline() {
@@ -76,7 +76,7 @@ export default class CardComponent extends Vue.with(Props) {
 	}
 
 	get cardTypeClass() {
-		return this.sty['ctn_' + ECardType[this.noDefectCard.type]]
+		return sty['ctn_' + ECardType[this.noDefectCard.type]]
 	}
 
 	get cardIcons() {
@@ -87,9 +87,9 @@ export default class CardComponent extends Vue.with(Props) {
 			[ECardType.Computer]: 'types-mech',
 		}
 
-		const res = []
+		const res: { i: string, t: string }[] = []
 		if (this.topCard) {
-			for (let i = 0; i < this.stack.length - (this.damageCard ? 1 : 0) + (this.idx ? 1 : 0); i++) {
+			for (let i = 0; i < this.stack.length - (this.damageCard ? 1 : 0) + (this.idx !== null ? 1 : 0); i++) {
 				res.push({
 					i: icons[this.noDefectCard.type],
 					t: ECardType[this.noDefectCard.type]
@@ -159,11 +159,6 @@ export default class CardComponent extends Vue.with(Props) {
 		}
 
 	}
-
-	mounted() {
-
-	}
-
 
 }
 </script>
