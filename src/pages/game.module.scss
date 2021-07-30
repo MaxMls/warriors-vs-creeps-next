@@ -1,0 +1,248 @@
+
+.statCtn {
+	padding: 15px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	--icon-color: #6E286B;
+	color: var(--icon-color);
+}
+
+.statIcon {
+	min-width: 30px;
+	min-height: 30px;
+	//background: #eee;
+
+	width: 30px;
+	height: 30px;
+
+	& + .statValue {
+		margin-top: 5px;
+	}
+}
+
+.statValue {
+	font-size: 20px;
+}
+
+.statsPanelCtn {
+	border: 1px solid white;
+}
+
+.statsPanel {
+	height: fit-content;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+
+.statCtnCounter {
+	grid-column: 1/-1;
+
+	&:not(:last-child) {
+		border-bottom: 1px solid white;
+	}
+
+}
+
+.statCtnCrane {
+	grid-column: 1;
+
+	//border: 1px solid white;
+	border-top: none;
+	border-right: none;
+
+}
+
+.statCtnTrash {
+	grid-column: 2;
+
+	border-left: 1px solid white;
+	border-top: none;
+}
+
+.statCtnDirection {
+	grid-column: 1/-1;
+
+	border: 1px solid white;
+	border-left: none;
+	border-right: none;
+	margin-bottom: -1px;
+}
+
+.ctn {
+	border: none !important;
+	position: relative;
+	display: grid;
+	grid-template-columns: 0fr 1fr 0fr;
+	grid-template-rows: auto 1fr;
+	//grid-gap: 1px;
+	border: none;
+
+	//padding: 1px;
+	height: calc(100vh - 40px);
+	margin: 20px;
+	//height: 700px;
+	//height: 100vh;
+
+	&, .statsPanel {
+		//background: #eee;
+	}
+
+	//border-color: #eee;
+
+	overflow: hidden;
+}
+
+.statsPanel {
+	grid-column: 1;
+	grid-row: 1;
+}
+
+.gamePanel {
+	// background: white;
+	grid-column: 2;
+	grid-row: 1;
+	border: 1px solid white;
+	padding: 10px;
+	border-left: none;
+	border-right: none;
+}
+
+.handPanelCtn {
+	border: 1px solid white;
+	position: relative;
+
+	grid-column: 3;
+	grid-row: 1;
+	width: 213px;
+}
+
+.handPanel {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	//background: white;
+	padding: 15px;
+	overflow-y: auto;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+.handPanelCard {
+	& + .handPanelCard {
+		margin-top: 10px;
+	}
+}
+
+.termPanel {
+	//background: white;
+	grid-column: 1/-1;
+	grid-row: 2;
+	//min-height: 100px;
+	border: 1px solid white;
+	border-top: none;
+
+	display: grid;
+	padding: 0 40px 0 15px;
+	padding-top: 10px;
+	z-index: 1;
+	grid-auto-flow: column;
+	grid-gap: 10px;
+	grid-auto-columns: 1fr;
+}
+
+.termSlot {
+	//height: 0;
+	position: relative;
+}
+
+.termCard {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+	transition: top .15s;
+
+	& > * {
+		flex: none;
+	}
+
+	&:not(:hover) {
+		top: 0px !important;
+	}
+}
+
+.termGradient {
+	flex: 1 1 auto;
+	background: linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%);
+	border: 1px solid #EEEEEE;
+	border-top: 0;
+	border-bottom: 0;
+}
+
+.termCardCtn {
+	position: relative;
+	top: calc(100% - 208px)
+}
+
+
+.message {
+	//z-index: 3;
+	padding: 15px 30px;
+	border: 1px solid #eee;
+	font-size: 18px;
+	text-align: center;
+	max-width: 100%;
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	background: white;
+
+	opacity: .7;
+	pointer-events: none;
+}
+
+.selectPopupCtn {
+	position: absolute;
+
+	z-index: 3;
+	top: 50%;
+	transform: translateY(-50%);
+	max-width: 100%;
+	overflow: hidden;
+	overflow-x: auto;
+	left: 0;
+	right: 0;
+
+	margin-left: calc(100% - 200px);
+	transition: margin-left .2s;
+
+	&:hover {
+		margin-left: calc(0px);
+	}
+}
+
+.selectPopup {
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	width: max-content;
+	padding: 20px 20px;
+	gap: 20px;
+
+
+}
+
+.selectPopupCard {
+	width: max-content;
+
+}

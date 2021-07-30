@@ -1,45 +1,51 @@
 <template>
-	<div :class='[cs.ctn, $style.ctn]' ref="ctn">
-		<div style="position: relative; display: grid; height: fit-content">
-			<div :class="$style.statsPanel">
-				<div :class="$style.statsPanelCtn">
-					<div :class="[$style.statCtn,  $style.statCtnCounter]" v-for="i in 3">
-						<div :class="$style.statIcon">
-							O
-						</div>
-						<div :class="[$style.statValue,]">
-							99
-						</div>
+	<div :class='[cs.ctn, style.ctn]' ref="ctn">
+		<div :class="style.statsPanelCtn">
+			<div :class="style.statsPanel">
+				<div :class="[style.statCtn,  style.statCtnCounter]" v-for="i in ['creep', 'heart', 'time']">
+					<SvgIcon :class="style.statIcon" :name="i"/>
+					<div :class="[style.statValue]">
+						99
 					</div>
-					<div :class="[$style.statCtn, $style.statCtnCrane]">
-						<div :class="$style.statIcon">
-							O
-						</div>
-					</div>
-					<div :class="[$style.statCtn, $style.statCtnTrash]">
-						<div :class="$style.statIcon">
-							O
-						</div>
-					</div>
-
+				</div>
+				<div :class="[style.statCtn, style.statCtnCrane]">
+					<SvgIcon :class="style.statIcon" name="cran"/>
+				</div>
+				<div :class="[style.statCtn, style.statCtnTrash]">
+					<SvgIcon :class="style.statIcon" name="trash"/>
+				</div>
+				<div :class="[style.statCtn, style.statCtnDirection]">
+					<SvgIcon :class="style.statIcon" name="direction"/>
 				</div>
 			</div>
 		</div>
-		<div :class="$style.gamePanel">
 
+		<div :class="style.gamePanel">
+			<GameMapComponent v-if=game.map.gameMap :renderMap="game.map"/>
 		</div>
-		<div :class="$style.handPanelCtn">
-			<div :class="$style.handPanel">
+		<div :class="style.handPanelCtn">
+			<div :class="style.handPanel">
 
-				<div v-for="i in 5" :class="$style.handPanelCard">
-					<Card/>
+				<div v-for="(idx, i) in game.handCards" :class="style.handPanelCard" @click="game.onHandClick(i)">
+					<CardComponent  :idx="idx" :select="!!game.onHandClick" :active="game.handActiveCardInd === i"/>
 				</div>
 			</div>
 		</div>
-		<div :class="$style.termPanel" ref="termPanel">
-			<div v-for="i in 6" :class="$style.termSlot" :ref="setItemTermSlotRef">
-				<div :class="$style.termCard">
-					<Card/>
+		<div :class="style.termPanel" :ref="visual.setItemTermPanelRef">
+			<div v-for="stack in game.stacks" :class="style.termSlot" :ref="visual.setItemTermSlotRef">
+				<div :class="style.termCard">
+					<CardComponent :stack="stack" :level="stack.length"/>
+					<div :class="style.termGradient"/>
+				</div>
+			</div>
+		</div>
+		<div v-show=game.message :class="style.message">
+			{{ game.message }}
+		</div>
+		<div v-if=game.selectsCards.length v-horizontal-scroll :class="style.selectPopupCtn">
+			<div :class="style.selectPopup">
+				<div v-for="idx in game.selectsCards" :class="style.selectPopupCard">
+					<CardComponent :stack="[idx]"/>
 				</div>
 			</div>
 		</div>
@@ -47,190 +53,106 @@
 </template>
 
 <script lang=ts>
-import {defineComponent} from "vue";
-import Card from "../components/Card.vue";
+import style from "./game.module.scss";
+import cs from "./common.module.scss";
 
-export default defineComponent({
-	name: "game",
-	components: {Card},
-	data() {
-		return {
-			termSlotRefs: [] as HTMLElement[]
+import {onBeforeUnmount, onMounted, ref, unref} from "vue";
+import {Options, setup, Vue} from "vue-class-component";
+import CardComponent from "../components/CardComponent.vue";
+import GameMapComponent from "../components/GameMapComponent.vue";
+import {VueRender} from "../engine/renders/vue-render";
+import SvgIcon from "../components/SvgIcon.vue";
+
+const useVisualGame = () => {
+	const termPanelRef = ref<HTMLElement | null>(null);
+	const termSlotRefs: HTMLElement[] = []
+
+	const recalculateTermCardsBottomOffset = () => {
+		const termPanel = unref(termPanelRef) as HTMLElement
+		const ctnHeight = termPanel.getBoundingClientRect().height
+		for (const slot of termSlotRefs) {
+			const card = slot.querySelector('.' + style.termCard) as HTMLElement
+			const v = Math.min(0, (ctnHeight - card.getBoundingClientRect().height)) + 'px'
+			if (card.style.top !== v) card.style.top = v
 		}
-	},
-	methods: {
+	}
+
+	onMounted(() => {
+		recalculateTermCardsBottomOffset()
+		window.addEventListener("resize", recalculateTermCardsBottomOffset);
+	})
+	onBeforeUnmount(() => {
+		window.removeEventListener("resize", recalculateTermCardsBottomOffset);
+	})
+
+	return {
 		setItemTermSlotRef(v: any) {
-			this.termSlotRefs.push(v)
+			termSlotRefs.push(v)
 		},
-		recalculateTermCardsBottomOffset() {
-			const termPanel = this.$refs.termPanel as HTMLElement
-			const ctnHeight = termPanel.getBoundingClientRect().height
-			for (const slot of this.termSlotRefs) {
-				const card = slot.querySelector('.' + this.$style.termCard) as HTMLElement
-				card.style.bottom = Math.min(0, ctnHeight - card.getBoundingClientRect().height + 150) + 'px'
+		setItemTermPanelRef(v: any) {
+			termPanelRef.value = v
+		},
+
+	}
+}
+const useRenderGame = () => {
+	/*	const lobby = unref(inject(LOBBY_PROVIDER) as AbstractLobby)
+		const router = useRouter()
+
+		let game: Game*/
+	let render = new VueRender()
+
+	/*
+		onBeforeMount(async () => {
+			if (!lobby.game) {
+				await router.push('/')
+			} else {
+				const seed = lobby.players.map(p => p.seed ?? '').join('.')
+				const network = new ServerEventsNetwork(lobby.roomId as string)
+				const gameMap = new GameMap([
+					[1, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0],
+					[1, 1, 0, 0, 0, 0, 0, 2, 0, 2, 2, 0],
+					[1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+					[1, 1, 1, 0, 0, 0, 0, 2, 0, 3, 0, 2],
+					[1, 1, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0],
+					[1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0]
+				])
+
+				const render = new VueRender()
+
+				const agents: AbstractAgent[] = []
+				for (const player of lobby.players) {
+					if (player.name == lobby.playerName) {
+						agents.push(new LocalAgent(network, player.name, render))
+					} else if (player.bot) {
+						agents.push(new BotAgent(seed))
+					} else {
+						agents.push(new NetworkAgent(network, player.name))
+					}
+				}
+
+				game = new Game(render, agents, gameMap, seed)
+
 			}
-		}
-	},
-	mounted() {
-		this.recalculateTermCardsBottomOffset()
-		window.addEventListener("resize", this.recalculateTermCardsBottomOffset);
-	},
-	beforeUnmount() {
-		window.removeEventListener("resize", this.recalculateTermCardsBottomOffset);
-	}
+		})
+
+	*/
+
+	onMounted(() => {
+		//game.start()
+	})
+
+	return render
+}
+
+@Options({
+	data: () => ({style, cs}),
+	components: {SvgIcon, GameMapComponent, CardComponent},
+	inheritAttrs: false
 })
+export default class GamePage extends Vue {
+	visual = setup(() => useVisualGame())
+	game = setup(() => useRenderGame())
+}
+
 </script>
-
-<style module="cs" lang=scss src="./common.scss"/>
-
-<style module lang=scss>
-
-.statCtn {
-	padding: 15px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	background: white;
-}
-
-.statIcon {
-	min-width: 30px;
-	min-height: 30px;
-	background: #eee;
-
-	& + .statValue {
-		margin-top: 5px;
-	}
-}
-
-.statValue {
-	font-size: 20px;
-}
-
-.statsPanel {
-	width: 0px;
-}
-
-.statsPanelCtn {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-gap: 1px;
-	padding-right: 1px;
-	width: 120px;
-}
-
-.statCtnCounter {
-	grid-column: 1/-1;
-}
-
-.statCtnCrane {
-	grid-column: 1;
-}
-
-.statCtnTrash {
-	grid-column: 2;
-}
-
-.ctn {
-	display: grid;
-	grid-template-columns: 0fr 1fr 0fr;
-	grid-template-rows: 550px 150px;
-	grid-gap: 1px;
-	border: none;
-
-	padding: 1px;
-	//height: calc(100vh - 40px);
-	margin: 20px;
-	//height: 700px;
-
-	&, .statsPanel {
-		background: #eee;
-	}
-
-	overflow: hidden;
-}
-
-/*
-.headerPanel {
-	grid-row: 1;
-	grid-column: 1/-1;
-	background: white;
-	padding: 20px;
-}*/
-
-.statsPanel {
-	grid-column: 1;
-	grid-row: 1;
-	background: black;
-}
-
-.gamePanel {
-	// background: white;
-	grid-column: 2;
-	grid-row: 1;
-}
-
-.handPanelCtn {
-	position: relative;
-
-	grid-column: 3;
-	grid-row: 1;
-	width: 250px;
-}
-
-.handPanel {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background: white;
-	padding: 20px;
-	overflow-y: auto;
-}
-
-.handPanelCard {
-	& + .handPanelCard {
-		margin-top: 20px;
-	}
-}
-
-.termPanel {
-	background: white;
-	grid-column: 1/-1;
-	grid-row: 2;
-	//min-height: 100px;
-
-	display: grid;
-	padding: 0 40px 0 15px;
-	z-index: 1;
-	grid-auto-flow: column;
-	grid-gap: 10px;
-	grid-auto-columns: 1fr;
-}
-
-.termSlot {
-	//height: 0;
-	position: relative;
-}
-
-.termCard {
-	position: absolute;
-	left: 0;
-	right: 0;
-	background: #fff;
-	bottom: -30px;
-	transition: bottom .2s;
-
-	&:hover {
-
-		bottom: 0px !important;
-	}
-}
-
-.termCardCtn {
-	position: relative;
-	top: calc(100% - 208px)
-}
-</style>

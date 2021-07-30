@@ -1,7 +1,8 @@
 /*async function genRoom() {
 	return Math.random().toString()
 }*/
-
+export type ArrayElement<ArrayType extends readonly unknown[]> =
+	ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
 const fixedEncodeURIComponent = (str) => {
 	return encodeURIComponent(str).replace(/[!'()*]/g, (c) => {
 		return '%' + c.charCodeAt(0).toString(16);
@@ -336,3 +337,12 @@ export const waitName = (connection: RTCPeerConnection) => {
 	})
 }
 */
+
+export const coordsToString = ({x, y}: { x: number, y: number }) => {
+	return `${x},${y}`
+}
+
+export const coordsFromString = (str: string) => {
+	const [x, y] = str.split(',').map(v => +v)
+	return {x, y}
+}

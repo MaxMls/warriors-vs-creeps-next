@@ -651,12 +651,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue@npm:^1.2.5":
-  version: 1.2.5
-  resolution: "@vitejs/plugin-vue@npm:1.2.5"
+"@vitejs/plugin-vue@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@vitejs/plugin-vue@npm:1.3.0"
   peerDependencies:
     "@vue/compiler-sfc": ^3.0.8
-  checksum: ae091e12a1cd937c95c2628c5bc4734eab9f700c1a1cd8cdad04dfcaae91bcb3d70e9b703134a6bf68954a138d59bff9229989318521c37ec89d6723443bf1cb
+  checksum: 29d4cad645217856e16dc42bb3d2eb34c8e85f33d26e93fe57af088f291a6c688f9d2e79826b6e4be248acbd02676ced09da01add6926e225f7267124c6be605
   languageName: node
   linkType: hard
 
@@ -931,6 +931,13 @@ __metadata:
     clean-stack: ^2.0.0
     indent-string: ^4.0.0
   checksum: 704d2001a303c185e9b836d211f7eef2f4557195a11c3271143b4dcda5f6f263abe746d9b8a06b5871d07870686c7db9c0b2c38e2d3cbc593784eaaee8a29043
+  languageName: node
+  linkType: hard
+
+"animated-scroll-to@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "animated-scroll-to@npm:2.2.0"
+  checksum: 8af36a5c84ec91656a73535f7e9b02f15e03482d97ccf134d486bccb7c733193b2d6d98ed3d419fef0e91aca287c9ef9d16caea44cf202ff0700223c9ef2ab07
   languageName: node
   linkType: hard
 
@@ -3528,7 +3535,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.1.10, postcss@npm:^8.2.10, postcss@npm:^8.3.5":
+"postcss@npm:^8.1.10, postcss@npm:^8.2.10":
   version: 8.3.5
   resolution: "postcss@npm:8.3.5"
   dependencies:
@@ -3536,6 +3543,17 @@ fsevents@~2.3.2:
     nanoid: ^3.1.23
     source-map-js: ^0.6.2
   checksum: 87dc16efcf40286fad4ded0a433497ddbc55dfad3d7ddb200ba9c0761ec376280fa2c06a522628583c9284def85894c52bc361cffedf0679f4936370c084a145
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.3.6":
+  version: 8.3.6
+  resolution: "postcss@npm:8.3.6"
+  dependencies:
+    colorette: ^1.2.2
+    nanoid: ^3.1.23
+    source-map-js: ^0.6.2
+  checksum: 515c26472861ce0f3b0a7945b9ac4732756d2aab6b12950137f72c7c6d90967136ba56e878815edcbf132c5643005dad1e9bbcb14139a948802af10245a8f6e3
   languageName: node
   linkType: hard
 
@@ -4001,14 +4019,14 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"sass@npm:^1.35.2":
-  version: 1.35.2
-  resolution: "sass@npm:1.35.2"
+"sass@npm:^1.36.0":
+  version: 1.36.0
+  resolution: "sass@npm:1.36.0"
   dependencies:
     chokidar: ">=3.0.0 <4.0.0"
   bin:
     sass: sass.js
-  checksum: d102e3fd6e6aa1a61f9c765fb31ff701d78ef05cf256ebb9ed80994c86638dcc8cc71832df1a1f71edce427cf823449c2fc43618b29ad51a8ca5bf93349ccaf4
+  checksum: e72aa7d49d7a65f37253b5b762925e260c7aaed06f404876fd11e5b2ac0a8d13995f7fae6e02f8098f53d3046150f8aaf3faaaf248216e313622252cbc4b46b7
   languageName: node
   linkType: hard
 
@@ -4725,22 +4743,22 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"vite-plugin-pages@npm:^0.15.0":
-  version: 0.15.0
-  resolution: "vite-plugin-pages@npm:0.15.0"
+"vite-plugin-pages@npm:^0.15.1":
+  version: 0.15.1
+  resolution: "vite-plugin-pages@npm:0.15.1"
   dependencies:
     "@antfu/utils": ^0.2.4
     deep-equal: ^2.0.5
     fast-glob: ^3.2.7
     json5: ^2.2.0
-    yaml: ^2.0.0-6
+    yaml: ^2.0.0-7
   peerDependencies:
     "@vue/compiler-sfc": ">=3"
     vite: ">=2"
   peerDependenciesMeta:
     "@vue/compiler-sfc":
       optional: true
-  checksum: 648674627d57a1ea1eca1cf0fc5c7a9ffa39ea7cd5688e2f05182df094253b304356cef03c6fc691c1c591e715fbba9e5e7361d7431ef9448962d097511ea39a
+  checksum: 0be9deb4b4d9ea19f3e49f7d66f1266bb5fc6942b0a7e1f625e111db8bc203080d992ab79ea69f67e6c16ab1f36bb37e2d595ded4b1148cba7839d5f989872df
   languageName: node
   linkType: hard
 
@@ -4761,13 +4779,13 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"vite@npm:^2.4.3":
-  version: 2.4.3
-  resolution: "vite@npm:2.4.3"
+"vite@npm:^2.4.4":
+  version: 2.4.4
+  resolution: "vite@npm:2.4.4"
   dependencies:
     esbuild: ^0.12.8
     fsevents: ~2.3.2
-    postcss: ^8.3.5
+    postcss: ^8.3.6
     resolve: ^1.20.0
     rollup: ^2.38.5
   dependenciesMeta:
@@ -4775,7 +4793,7 @@ typescript@^4.3.5:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 36d37053ddf10312efea5a1cc0bdb494b24036f38f098277d258253ce4fbfdee0c02a4316996967a6a178eca6f508e95134971af8d90f9808676f57fc7b4ee34
+  checksum: 224e195aa5d089a3c0ca775a600de9ea1699d20bead83217136bf74dfc9ca0f555e9b8403462529915cdf5f42bf0397b34cd7249cdc5353132ada5e6951e2130
   languageName: node
   linkType: hard
 
@@ -5039,20 +5057,21 @@ typescript@^4.3.5:
   resolution: "warriors-vs-creeps-next@workspace:."
   dependencies:
     "@types/seedrandom": ^3.0.1
-    "@vitejs/plugin-vue": ^1.2.5
+    "@vitejs/plugin-vue": ^1.3.0
     "@vue/compiler-sfc": ^3.1.5
+    animated-scroll-to: ^2.2.0
     axios: ^0.21.1
     clipboard: ^2.0.8
     events: ^3.3.0
     firebase: ^8.8.0
     nanoid: ^3.1.23
-    sass: ^1.35.2
+    sass: ^1.36.0
     seedrandom: ^3.0.5
     ts-node: ^10.1.0
     ts-node-dev: ^1.1.8
     typescript: ^4.3.5
-    vite: ^2.4.3
-    vite-plugin-pages: ^0.15.0
+    vite: ^2.4.4
+    vite-plugin-pages: ^0.15.1
     vite-plugin-svg-icons: ^1.0.1
     vue: ^3.1.5
     vue-class-component: ^8.0.0-rc.1
@@ -5214,7 +5233,7 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2.0.0-6":
+"yaml@npm:^2.0.0-7":
   version: 2.0.0-7
   resolution: "yaml@npm:2.0.0-7"
   checksum: 0d693c77c57a0e3db2601cf014d3be61bc6cee05c006cc2cdf805434df76e3f3af2aff5f18e2b04e610f4d5df2de20687442115e97c33e3d214bccb5fecf3d02

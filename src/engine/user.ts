@@ -1,14 +1,18 @@
 import {cardsJSON} from "./cards";
-import {ECardType, EHighlight, ERotation, TCardInd} from "./types";
+import {ECardType, EHighlight, EDirection, TCardInd} from "./types";
 import {AbstractAgent} from "./agents/abstract-agent";
 import {Cell} from "./cell";
 import {LocalAgent} from "./agents/local-agent";
+import {Unit} from "./unit";
 
 export class User {
 	readonly current: boolean
 
+	readonly setStacks: AbstractAgent['setStacks']
+
 	constructor(private readonly agent: AbstractAgent) {
 		this.current = agent instanceof LocalAgent
+		this.setStacks = this.agent.setStacks.bind(this.agent)
 	}
 
 	// Карты в руке, int id типы карт
@@ -20,14 +24,13 @@ export class User {
 		return this._stacks;
 	}
 
-	/*private declare agent: AbstractAgent;
-	set agent(value: AbstractAgent) {
-		this.agent = value;
-	}*/
-
-	private _myHero: any = null;
-	set myHero(value: any) {
+	private _myHero!: Unit;
+	set myHero(value: Unit) {
 		this._myHero = value;
+	}
+
+	get myHero(): Unit {
+		return this._myHero;
 	}
 
 	// возвращает текущего пользователя закончившего ход
@@ -38,7 +41,7 @@ export class User {
 		return cardId
 	}
 
-	async chooseRotate(rotateArray: ERotation[]) {
+	async chooseRotate(rotateArray: EDirection[]) {
 		return await this.agent.chooseRotate(rotateArray)
 	}
 
@@ -50,7 +53,7 @@ export class User {
 			let disabledStacks: number[] = [];
 
 			for (let i = 0; i < 6; i++) {
-				if (this._stacks[i].length > 0 && cardsJSON[this._stacks[i][this._stacks[i].length - 1]].type === ECardType.Deffect) {
+				if (this._stacks[i].length > 0 && cardsJSON[this._stacks[i][this._stacks[i].length - 1]].type === ECardType.Defect) {
 					disabledStacks.push(i);
 				}
 			}
@@ -63,7 +66,7 @@ export class User {
 			let notDisabledStacks: number[] = [];
 
 			for (let i = 0; i < 6; i++) {
-				if (this._stacks[i].length === 0 || cardsJSON[this._stacks[i][this._stacks[i].length - 1]].type !== ECardType.Deffect) {
+				if (this._stacks[i].length === 0 || cardsJSON[this._stacks[i][this._stacks[i].length - 1]].type !== ECardType.Defect) {
 					notDisabledStacks.push(i);
 				}
 			}
@@ -90,7 +93,7 @@ export class User {
 
 				await this.scrapRequest(cardsJSON[this.hand[cardPosInHand]].type)
 				this.hand.splice(cardPosInHand, 1);
-			} else if (this._stacks[stackId].length > 0 && cardsJSON[this._stacks[stackId][this._stacks[stackId].length - 1]].type === ECardType.Deffect) {
+			} else if (this._stacks[stackId].length > 0 && cardsJSON[this._stacks[stackId][this._stacks[stackId].length - 1]].type === ECardType.Defect) {
 
 			} else if (this._stacks[stackId].length === 0 || cardsJSON[this._stacks[stackId][0]].type === cardsJSON[this.hand[cardPosInHand]].type) {
 				if (this._stacks[stackId].length === 3) {
@@ -115,4 +118,5 @@ export class User {
 	async selectCells(cells: Cell[], highlight: EHighlight, count: number) {
 		return this.agent.selectCells(cells, highlight, count)
 	}
+
 }

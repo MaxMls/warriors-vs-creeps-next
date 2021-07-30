@@ -96,17 +96,15 @@ const useInjectLobby = () => {
 		instance: lobby,
 		player
 	}
-
 }
 
 @Options({
 	components: {},
 	inheritAttrs: false
-	//inject: [LOBBY_PROVIDER],
 })
 export default class Lobby extends Vue.with(Props) {
 	lobby = setup(() => useInjectLobby())
-	colors = [/*'#FDC5F5', */'#F7AEF8', '#B388EB', '#8093F1', '#72DDF7']
+	colors = ['#F7AEF8', '#B388EB', '#8093F1', '#72DDF7']
 
 	get roomId() {
 		return this.$route.params.roomId

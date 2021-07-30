@@ -1,0 +1,142 @@
+:root {
+	--t-electro-color: #AC1DD0;
+	--t-metal-color: #1D4FD0;
+	--t-fire-color: #EE6E27;
+	--t-computer-color: #16A2AB;
+	--t-warning-color: #D01D3D;
+}
+
+.ctn {
+	cursor: pointer;
+	--icon-color: #222;
+	color: #333;
+}
+
+.icons {
+	display: flex;
+	justify-content: center;
+	//padding-bottom: 5px;
+	--icon-color: #fff;
+}
+
+.icon {
+	width: 24px;
+	height: 24px;
+}
+
+.ctn {
+	font-weight: 500;
+}
+
+.name {
+	text-align: center;
+	padding: 0 10px;
+
+	margin-bottom: 5px;
+	color: #6E286B;
+	color: #808080;
+	font-weight: normal;
+	//color: #75aacc;
+}
+
+.module {
+	padding: 10px;
+	background: white;
+	border: 1px solid #eee;
+	border-bottom-width: 0;
+
+	&:first-child {
+		border-top-right-radius: 10px;
+		border-top-left-radius: 10px;
+	}
+
+	&:last-child {
+		border-bottom-width: 1px;
+	}
+
+}
+
+.ctn_single {
+	border-radius: 12px;
+
+	.module {
+		&:last-child {
+			border-bottom-right-radius: 10px;
+			border-bottom-left-radius: 10px;
+		}
+	}
+}
+
+.ctn_outline {
+	border: 2px solid #FFE500;
+	margin: -2px;
+}
+
+.ctn_active {
+	border-color: #1cf367;
+}
+
+
+.ctn_Electro .module_active, .icon_Electro {
+	--icon-color: var(--t-electro-color);
+}
+
+.ctn_Metal .module_active, .icon_Metal {
+	--icon-color: var(--t-metal-color);
+}
+
+.ctn_Fire .module_active, .icon_Fire {
+	--icon-color: var(--t-fire-color);
+}
+
+.ctn_Computer .module_active, .icon_Computer {
+	--icon-color: var(--t-computer-color);
+}
+
+
+.module_damaged.module_active {
+	--icon-color: #808080;
+}
+
+.module_damage, .icon_Defect {
+	--icon-color: var(--t-warning-color);
+}
+
+
+.module_active, .module_damage {
+	border-color: var(--icon-color);
+	border-bottom-width: 1px;
+	color: var(--icon-color);
+
+	& + .module {
+		border-top-width: 0;
+	}
+}
+
+.step {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	& + .step {
+		margin-top: 5px;
+	}
+}
+
+
+.icon {
+	flex: 0 0 auto;
+	margin: 5px;
+	width: 24px;
+	height: 24px;
+	//background: #eee;
+
+	& + .desc {
+		margin-left: 10px;
+		margin-right: 5px;
+	}
+}
+
+.desc {
+	flex: 1 1 auto;
+}

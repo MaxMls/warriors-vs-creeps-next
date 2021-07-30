@@ -1,4 +1,5 @@
 import EventEmitter from "events";
+import {Game} from "../game";
 
 export class RequestError {
 	constructor(public readonly data: { [_field: string]: string }) {}
@@ -9,6 +10,7 @@ export interface ILobbyPlayer {
 	name: string;
 	bot?: boolean;
 	ready?: boolean;
+	seed?: string;
 	// bot host name
 	master?: string;
 	// visible name
@@ -26,7 +28,7 @@ export abstract class AbstractLobby {
 		this.on = this.localEventEmitter.on.bind(this.localEventEmitter)
 		this.off = this.localEventEmitter.off.bind(this.localEventEmitter)
 	}
-
+	abstract get game(): boolean
 	abstract get player(): ILobbyPlayer | null
 
 	abstract createRoom(peerName: string): Promise<void>

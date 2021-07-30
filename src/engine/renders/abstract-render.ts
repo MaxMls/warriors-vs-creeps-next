@@ -1,5 +1,5 @@
 import {GameMap} from "../game-map";
-import {EHighlight, ERotation, TCardInd, TStackInd} from "../types";
+import {EHighlight, EDirection, TCardInd, TStackInd} from "../types";
 import {Cell} from "../cell";
 
 /* UI render */
@@ -37,7 +37,7 @@ export abstract class AbstractRender {
 	abstract updateKillsCounter(newVal: number): void
 
 
-	abstract updateCellRotate(cell: Cell, orientation: ERotation[]): void
+	abstract updateHeroDirection(cell: Cell, orientation: EDirection): void
 
 
 	// wait for user input gui:
@@ -47,7 +47,7 @@ export abstract class AbstractRender {
 	// callback принимает номер карты в руке и номер стека
 	abstract programming(): Promise<[number, number]>
 
-	abstract chooseRotate(rotateArray: ERotation[]): Promise<number>
+	abstract chooseRotate(rotateArray: EDirection[]): Promise<number>
 
 	// cellsArray[i] = {x:X, y:Y, higlight:/0, 1, 2/, isSelected}
 	// callback Возвращает id ячеек в массиве cellsArray, на которые кликнули

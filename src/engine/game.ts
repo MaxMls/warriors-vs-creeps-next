@@ -8,6 +8,7 @@ import {createArray, getNextCellFromAToB, getRandomInt, shakeArray, vectorRotate
 import {Unit} from "./unit";
 import {Cell} from "./cell";
 import {AbstractRender} from "./renders/abstract-render";
+import {AbstractAgent} from "./agents/abstract-agent";
 
 /*private readonly map = new MapObject([ // Ландшафт
 	[1, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0],
@@ -49,19 +50,21 @@ import {AbstractRender} from "./renders/abstract-render";
 export class Game {
 
 
-	public declare random: ReturnType<seedrandom>;
+	private readonly random: ReturnType<seedrandom>;
+	private readonly users: User[]
 
+	//private constructor();
 	constructor(
-		public readonly render: AbstractRender,
-		// public readonly roomKey,
-		private readonly users: User[],
+		private readonly render: AbstractRender,
+		agents: AbstractAgent[],
 		private readonly gameMap: GameMap,
 		private readonly seed: { toString(): string } | string
 	) {
-		/*0.5297204857065221//*/
+		/* 0.5297204857065221 */
 		// Общее случайное число, получать его от хоста
-		//this.seedRandom =  0.12800927790647165 // - рядом с бомбой
+		// this.seedRandom =  0.12800927790647165 // - рядом с бомбой
 		this.random = seedrandom(seed.toString());
+		this.users = agents.map(a => new User(a))
 	}
 
 	//private readonly users: User[] = []
@@ -129,11 +132,11 @@ export class Game {
 		bombCell.unit = new Unit(EUnitType.Bomb)
 		this.render.initUnit(bombCell);
 
-		this.chooseCards();
-		//warriorsAct()
+
+		setTimeout(this.chooseCards, 0)
 	};
 
-	public lose(message: string) {
+	private lose(message: string) {
 		this.render.stopSelect();
 		this.render.stopTimer();
 		this.render.defeat();
@@ -215,13 +218,13 @@ export class Game {
 		let card = cardsJSON[cardId].levels[level - 1];
 		let heroCell = this.gameMap.getAllCellHasUnits(EUnitType.Hero).filter(cell => cell.unit === user.myHero)[0]
 
-		if (card.rotate.length !== 0) {
+		if (card?.rotate?.length) {
 			let rotateAngleId = 0;
 			if (card.rotate.length > 1) {
 				rotateAngleId = await user.chooseRotate(card.rotate);
 			}
 			user.myHero.rotate(card.rotate[rotateAngleId]);
-			this.render.updateCellRotate(heroCell, user.myHero.rotation)
+			this.render.updateHeroDirection(heroCell, user.myHero.rotation)
 		}
 
 
@@ -379,8 +382,8 @@ export class Game {
 
 	}
 
-	private creepKill(cell) {
-		cell.unit = null;
+	private creepKill(cell: Cell) {
+		cell.killUnit();
 		this.render.killUnit(cell)
 		this.render.updateKillsCounter(++this.killsCount);
 	}
@@ -471,20 +474,23 @@ export class Game {
 		}
 	}
 
-	private getDisable(user) {
+	private getDisable(user: User) {
 		//TODO: random for choosing stacks
 		//let user = this;
 		//users[userID].disables[0] = true;
 		//let user = this;
+
 		if (this.damageCardsDeck.length !== 0) {
 			let ranId = getRandomInt(this.random, 0, 6);
-			if (user.stacks[ranId].length > 0 && cardsJSON[user.stacks[ranId][user.stacks[ranId].length - 1]].type === ECardType.Deffect) {
+			const damageCard = this.damageCardsDeck.pop() as TCardInd // because check length on top
+			if (user.stacks[ranId].length > 0 && cardsJSON[user.stacks[ranId][user.stacks[ranId].length - 1]].type === ECardType.Defect) {
 				user.stacks[ranId].pop();
-				user.stacks[ranId].push(this.damageCardsDeck.pop());
-			} else user.stacks[ranId].push(this.damageCardsDeck.pop());
-
+				user.stacks[ranId].push(damageCard);
+			} else {
+				user.stacks[ranId].push(damageCard);
+			}
 		}
-		user.agent.setStacks(user.stacks);
+		user.setStacks(user.stacks);
 	}
 
 

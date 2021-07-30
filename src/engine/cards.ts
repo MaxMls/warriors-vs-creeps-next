@@ -1,6 +1,24 @@
-// Straight - Убивать по прямой   пока не достигнута координата
+// Straight - Убивать по прямой пока не достигнута координата
 //const attackType = {Straight, Coordinates}
-import {ECardType, ERotation, IVector} from "./types";
+import {ECardAction, ECardType, EDirection, IVector} from "./types";
+import * as stream from "stream";
+
+
+export type ICardStep = ({
+	action: ECardAction.Move,
+	coords: IVector[]
+} | {
+	action: ECardAction.Rotate,
+	directions: EDirection[]
+} | {
+	action: ECardAction.Attack,
+	coords: IVector[],
+	// Targets count. undefined === all found targets
+	count?: number
+}) & {
+	// описание
+	desc?: string
+}
 
 export interface ICardLevel {
 	// количество возможных целей
@@ -10,7 +28,8 @@ export interface ICardLevel {
 	// Атака пока только после движения
 	attack: IVector[],
 	// Варианты поворота на выбор, можно выбрать только 1
-	rotate: ERotation[]
+	rotate: EDirection[],
+	steps: ICardStep[]
 }
 
 export interface ICard {
@@ -27,7 +46,8 @@ export interface ICard {
 
 export const cardsJSON: ICard[] = [
 	{
-		name: "Fuel Tank",
+		//name: "Fuel Tank",
+		name: "Маневрирование",
 		// Эффект накладывается при взятии карты
 		type: ECardType.Fire,
 		effects: ["FuelTank"], // при желании. функция Сброс карты и атаковать всех в радиусе 1 при получении урона
@@ -36,36 +56,43 @@ export const cardsJSON: ICard[] = [
 				targetCount: 0,
 				move: [],
 				attack: [],
-				rotate: [
-					ERotation._90,
-					ERotation._270,
+				rotate: [EDirection._90, EDirection._270,],
+				steps: [
+					{
+						action: ECardAction.Rotate,
+						directions: [EDirection._90, EDirection._270,],
+					}
 				]
 			},
 			{// 2 Уровень
 				targetCount: 0,
 				move: [],
 				attack: [],
-				rotate: [
-					ERotation._90,
-					ERotation._180,
-					ERotation._270,
+				rotate: [EDirection._90, EDirection._180, EDirection._270,],
+				steps: [
+					{
+						action: ECardAction.Rotate,
+						directions: [EDirection._90, EDirection._180, EDirection._270,],
+					}
 				]
 			},
 			{// 3 Уровень
 				targetCount: 0,
 				move: [],
 				attack: [],
-				rotate: [
-					ERotation._0,
-					ERotation._90,
-					ERotation._180,
-					ERotation._270,
+				rotate: [EDirection._0, EDirection._90, EDirection._180, EDirection._270,],
+				steps: [
+					{
+						action: ECardAction.Rotate,
+						directions: [EDirection._0, EDirection._90, EDirection._180, EDirection._270,],
+					}
 				]
 			}
 		]
 	},
 	{
-		name: "Blaze",
+		/*name: "Blaze",*/
+		name: "Пламя",
 		type: ECardType.Fire,
 		effects: [],
 		levels: [
@@ -73,24 +100,64 @@ export const cardsJSON: ICard[] = [
 				targetCount: 2,
 				move: [{x: 0, y: 1}],
 				attack: [{x: -1, y: 0}, {x: 1, y: 0}],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 1}],
+						desc: '1 клетка вперёд'
+					},
+					{
+						action: ECardAction.Attack,
+						coords: [{x: -1, y: 0}, {x: 1, y: 0}],
+						count: 2,
+						desc: 'По бокам'
+					},
+				]
 			},
 			{
 				targetCount: 2,
 				move: [{x: 0, y: 2}],
 				attack: [{x: -1, y: 0}, {x: 1, y: 0}], // Атака в конце хода
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 2}],
+						desc: '2 клетки вперёд'
+					},
+					{
+						action: ECardAction.Attack,
+						coords: [{x: -1, y: 0}, {x: 1, y: 0}],
+						count: 2,
+						desc: 'По бокам'
+					},
+				]
 			},
 			{
 				targetCount: 2,
 				move: [{x: 0, y: 3}],
 				attack: [{x: -1, y: 0}, {x: 1, y: 0}], // Атака в конце хода
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 3}],
+						desc: '3 клетки вперёд'
+					},
+					{
+						action: ECardAction.Attack,
+						coords: [{x: -1, y: 0}, {x: 1, y: 0}],
+						count: 2,
+						desc: 'По бокам'
+					},
+				]
 			}
 		]
 	},
 	{
-		name: "Flamespitter",
+		name: "Огнемёт",
+		/*name: "Flamespitter",*/
 		type: ECardType.Fire,
 		effects: [],
 		levels: [
@@ -98,27 +165,46 @@ export const cardsJSON: ICard[] = [
 				targetCount: 999,
 				move: [],
 				attack: [{x: 0, y: 1}, {x: 0, y: 2}], // Атака в конце хода
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}, {x: 0, y: 2}],
+						desc: '2 клетки спереди'
+					},
+				]
 			},
 			{// 2 Уровень
 				targetCount: 999,
 				move: [],
-				attack: [{x: 0, y: 1}, {x: 0, y: 2}, {x: -1, y: 2}, {x: 1, y: 2}], // Атака в конце хода
-				rotate: []
+				attack: [{x: 0, y: 1}, {x: 0, y: 2}, {x: -1, y: 2}, {x: 1, y: 2}],
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}, {x: 0, y: 2}, {x: -1, y: 2}, {x: 1, y: 2}],
+						desc: '4 клетки спереди буквой T'
+					},
+				]
 			},
 			{// 3 Уровень
 				targetCount: 999,
 				move: [],
-				attack: [{x: 0, y: 1}, {x: 0, y: 2}, {x: -1, y: 2}, {x: 1, y: 2}, {x: -1, y: 3}, {x: 0, y: 3}, {
-					x: 1,
-					y: 3
-				}], // Аттака в конце хода
-				rotate: []
+				attack: [{x: 0, y: 1}, {x: 0, y: 2}, {x: -1, y: 2}, {x: 1, y: 2}, {x: -1, y: 3}, {x: 0, y: 3}, {x: 1, y: 3}],
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}, {x: 0, y: 2}, {x: -1, y: 2}, {x: 1, y: 2}, {x: -1, y: 3}, {x: 0, y: 3}, {x: 1, y: 3}],
+						desc: '7 клеток спереди буквой T'
+					},
+				]
 			}
 		]
 	},
 	{
-		name: "Memory Core",
+		name: "Настройка",
+		/*name: "Memory Core",*/
 		// +1 карта в раздачу, если ты первый игрок
 		type: ECardType.Computer,
 		effects: ["FuelTank"],
@@ -127,36 +213,43 @@ export const cardsJSON: ICard[] = [
 				targetCount: 0,
 				move: [],
 				attack: [],
-				rotate: [
-					ERotation._90,
-					ERotation._270,
+				rotate: [EDirection._90, EDirection._270,],
+				steps: [
+					{
+						action: ECardAction.Rotate,
+						directions: [EDirection._90, EDirection._270,],
+					},
 				]
 			},
 			{// 2 Уровень +2 cards
 				targetCount: 0,
 				move: [],
 				attack: [],
-				rotate: [
-					ERotation._90,
-					ERotation._180,
-					ERotation._270,
+				rotate: [EDirection._90, EDirection._180, EDirection._270,],
+				steps: [
+					{
+						action: ECardAction.Rotate,
+						directions: [EDirection._90, EDirection._180, EDirection._270,],
+					},
 				]
 			},
 			{// 3 Уровень +3 cards
 				targetCount: 0,
 				move: [],
 				attack: [],
-				rotate: [ // 1: 90,  2: 180, 3: 270(-90), 4:360
-					ERotation._0,
-					ERotation._90,
-					ERotation._180,
-					ERotation._270,
+				rotate: [EDirection._0, EDirection._90, EDirection._180, EDirection._270,],
+				steps: [
+					{
+						action: ECardAction.Rotate,
+						directions: [EDirection._0, EDirection._90, EDirection._180, EDirection._270]
+					},
 				]
 			}
 		]
 	},
 	{
-		name: "Omni Stomp",
+		name: "Сальто",
+	/*	name: "Omni Stomp",*/
 		type: ECardType.Computer,
 		effects: [],
 		levels: [
@@ -164,77 +257,97 @@ export const cardsJSON: ICard[] = [
 				targetCount: 0,
 				move: [{x: 0, y: 1}, {x: -1, y: 0}, {x: 1, y: 0}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 1}, {x: -1, y: 0}, {x: 1, y: 0}],
+						desc: '1 клетка вперед, влево или вправо'
+					},
+				]
 			},
 			{// 2 Уровень
 				targetCount: 0,
 				move: [{x: 0, y: 2}, {x: -2, y: 0}, {x: 2, y: 0}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 2}, {x: -2, y: 0}, {x: 2, y: 0}],
+						desc: '2 клетки вперед, влево или вправо'
+					},
+				]
 			},
 			{// 3 Уровень
 				targetCount: 0,
 				move: [{x: 0, y: 3}, {x: -3, y: 0}, {x: 3, y: 0}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 3}, {x: -3, y: 0}, {x: 3, y: 0}],
+						desc: '3 клетки вперед, влево или вправо'
+					},
+				]
 			}
 		]
 	},
 	{
-		name: "Hexmatic Aimbot",
+		//name: "Hexmatic Aimbot",
+		name: "Прицельный выстрел",
 		type: ECardType.Computer,
 		effects: [],
 		levels: [
 			{// 1 Уровень
 				targetCount: 1,
 				move: [],
-				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {
-					x: -1,
-					y: 0
-				}, {x: -1, y: 1}],
-				rotate: []
+				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}],
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}],
+						count: 1,
+						desc: '1 цель в радиусе 1'
+					},
+				]
 			},
 			{// 2 Уровень
 				targetCount: 1,
 				move: [],
-				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1},
-					{x: 0, y: 2}, {x: 1, y: 2}, {x: 2, y: 2}, {x: 2, y: 1}, {x: 2, y: 0}, {x: 2, y: -1}, {x: 2, y: -2}, {x: 1, y: -2},
-					{x: 0, y: -2}, {x: -1, y: -2}, {x: -2, y: -2}, {x: -2, y: -1}, {x: -2, y: 0}, {x: -2, y: 1}, {x: -2, y: 2}, {x: -1, y: 2}],
-				rotate: []
+				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}, {x: 0, y: 2}, {x: 1, y: 2}, {x: 2, y: 2}, {x: 2, y: 1}, {x: 2, y: 0}, {x: 2, y: -1}, {x: 2, y: -2}, {x: 1, y: -2}, {x: 0, y: -2}, {x: -1, y: -2}, {x: -2, y: -2}, {x: -2, y: -1}, {x: -2, y: 0}, {x: -2, y: 1}, {x: -2, y: 2}, {x: -1, y: 2}],
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}, {x: 0, y: 2}, {x: 1, y: 2}, {x: 2, y: 2}, {x: 2, y: 1}, {x: 2, y: 0}, {x: 2, y: -1}, {x: 2, y: -2}, {x: 1, y: -2}, {x: 0, y: -2}, {x: -1, y: -2}, {x: -2, y: -2}, {x: -2, y: -1}, {x: -2, y: 0}, {x: -2, y: 1}, {x: -2, y: 2}, {x: -1, y: 2}],
+						count: 1,
+						desc: '1 цель в радиусе 2'
+					},
+				]
 			},
 			{// 3 Уровень
 				targetCount: 1,
 				move: [],
-				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {
-					x: -1,
-					y: 0
-				}, {x: -1, y: 1},
-					{x: 0, y: 2}, {x: 1, y: 2}, {x: 2, y: 2}, {x: 2, y: 1}, {x: 2, y: 0}, {x: 2, y: -1}, {
-						x: 2,
-						y: -2
-					}, {x: 1, y: -2},
-					{x: 0, y: -2}, {x: -1, y: -2}, {x: -2, y: -2}, {x: -2, y: -1}, {x: -2, y: 0}, {x: -2, y: 1}, {
-						x: -2,
-						y: 2
-					}, {x: -1, y: 2},
-					{x: 0, y: 3}, {x: 1, y: 3}, {x: 2, y: 3}, {x: 3, y: 3}, {x: 3, y: 2}, {x: 3, y: 1}, {x: 3, y: 0}, {
-						x: 3,
-						y: -1
+				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}, {x: 0, y: 2}, {x: 1, y: 2}, {x: 2, y: 2}, {x: 2, y: 1}, {x: 2, y: 0}, {x: 2, y: -1}, {x: 2, y: -2}, {x: 1, y: -2}, {x: 0, y: -2}, {x: -1, y: -2}, {x: -2, y: -2}, {x: -2, y: -1}, {x: -2, y: 0}, {x: -2, y: 1}, {x: -2, y: 2}, {x: -1, y: 2}, {x: 0, y: 3}, {x: 1, y: 3}, {x: 2, y: 3}, {x: 3, y: 3}, {x: 3, y: 2}, {x: 3, y: 1}, {x: 3, y: 0}, {x: 3, y: -1}, {x: 3, y: -2}, {x: 3, y: -3}, {x: 2, y: -3}, {x: 1, y: -3}, {x: 0, y: -3}, {x: -1, y: -3}, {x: -2, y: -3}, {x: -3, y: -3}, {x: -3, y: -2}, {x: -3, y: -1}, {x: -3, y: 0}, {x: -3, y: 1}, {x: -3, y: 2}, {x: -3, y: 3}, {x: -2, y: 3}, {x: -1, y: 3}],
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}, {x: 0, y: 2}, {x: 1, y: 2}, {x: 2, y: 2}, {x: 2, y: 1}, {x: 2, y: 0}, {x: 2, y: -1}, {x: 2, y: -2}, {x: 1, y: -2}, {x: 0, y: -2}, {x: -1, y: -2}, {x: -2, y: -2}, {x: -2, y: -1}, {x: -2, y: 0}, {x: -2, y: 1}, {x: -2, y: 2}, {x: -1, y: 2}, {x: 0, y: 3}, {x: 1, y: 3}, {x: 2, y: 3}, {x: 3, y: 3}, {x: 3, y: 2}, {x: 3, y: 1}, {x: 3, y: 0}, {x: 3, y: -1}, {x: 3, y: -2}, {x: 3, y: -3}, {x: 2, y: -3}, {x: 1, y: -3}, {x: 0, y: -3}, {x: -1, y: -3}, {x: -2, y: -3}, {x: -3, y: -3}, {x: -3, y: -2}, {x: -3, y: -1}, {x: -3, y: 0}, {x: -3, y: 1}, {x: -3, y: 2}, {x: -3, y: 3}, {x: -2, y: 3}, {x: -1, y: 3}],
+						count: 1,
+						desc: '1 цель в радиусе 3'
 					},
-					{x: 3, y: -2}, {x: 3, y: -3}, {x: 2, y: -3}, {x: 1, y: -3}, {x: 0, y: -3}, {x: -1, y: -3}, {
-						x: -2,
-						y: -3
-					}, {x: -3, y: -3},
-					{x: -3, y: -2}, {x: -3, y: -1}, {x: -3, y: 0}, {x: -3, y: 1}, {x: -3, y: 2}, {x: -3, y: 3}, {
-						x: -2,
-						y: 3
-					}, {x: -1, y: 3}],
-				rotate: []
+				]
+
 			}
 		]
 	},
 	{
-		name: "Scythe",
+		//name: "Scythe",
+		name: "Коса",
 		// Эффект накладывается при взятии карты
 		type: ECardType.Metal,
 		effects: [], // при желании. функция Сброс карты и аттаковать всех в радиусе 1 при получении урона
@@ -242,96 +355,160 @@ export const cardsJSON: ICard[] = [
 			{// 1 Уровень
 				targetCount: 1,
 				move: [],
-				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {
-					x: -1,
-					y: 0
-				}, {x: -1, y: 1}],
-				rotate: [
-					ERotation._90,
-					ERotation._270,
+				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}],
+				rotate: [EDirection._90, EDirection._270,],
+				steps: [
+					{
+						action: ECardAction.Rotate,
+						directions: [EDirection._90, EDirection._270,]
+					},
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}],
+						count: 1,
+						desc: '1 цель в радиусе 1'
+					},
 				]
 			},
 			{// 2 Уровень
 				targetCount: 2,
 				move: [],
-				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {
-					x: -1,
-					y: 0
-				}, {x: -1, y: 1}],
-				rotate: [
-					ERotation._90,
-					ERotation._180,
-					ERotation._270,
+				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}],
+				rotate: [EDirection._90, EDirection._180, EDirection._270,],
+				steps: [
+					{
+						action: ECardAction.Rotate,
+						directions: [EDirection._90, EDirection._180, EDirection._270,],
+					},
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}],
+						count: 2,
+						desc: '2 цели в радиусе 1'
+					},
 				]
+
 			},
 			{// 3 Уровень
 				targetCount: 3,
 				move: [],
-				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {
-					x: -1,
-					y: 0
-				}, {x: -1, y: 1}],
-				rotate: [
-					ERotation._0,
-					ERotation._90,
-					ERotation._180,
-					ERotation._270,
+				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}],
+				rotate: [EDirection._0, EDirection._90, EDirection._180, EDirection._270,],
+				steps: [
+					{
+						action: ECardAction.Rotate,
+						directions: [EDirection._0, EDirection._90, EDirection._180, EDirection._270,],
+					},
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}],
+						count: 3,
+						desc: '3 цели в радиусе 1'
+					},
 				]
 			}
 		]
 	},// do
 	{
-		name: "Skewer",
+		/*name: "Skewer",*/
+		name: "Прыжок",
 		type: ECardType.Metal,
 		effects: [],
 		levels: [
 			{// 1 Уровень
 				targetCount: 2,
 				move: [{x: 0, y: 1}],
-				attack: [], // Аттака в конце хода
-				rotate: []
+				attack: [],
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 1}],
+						desc: '1 клетка вперёд'
+					},
+				]
 			},
 			{// 2 Уровень
 				targetCount: 2,
 				move: [{x: 0, y: 2}],
-				attack: [], // Аттака в конце хода
-				rotate: []
+				attack: [], // 
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 2}],
+						desc: '2 клетки вперёд'
+					},
+				]
 			},
 			{// 3 Уровень
 				targetCount: 2,
 				move: [{x: 0, y: 3}],
-				attack: [], // Аттака в конце хода
-				rotate: []
+				attack: [], // 
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 3}],
+						desc: '3 клетки вперёд'
+					},
+				]
 			}
 		]
 	},
 	{
-		name: "Ripsaw",
+		name: "Шпага",
+		/*		name: "Ripsaw",*/
 		type: ECardType.Metal,
 		effects: ["Ripsaw"],
 		levels: [
 			{// 1 Уровень
 				targetCount: 1,
 				move: [],
-				attack: [{x: 0, y: 1}], // Аттака в конце хода
-				rotate: []
+				attack: [{x: 0, y: 1}], // 
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}],
+						count: 1,
+						desc: '1 цель перед вами'
+					},
+				]
 			},
 			{// 2 Уровень
 				targetCount: 2,
 				move: [],
-				attack: [{x: 0, y: 1}, {x: 0, y: 2}], // Аттака в конце хода
-				rotate: []
+				attack: [{x: 0, y: 1}, {x: 0, y: 2}], // 
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}, {x: 0, y: 2}],
+						count: 2,
+						desc: '2 цели перед вами'
+					},
+				]
 			},
 			{// 3 Уровень
 				targetCount: 3,
 				move: [],
-				attack: [{x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}], // Аттака в конце хода
-				rotate: []
+				attack: [{x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}], // 
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}],
+						count: 3,
+						desc: '3 цели перед вами'
+					},
+				]
 			}
 		]
 	},
 	{
-		name: "Cyclotron",
+		/*name: "Cyclotron",*/
+		name: "Волчок",
 		type: ECardType.Electro,
 		// +1 карта в раздачу, если ты первый игрок
 		effects: [],
@@ -340,42 +517,58 @@ export const cardsJSON: ICard[] = [
 				targetCount: 999,
 				move: [],
 				attack: [{x: 1, y: 1}, {x: -1, y: -1}, {x: 1, y: -1}, {x: -1, y: 1}],
-				rotate: [ // 1: 90,  2: 180, 3: 270(-90), 4:360
-					ERotation._90,
-					ERotation._270,
+				rotate: [EDirection._90, EDirection._270,],
+				steps: [
+					{
+						action: ECardAction.Rotate,
+						directions: [EDirection._90, EDirection._270,],
+					},
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 1, y: 1}, {x: -1, y: -1}, {x: 1, y: -1}, {x: -1, y: 1}],
+						desc: 'По диагонали в радиусе 1'
+					},
 				]
 			},
 			{// 2 Уровень +2 cards
 				targetCount: 999,
 				move: [],
-				attack: [{x: 1, y: 1}, {x: -1, y: -1}, {x: 1, y: -1}, {x: -1, y: 1},/**/{x: 2, y: 2}, {x: -2, y: -2}, {
-					x: 2,
-					y: -2
-				}, {x: -2, y: 2}],
-				rotate: [
-					ERotation._90,
-					ERotation._180,
-					ERotation._270,
+				attack: [{x: 1, y: 1}, {x: -1, y: -1}, {x: 1, y: -1}, {x: -1, y: 1},/**/{x: 2, y: 2}, {x: -2, y: -2}, {x: 2, y: -2}, {x: -2, y: 2}],
+				rotate: [EDirection._90, EDirection._180, EDirection._270,],
+				steps: [
+					{
+						action: ECardAction.Rotate,
+						directions: [EDirection._90, EDirection._180, EDirection._270,],
+					},
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 1, y: 1}, {x: -1, y: -1}, {x: 1, y: -1}, {x: -1, y: 1},/**/{x: 2, y: 2}, {x: -2, y: -2}, {x: 2, y: -2}, {x: -2, y: 2}],
+						desc: 'По диагонали в радиусе 2'
+					},
 				]
 			},
 			{// 3 Уровень +3 cards
 				targetCount: 999,
 				move: [],
-				attack: [{x: 1, y: 1}, {x: -1, y: -1}, {x: 1, y: -1}, {x: -1, y: 1},/**/{x: 2, y: 2}, {x: -2, y: -2}, {
-					x: 2,
-					y: -2
-				}, {x: -2, y: 2},/**/{x: 3, y: 3}, {x: -3, y: -3}, {x: 3, y: -3}, {x: -3, y: 3}],
-				rotate: [
-					ERotation._0,
-					ERotation._90,
-					ERotation._180,
-					ERotation._270,
+				attack: [{x: 1, y: 1}, {x: -1, y: -1}, {x: 1, y: -1}, {x: -1, y: 1},/**/{x: 2, y: 2}, {x: -2, y: -2}, {x: 2, y: -2}, {x: -2, y: 2},/**/{x: 3, y: 3}, {x: -3, y: -3}, {x: 3, y: -3}, {x: -3, y: 3}],
+				rotate: [EDirection._0, EDirection._90, EDirection._180, EDirection._270,],
+				steps: [
+					{
+						action: ECardAction.Rotate,
+						directions: [EDirection._0, EDirection._90, EDirection._180, EDirection._270,],
+					},
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 1, y: 1}, {x: -1, y: -1}, {x: 1, y: -1}, {x: -1, y: 1},/**/{x: 2, y: 2}, {x: -2, y: -2}, {x: 2, y: -2}, {x: -2, y: 2},/**/{x: 3, y: 3}, {x: -3, y: -3}, {x: 3, y: -3}, {x: -3, y: 3}],
+						desc: 'По диагонали в радиусе 3'
+					},
 				]
 			}
 		]
 	},
 	{
-		name: "Speed",
+		/*name: "Speed",*/
+		name: "Скорость",
 		type: ECardType.Electro,
 		effects: [],
 		levels: [
@@ -383,24 +576,46 @@ export const cardsJSON: ICard[] = [
 				targetCount: 0,
 				move: [{x: 0, y: 1}, {x: 0, y: 2}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 1}, {x: 0, y: 2}],
+						desc: '1 или 2 клетки вперёд'
+					},
+				]
 			},
 			{// 2 Уровень
 				targetCount: 0,
 				move: [{x: 0, y: 2}, {x: 0, y: 3}, {x: 0, y: 4}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 2}, {x: 0, y: 3}, {x: 0, y: 4}],
+						desc: '2, 3 или 4 клетки вперёд'
+					},
+				]
 			},
 			{// 3 Уровень
 				targetCount: 0,
 				move: [{x: 0, y: 3}, {x: 0, y: 4}, {x: 0, y: 5}, {x: 0, y: 6}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 3}, {x: 0, y: 4}, {x: 0, y: 5}, {x: 0, y: 6}],
+						desc: '3, 4, 5 или 6 клеток вперёд'
+					},
+				]
 			}
 		]
 	},
 	{
-		name: "Chain Lightning",
+		/*name: "Chain Lightning",*/
+		name: "Шаровая молния",
 		type: ECardType.Electro,
 		effects: ["ChainLightning"],
 		levels: [
@@ -408,143 +623,276 @@ export const cardsJSON: ICard[] = [
 				targetCount: 1,
 				move: [],
 				attack: [{x: 0, y: 1}],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}],
+						desc: '1 цель перед вами'
+					},
+				]
 			},
 			{// 2 Уровень
 				targetCount: 3,
 				move: [],
 				attack: [{x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}],
+						desc: '3 цели перед вами'
+					},
+				]
 			},
 			{// 3 Уровень
 				targetCount: 5,
 				move: [],
 				attack: [{x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}, {x: 0, y: 4}, {x: 0, y: 5}],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Attack,
+						coords: [{x: 0, y: 1}, {x: 0, y: 2}, {x: 0, y: 3}, {x: 0, y: 4}, {x: 0, y: 5}],
+						desc: '5 целей перед вами'
+					},
+				]
 			}
 		]
 	},
 	{
 		name: "Move left disable",
-		type: ECardType.Deffect,
+		type: ECardType.Defect,
 		effects: [],
 		levels: [
 			{// 1 Уровень
 				targetCount: 0,
 				move: [{x: -1, y: 0}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: -1, y: 0}],
+						desc: '1 клетка влево'
+					},
+				]
 			},
 			{// 2 Уровень
 				targetCount: 0,
 				move: [{x: -1, y: 0}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: -1, y: 0}],
+						desc: '1 клетка влево'
+					},
+				]
 			},
 			{// 3 Уровень
 				targetCount: 0,
 				move: [{x: -1, y: 0}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: -1, y: 0}],
+						desc: '1 клетка влево'
+					},
+				]
 			},
 			{// 4 Уровень
 				targetCount: 0,
 				move: [{x: -1, y: 0}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: -1, y: 0}],
+						desc: '1 клетка влево'
+					},
+				]
 			},
 		]
 	},
 	{
 		name: "Move backward disable",
-		type: ECardType.Deffect,
+		type: ECardType.Defect,
 		effects: [],
 		levels: [
 			{// 1 Уровень
 				targetCount: 0,
 				move: [{x: 0, y: -1}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: -1}],
+						desc: '1 клетка назад'
+					},
+				]
 			},
 			{// 2 Уровень
 				targetCount: 0,
 				move: [{x: 0, y: -1}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: -1}],
+						desc: '1 клетка назад'
+					},
+				]
 			},
 			{// 3 Уровень
 				targetCount: 0,
 				move: [{x: 0, y: -1}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: -1}],
+						desc: '1 клетка назад'
+					},
+				]
 			},
 			{// 4 Уровень
 				targetCount: 0,
 				move: [{x: 0, y: -1}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: -1}],
+						desc: '1 клетка назад'
+					},
+				]
 			},
 		]
 	},
 	{
 		name: "Move forward disable",
-		type: ECardType.Deffect,
+		type: ECardType.Defect,
 		effects: [],
 		levels: [
 			{// 1 Уровень
 				targetCount: 0,
 				move: [{x: 0, y: 1}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 1}],
+						desc: '1 клетка вперёд'
+					},
+				]
 			},
 			{// 2 Уровень
 				targetCount: 0,
 				move: [{x: 0, y: 1}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 1}],
+						desc: '1 клетка вперёд'
+					},
+				]
 			},
 			{// 3 Уровень
 				targetCount: 0,
 				move: [{x: 0, y: 1}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 1}],
+						desc: '1 клетка вперёд'
+					},
+				]
 			},
 			{// 4 Уровень
 				targetCount: 0,
 				move: [{x: 0, y: 1}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 0, y: 1}],
+						desc: '1 клетка вперёд'
+					},
+				]
 			},
 		]
 	},
 	{
 		name: "Move right disable",
-		type: ECardType.Deffect,
+		type: ECardType.Defect,
 		effects: [],
 		levels: [
 			{// 1 Уровень
 				targetCount: 0,
 				move: [{x: 1, y: 0}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 1, y: 0}],
+						desc: '1 клетка влево'
+					},
+				]
 			},
 			{// 2 Уровень
 				targetCount: 0,
 				move: [{x: 1, y: 0}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 1, y: 0}],
+						desc: '1 клетка влево'
+					},
+				]
 			},
 			{// 3 Уровень
 				targetCount: 0,
 				move: [{x: 1, y: 0}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 1, y: 0}],
+						desc: '1 клетка влево'
+					},
+				]
 			},
 			{// 4 Уровень
 				targetCount: 0,
 				move: [{x: 1, y: 0}],
 				attack: [],
-				rotate: []
+				rotate: [],
+				steps: [
+					{
+						action: ECardAction.Move,
+						coords: [{x: 1, y: 0}],
+						desc: '1 клетка влево'
+					},
+				]
 			},
 		]
 	},

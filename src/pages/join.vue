@@ -13,7 +13,7 @@
 
 import Form from "../components/Form.vue";
 import {Vue, Options, setup} from "vue-class-component"
-import firebase from "firebase/app";
+//import firebase from "firebase/app";
 import {AbstractLobby, RequestError} from "../engine/lobby/abstract-lobby";
 import {unref} from "vue";
 import {LOBBY_PROVIDER} from "../context/network.context";

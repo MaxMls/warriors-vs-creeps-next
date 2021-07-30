@@ -1,6 +1,15 @@
 import {AbstractLobby, ILobbyPlayer, RequestError} from "./abstract-lobby";
 import {dynamicSort, GlobalEventEmitter} from "../../common";
 import {customAlphabet} from 'nanoid'
+import {Game} from "../game";
+import {VueRender} from "../renders/vue-render";
+import {User} from "../user";
+import {LocalAgent} from "../agents/local-agent";
+import {BotAgent} from "../agents/bot-agent";
+import {NetworkAgent} from "../agents/network-agent";
+import {ServerEventsNetwork} from "../networks/server-events-network";
+import {AbstractAgent} from "../agents/abstract-agent";
+import {GameMap} from "../game-map";
 
 const urlAlphabet = "abdefghijklmnqrstuvxyzABDEFGHIJKLMNQRSTUVXYZ0123456789-_"
 const genId = customAlphabet(urlAlphabet, 15)
@@ -16,9 +25,18 @@ export class ServerEventsLobby extends AbstractLobby {
 
 	private readonly globalEventEmitter: GlobalEventEmitter
 
-	constructor(serverUrl: string = 'https://localhost/e/') {
+	constructor(serverUrl: string) {
 		super();
 		this.globalEventEmitter = new GlobalEventEmitter(serverUrl)
+	}
+
+	private _game: boolean = false;
+	get game(): boolean {
+		return this._game;
+	}
+
+	private set game(value: boolean) {
+		this._game = value;
 	}
 
 	private _playerName: string | null = null
@@ -57,10 +75,11 @@ export class ServerEventsLobby extends AbstractLobby {
 		this.localEventEmitter.emit('players', this.players)
 	}
 
-	private readyPlayer(playerName: string, value: boolean) {
+	private readyPlayer(playerName: string, value: boolean, seed: string) {
 		const player = this.players.find(v => v.name === playerName)
 		if (player) {
 			player.ready = value
+			player.seed = seed
 			this.localEventEmitter.emit('players', this.players)
 		} else {
 			throw new Error('Player not found')
@@ -133,7 +152,11 @@ export class ServerEventsLobby extends AbstractLobby {
 				await this.roomEventsSubscribe()
 
 				await new Promise<void>(async (resolve, reject) => {
+					const t = setTimeout(() => {
+						reject(new RequestError({room: 'no one from the room answers'}))
+					}, 5000)
 					this.onJoin = (error) => {
+						clearTimeout(t)
 						this.onJoin = null
 						if (error) reject(error as RequestError)
 						else resolve()
@@ -211,9 +234,12 @@ export class ServerEventsLobby extends AbstractLobby {
 						this.kickPlayer(s)
 					}
 				},
-				readyEvent: async (data: { playerName: string, value: boolean }, initName: string) => {
+				readyEvent: async (data: { playerName: string, value: boolean, seed: string }, initName: string) => {
 					console.log('readyEvent', {initName, data})
-					this.readyPlayer(data.playerName, data.value)
+					this.readyPlayer(data.playerName, data.value, data.seed)
+					if (!this.players.find(v => !v.ready)) {
+						await this.startGame()
+					}
 				}
 			})[event.type]?.(event.data, event.initName)
 		}
@@ -236,11 +262,12 @@ export class ServerEventsLobby extends AbstractLobby {
 
 	async ready(value): Promise<void> {
 		if (this.roomId === null || this.playerName === null) throw new Error('not in room')
-		this.readyPlayer(this.playerName, value)
+		const seed = genId()
+		this.readyPlayer(this.playerName, value, seed)
 		await this.roomEventEmit({
 			type: 'readyEvent',
 			initName: this.playerName,
-			data: {playerName: this.playerName, value}
+			data: {playerName: this.playerName, value, seed}
 		})
 
 	}
@@ -254,5 +281,18 @@ export class ServerEventsLobby extends AbstractLobby {
 		this.onJoin = null
 	}
 
+	private async startGame() {
+		if (this.game) throw  new Error('game already start')
+		if (this.roomId === null || this.playerName === null) throw new Error('not in room')
 
+		await this.roomEventsUnsubscribe()
+
+		// start game
+		this.game = true /*new Game(render, agents, gameMap, seed)*/
+		this.localEventEmitter.emit('gameStart')
+	}
+
+	async endGame() {
+		await this.roomEventsSubscribe()
+	}
 }

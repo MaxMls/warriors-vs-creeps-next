@@ -1,10 +1,5 @@
 import {AbstractAgent} from "./abstract-agent";
-import {EHighlight, ERotation, TCardInd, TStackInd, TUserId} from "../types";
-
 import {AbstractNetwork} from "../networks/abstract-network";
-import {Cell} from "../cell";
-import {uuid} from "../extension-functions";
-import seedrandom from "seedrandom";
 
 /* Агент получающий события через интернет.<br/>
  * Связан с local agents на других пк.<br/>
@@ -12,38 +7,31 @@ import seedrandom from "seedrandom";
  * Игнорирует любые аргументы */
 export class NetworkAgent extends AbstractAgent {
 
-	private readonly random: { (): number };
+	readonly chooseRotate: AbstractAgent["chooseRotate"]
+	readonly programming: AbstractAgent["programming"]
+	readonly selectCard: AbstractAgent["selectCard"]
+	readonly selectCells: AbstractAgent["selectCells"]
+	readonly selectStacks: AbstractAgent["selectStacks"]
+	readonly setStacks: AbstractAgent["setStacks"]
+	readonly setHand: AbstractAgent["setHand"]
 
 	constructor(
-		private readonly seed: string,
 		private readonly network: AbstractNetwork,
+		private readonly name: string,
 	) {
 		super()
-		this.random = seedrandom(seed.toString());
+		this.chooseRotate = this.handlerFactory('chooseRotate')
+		this.programming = this.handlerFactory('programming')
+		this.selectCard = this.handlerFactory('selectCard')
+		this.selectCells = this.handlerFactory('selectCells')
+		this.selectStacks = this.handlerFactory('selectStacks')
+		this.setStacks = () => {}
+		this.setHand = () => {}
 	}
 
-	setHand(cards: TCardInd[]) {}
+	private handlerFactory(name) {
+		this.network.defineAction(name).catch(e => console.error(e))
 
-	setStacks(stacks: TCardInd[][]) {}
-
-	async chooseRotate(rotateArray: ERotation[]): Promise<number> {
-		return await this.network.waitAction(uuid(this.random))
+		return () => this.network.waitAction(`${this.name}/${name}`)
 	}
-
-	async programming(): Promise<[number, number]> {
-		return await this.network.waitAction(uuid(this.random))
-	}
-
-	async selectCard(cards: TCardInd[]): Promise<number> {
-		return await this.network.waitAction(uuid(this.random))
-	}
-
-	async selectCells(cells: Cell[], highlight: EHighlight, count: number): Promise<number[]> {
-		return await this.network.waitAction(uuid(this.random))
-	}
-
-	async selectStacks(stacks: TStackInd[], count: number): Promise<number[]> {
-		return await this.network.waitAction(uuid(this.random))
-	}
-
 }

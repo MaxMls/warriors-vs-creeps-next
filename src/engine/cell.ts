@@ -16,6 +16,14 @@ export class Cell {
 		this._unit = value;
 	}
 
+	get unit(): Unit {
+		return this._unit as Unit
+	}
+
+	public killUnit() {
+		this._unit = null
+	}
+
 	public hasUnit() {
 		return this._unit !== null;
 	};

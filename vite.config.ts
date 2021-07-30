@@ -1,16 +1,30 @@
 import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import pages from "vite-plugin-pages";
+import viteSvgIcons from 'vite-plugin-svg-icons';
+import * as path from "path";
 
 // https://vitejs.dev/config/
-export default defineConfig({
-	optimizeDeps: {include: ['firebase/app', 'firebase/database']},
+export default defineConfig({/*
+	alias: {
+		'@': path.resolve(__dirname, './src')
+	},*/
 	plugins: [
 		vue({}),
-		pages({nuxtStyle: true})
+		pages({nuxtStyle: true}),
+		viteSvgIcons({
+			iconDirs: [path.resolve(__dirname, './src/assets/icons')],
+			symbolId: 'icon-[dir]-[name]',
+		}),
 	],
 	build: {
 		sourcemap: true
+	},
+	css: {
+		postcss: {
+
+			map: true
+		}
 	},
 	server: {
 		https: {
