@@ -1,5 +1,5 @@
 import {GameMap} from "../game-map";
-import {EHighlight, EDirection, TCardInd, TStackInd} from "../types";
+import {EHighlight, EDirection, TCardId, TStackId} from "../types";
 import {Cell} from "../cell";
 
 /* UI render */
@@ -20,10 +20,10 @@ export abstract class AbstractRender {
 
 	abstract stopTimer(): void
 
-	abstract setHand(cards: TCardInd[]): void
+	abstract setHand(cards: TCardId[]): void
 
 	// cards - Массив 6x3 карт в стеках [ [down, center, top], ... ] int id типы карт
-	abstract setStacks(stacks: TCardInd[][]): void
+	abstract setStacks(stacks: TCardId[][]): void
 
 	//Окно, отображающее поражение для текущей сессии
 	abstract defeat(): void
@@ -42,10 +42,10 @@ export abstract class AbstractRender {
 
 	// wait for user input gui:
 
-	abstract selectCard(cards: TCardInd[]): Promise<number>
+	abstract selectCard(cards: TCardId[]): Promise<number>
 
 	// callback принимает номер карты в руке и номер стека
-	abstract programming(): Promise<[number, number]>
+	abstract programming(stacks: TStackId[]): Promise<[number, number]>
 
 	abstract chooseRotate(rotateArray: EDirection[]): Promise<number>
 
@@ -54,6 +54,6 @@ export abstract class AbstractRender {
 	// count - количество ячеек
 	abstract selectCells(cells: Cell[], highlight: EHighlight, count: number): Promise<number[]>
 
-	abstract selectStacks(stacks: TStackInd[], count: number): Promise<number[]>
+	abstract selectStacks(stacks: TStackId[], count: number): Promise<number[]>
 
 }

@@ -9,6 +9,17 @@
 	color: var(--icon-color);
 }
 
+.statCtn_selected {
+	outline: 2px solid #f8e502;
+	outline-offset: -3px;
+	cursor: pointer;
+	background: white;
+
+	&:hover {
+		//	outline-color: white;
+	}
+}
+
 .statIcon {
 	min-width: 30px;
 	min-height: 30px;
@@ -184,9 +195,29 @@
 	flex: 1 1 auto;
 	background: linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%);
 	border: 1px solid #EEEEEE;
-	border-top: 0;
+	border-bottom-width: 0;
+}
+
+
+.termGradient_empty.termGradient_select {
+	border: 2px solid #FFE500;
 	border-bottom: 0;
 }
+
+
+.termGradient_select {
+	border-left: 2px solid #FFE500;
+	border-right: 2px solid #FFE500;
+	margin: 0 -2px;
+
+}
+
+.termGradient_empty {
+	border-top-width: 1px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+
 
 .termCardCtn {
 	position: relative;
@@ -222,27 +253,29 @@
 	overflow-x: auto;
 	left: 0;
 	right: 0;
+	opacity: .2;
 
-	margin-left: calc(100% - 200px);
-	transition: margin-left .2s;
+	//margin-left: calc(100% - 200px);
+	transition: opacity .15s;
+	&::-webkit-scrollbar {
+		display: none;
+	}
 
 	&:hover {
-		margin-left: calc(0px);
+		opacity: 1;
+		//margin-left: calc(0px);
 	}
 }
 
 .selectPopup {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: space-around;
 	width: max-content;
 	padding: 20px 20px;
 	gap: 20px;
-
-
 }
 
 .selectPopupCard {
-	width: max-content;
-
+	width: 200px;
 }

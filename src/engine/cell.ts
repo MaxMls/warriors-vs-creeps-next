@@ -1,12 +1,14 @@
 import {Unit} from "./unit";
+import {ETileType} from "./types";
 
 export class Cell {
 
 	constructor(
 		public readonly x: number,
 		public readonly y: number,
-		public readonly type: any,
+		public readonly type: ETileType,
 	) {}
+
 
 	private _unit: Unit | null = null;
 	public stop = false; // Проверка, можно ли продвинуть юнита вперед
@@ -27,5 +29,4 @@ export class Cell {
 	public hasUnit() {
 		return this._unit !== null;
 	};
-
 }

@@ -1,15 +1,6 @@
 import {AbstractLobby, ILobbyPlayer, RequestError} from "./abstract-lobby";
 import {dynamicSort, GlobalEventEmitter} from "../../common";
 import {customAlphabet} from 'nanoid'
-import {Game} from "../game";
-import {VueRender} from "../renders/vue-render";
-import {User} from "../user";
-import {LocalAgent} from "../agents/local-agent";
-import {BotAgent} from "../agents/bot-agent";
-import {NetworkAgent} from "../agents/network-agent";
-import {ServerEventsNetwork} from "../networks/server-events-network";
-import {AbstractAgent} from "../agents/abstract-agent";
-import {GameMap} from "../game-map";
 
 const urlAlphabet = "abdefghijklmnqrstuvxyzABDEFGHIJKLMNQRSTUVXYZ0123456789-_"
 const genId = customAlphabet(urlAlphabet, 15)
@@ -269,7 +260,9 @@ export class ServerEventsLobby extends AbstractLobby {
 			initName: this.playerName,
 			data: {playerName: this.playerName, value, seed}
 		})
-
+		if (!this.players.find(v => !v.ready)) {
+			await this.startGame()
+		}
 	}
 
 	async destroy(): Promise<void> {
@@ -289,6 +282,7 @@ export class ServerEventsLobby extends AbstractLobby {
 
 		// start game
 		this.game = true /*new Game(render, agents, gameMap, seed)*/
+		console.log('gameStartgameStart')
 		this.localEventEmitter.emit('gameStart')
 	}
 

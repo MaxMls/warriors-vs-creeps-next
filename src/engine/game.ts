@@ -3,7 +3,7 @@ import {cardsJSON} from "./cards";
 import {GameMap} from "./game-map";
 import seedrandom from "seedrandom";
 import {User} from "./user";
-import {ECardType, EHighlight, IVector, TCardInd, ETileType, TUserId, EUnitType} from "./types";
+import {ECardType, EHighlight, IVector, TCardId, ETileType, TUserId, EUnitType} from "./types";
 import {createArray, getNextCellFromAToB, getRandomInt, shakeArray, vectorRotate} from "./extension-functions";
 import {Unit} from "./unit";
 import {Cell} from "./cell";
@@ -65,17 +65,19 @@ export class Game {
 		// this.seedRandom =  0.12800927790647165 // - рядом с бомбой
 		this.random = seedrandom(seed.toString());
 		this.users = agents.map(a => new User(a))
+
+		this.render.renderMap(this.gameMap);
 	}
 
 	//private readonly users: User[] = []
 
 	// Колода карт по 8 карт
-	private readonly cardsDeck: TCardInd[] = []
+	private readonly cardsDeck: TCardId[] = []
 	private readonly cardsCount = 96
 	private bombHP = 8
 	private roundCounter = 0
 	private killsCount = 0
-	private readonly damageCardsDeck: TCardInd[] = []
+	private readonly damageCardsDeck: TCardId[] = []
 	private isStarted = false
 
 
@@ -88,10 +90,10 @@ export class Game {
 	TODO: users: AbstractAgent[] array - инициализированные обьекты пользователей
 	 */
 	public start() {
+		console.log('start')
 		if (this.isStarted) throw new Error('Game already started')
 		this.isStarted = true
 
-		this.render.renderMap(this.gameMap);
 
 		// Генерация колоды c командными картами
 		for (let i = 0; i < 12; i++) {
@@ -133,7 +135,7 @@ export class Game {
 		this.render.initUnit(bombCell);
 
 
-		setTimeout(this.chooseCards, 0)
+		setTimeout(() => this.chooseCards(), 0)
 	};
 
 	private lose(message: string) {
@@ -145,8 +147,9 @@ export class Game {
 
 
 	private async chooseCards() {
+		console.log('chooseCards')
 		let isFirstRound = this.roundCounter === 0;
-		let selectionCards: TCardInd[] = [];
+		let selectionCards: TCardId[] = [];
 		let countCards = isFirstRound ? 10 : 5; // TODO: добавить еще условие для core карт
 
 		for (let i = 0; i < countCards; i++) {
@@ -175,7 +178,7 @@ export class Game {
 			userId = (userId + 1) % this.users.length
 		}
 
-		setTimeout(this.programmingAct, 0);
+		setTimeout(() => this.programmingAct(), 0);
 	}
 
 
@@ -189,7 +192,7 @@ export class Game {
 		))
 		this.render.hideMessage()
 
-		setTimeout(this.warriorsAct, 0)
+		setTimeout(() => this.warriorsAct(), 0)
 	}
 
 
@@ -203,15 +206,15 @@ export class Game {
 			}
 
 			if (userId + 1 < this.users.length) {
-				setTimeout(go, 0, userId + 1);
+				setTimeout(() => go(userId + 1), 0);
 			} else {
-				setTimeout(this.creepsMoveAct, 0);
+				setTimeout(() => this.creepsMoveAct(), 0);
 			}
 		}
-		setTimeout(go, 0);
+		setTimeout(() => go(), 0);
 	}
 
-	private async runStack(user: User, stack: TCardInd[]) {
+	private async runStack(user: User, stack: TCardId[]) {
 		let level = stack.length;
 
 		let cardId = stack[level - 1];
@@ -283,16 +286,17 @@ export class Game {
 
 
 	// Возвращает bool удалось перейти или нет
-	private async goRamming(user, thisCell: Cell, vecX, vecY) {
-
+	private async goRamming(user: User, thisCell: Cell, vecX, vecY) {
 		let hookArray: Cell[] = []
-		let hookVecs = [vectorRotate({x: -1, y: 0}, thisCell.unit.rotation), vectorRotate({
-			x: 0,
-			y: -1
-		}, thisCell.unit.rotation), vectorRotate({x: 1, y: 0}, thisCell.unit.rotation)]
+		let hookVectors = [
+			vectorRotate({x: -1, y: 0}, thisCell.unit.rotation),
+			vectorRotate({x: 0, y: -1}, thisCell.unit.rotation),
+			vectorRotate({x: 1, y: 0}, thisCell.unit.rotation)
+		]
 		let hookSelect: Cell | null = null
-		for (let hook of hookVecs) {
-			let hookTemp = this.gameMap.getCell(thisCell.x + hook.x, thisCell.y - hook.y)
+
+		for (const hook of hookVectors) {
+			const hookTemp = this.gameMap.getCell(thisCell.x + hook.x, thisCell.y - hook.y)
 			if (hookTemp !== null && hookTemp.hasUnit() && (hookTemp.unit.type === EUnitType.Hero || hookTemp.unit.type === EUnitType.Bomb)) {
 				hookArray.push(hookTemp)
 			}
@@ -301,8 +305,8 @@ export class Game {
 		let unit = thisCell.unit;
 
 		if (hookArray.length > 1) {
-			hookSelect = hookArray[await user.selectCells(hookArray, EHighlight.Hook, 1)]
-			if (hookSelect !== null && hookSelect !== thisCell)
+			hookSelect = hookArray[(await user.selectCells(hookArray, EHighlight.Hook, 1))[0]]
+			if (hookSelect !== thisCell)
 				unit.attachedCell = hookSelect
 		}
 
@@ -311,47 +315,46 @@ export class Game {
 		let temp = Math.max(Math.abs(vecX), Math.abs(vecY))
 
 		// Развернутая рекурсия
-		let stack: Cell[] = []
-		stack.push(thisCell) // клетка которую двигаем
+		let recStack: Cell[] = []
+		recStack.push(thisCell) // клетка которую двигаем
 		let stopMatrix = createArray(this.gameMap.size.x, this.gameMap.size.y)
-		while (true) {
-			let curCell = stack.pop();
-			if (curCell === undefined) break
-
+		while (recStack.length) {
+			const curCell = recStack.pop() as Cell;
 			let next = this.gameMap.getCell((curCell.x + vecX / temp) | 0, (curCell.y + vecY / temp) | 0)
 
-			if (next === null || (curCell.x === toX && curCell.y === toY) || stopMatrix[next.x][next.y] == true) { /// Дальше двигаться никак нельзя
+			// Можно ли двигать дальше
+			if (next === null || (curCell.x === toX && curCell.y === toY) || stopMatrix[next.x][next.y] == true) {
 				stopMatrix[curCell.x][curCell.y] = true
 				continue;
 			}
 
-			if (next.unit !== null && (next.unit.type === EUnitType.Hero || next.unit.type === EUnitType.Bomb)) { // Следующую можно толкать положить в стек
-				stack.push(curCell)
-				stack.push(next)
+			// Следующую можно толкать, положить в стек
+			if (next.unit !== null && (next.unit.type === EUnitType.Hero || next.unit.type === EUnitType.Bomb)) {
+				recStack.push(curCell)
+				recStack.push(next)
 				continue;
 			}
 
 			if (next.unit !== null && next.unit.type === EUnitType.Creep) this.creepKill(next)
 
+			const movements: Promise<void>[] = []
+
+			movements.push(this.render.moveUnit(curCell, next))
 			this.gameMap.moveUnitFromCellToCoords(curCell, next.x, next.y)
 
 			// Если юнит кого-то тащит, то тот занимает ячейку юнита
 			if (next.unit.attachedCell !== null) {
 				let atCell = next.unit.attachedCell;
-				const movements: Promise<void>[] = []
-				movements.push(this.render.moveUnit(curCell, next))
-				this.gameMap.moveUnitFromCellToCoords(atCell, curCell.x, curCell.y);
 				movements.push(this.render.moveUnit(atCell, curCell))
-				await Promise.all(movements)
-
+				this.gameMap.moveUnitFromCellToCoords(atCell, curCell.x, curCell.y);
 				next.unit.attachedCell = curCell
-			} else {
-				await this.render.moveUnit(curCell, next)
 			}
-			stack.push(next)
-		}
-		unit.attachedCell = null
+			await Promise.all(movements)
 
+			recStack.push(next)
+		}
+
+		unit.attachedCell = null
 	}
 
 	private async goAttack(user, thisCell, attackVecs, count) {
@@ -383,9 +386,9 @@ export class Game {
 	}
 
 	private creepKill(cell: Cell) {
-		cell.killUnit();
 		this.render.killUnit(cell)
 		this.render.updateKillsCounter(++this.killsCount);
+		cell.killUnit();
 	}
 
 
@@ -403,21 +406,23 @@ export class Game {
 		}
 		await Promise.all(movements)
 
-		setTimeout(this.creepsSpawnAct, 0);
+		setTimeout(() => this.creepsSpawnAct(), 0);
 	}
 
 	// Spawn creeps on runes
 	private creepsSpawn() {
 		let runesFree = this.gameMap.getAllCellsByType(ETileType.Runes).filter(cell => !cell.hasUnit());
 		for (let spawnCell of runesFree) {
-			spawnCell.unit = new Unit(EUnitType.Creep)
-			this.render.initUnit(spawnCell);
+			if (!spawnCell.hasUnit()) {
+				spawnCell.unit = new Unit(EUnitType.Creep)
+				this.render.initUnit(spawnCell);
+			}
 		}
 	}
 
 	private creepsSpawnAct() {
 		this.creepsSpawn()
-		setTimeout(this.creepsAttackAct, 500);
+		setTimeout(() => this.creepsAttackAct(), 500);
 	}
 
 
@@ -460,7 +465,7 @@ export class Game {
 			}
 
 			if (eventId + 1 < attackEvent.length) {
-				attack(eventId + 1);
+				setTimeout(() => attack(eventId + 1), 0)
 			} else {
 				this.finalAct();
 			}
@@ -468,21 +473,18 @@ export class Game {
 		}
 
 		if (attackEvent.length > 0) {
-			attack();
+			setTimeout(() => attack(), 0)
 		} else {
-			this.finalAct();
+			setTimeout(() => this.finalAct(), 0)
 		}
 	}
 
 	private getDisable(user: User) {
-		//TODO: random for choosing stacks
-		//let user = this;
-		//users[userID].disables[0] = true;
-		//let user = this;
+		console.log('getDisable', user)
 
 		if (this.damageCardsDeck.length !== 0) {
 			let ranId = getRandomInt(this.random, 0, 6);
-			const damageCard = this.damageCardsDeck.pop() as TCardInd // because check length on top
+			const damageCard = this.damageCardsDeck.pop() as TCardId // because check length on top
 			if (user.stacks[ranId].length > 0 && cardsJSON[user.stacks[ranId][user.stacks[ranId].length - 1]].type === ECardType.Defect) {
 				user.stacks[ranId].pop();
 				user.stacks[ranId].push(damageCard);
@@ -507,7 +509,7 @@ export class Game {
 		this.users.unshift(lastUser);
 
 		this.roundCounter++;
-		setTimeout(this.chooseCards, 500);
+		setTimeout(() => this.chooseCards(), 500);
 	}
 
 

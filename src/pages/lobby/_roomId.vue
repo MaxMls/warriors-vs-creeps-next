@@ -43,7 +43,7 @@
 			        :class="[$style.buttonStart, $style.button,$style.buttonStart_ready]">
 				Ждем других игроков
 			</button>
-			<button @click="lobby.instance.ready(true)"  v-else type=button :class="[$style.buttonStart, $style.button]">
+			<button @click="lobby.instance.ready(true)" v-else type=button :class="[$style.buttonStart, $style.button]">
 				Готов начать игру
 			</button>
 		</div>
@@ -129,6 +129,8 @@ export default class Lobby extends Vue.with(Props) {
 						return this.roomId as string
 					}
 				});
+
+				this.lobby.instance.on('gameStart', this.gameStart)
 			}
 		} catch (e) {
 			console.error(e)
@@ -136,7 +138,13 @@ export default class Lobby extends Vue.with(Props) {
 		}
 	}
 
+	gameStart() {
+		console.log('gameStart')
+		this.$router.push('/game')
+	}
+
 	beforeUnmount() {
+		this.lobby.instance.off('gameStart', this.gameStart)
 		this.clipboard?.destroy()
 	}
 

@@ -2,7 +2,7 @@
 import {AbstractAgent} from "./abstract-agent";
 import {getRandomInt, shakeArray} from "../extension-functions";
 import {Game} from "../game";
-import {TCardInd} from "../types";
+import {TCardId, TStackId} from "../types";
 import seedrandom from "seedrandom";
 
 export class BotAgent extends AbstractAgent {
@@ -15,16 +15,16 @@ export class BotAgent extends AbstractAgent {
 		this.random = seedrandom(seed.toString());
 	}
 
-	setHand(cards: TCardInd[]) {}
+	setHand(cards: TCardId[]) {}
 
-	setStacks(stacks: TCardInd[][]) {}
+	setStacks(stacks: TCardId[][]) {}
 
 	async selectCard(cards) {
 		return 0
 	}
 
-	async programming(): Promise<[0, number]> {
-		return [0, getRandomInt(this.random, -2, 6)];
+	async programming(stacks: TStackId[]): Promise<[0, number]> {
+		return [0, this.botAI(stacks, 1)[0]];
 	}
 
 	async chooseRotate(rotateArray) {

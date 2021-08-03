@@ -14,9 +14,9 @@ export class LocalAgent extends AbstractAgent {
 	readonly setHand: AbstractAgent["setHand"]
 
 	constructor(
-		private readonly network: AbstractNetwork,
-		private readonly name: string,
-		private readonly render: AbstractRender,
+		private readonly network: AbstractNetwork | null,
+		private readonly name: string | null,
+		private readonly render: AbstractRender
 	) {
 		super();
 		this.chooseRotate = this.handlerFactory('chooseRotate')
@@ -30,7 +30,7 @@ export class LocalAgent extends AbstractAgent {
 
 	private handlerFactory(name) {
 		return (...args) => this.render[name](...args).then(async (res) => {
-			await this.network.sendAction(`${this.name}/${name}`, res)
+			if (this.network) await this.network.sendAction(`${this.name}/${name}`, res)
 			return res
 		})
 	}

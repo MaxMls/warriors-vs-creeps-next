@@ -4,8 +4,8 @@ import {Cell} from "./cell";
 // Структура данных для работы с полем игры
 export class GameMap {
 
-	private declare readonly _size: { x: number, y: number }
-	get size(): { x: number; y: number } {
+	private readonly _size: { x: number, y: number }
+	public get size(): { x: number; y: number } {
 		return this._size;
 	}
 
@@ -36,9 +36,7 @@ export class GameMap {
 
 	// Возвращает объект клетки(Cell) по координатам (x, y)
 	getCell(x, y) {
-		if (y < 0 || x < 0 || y >= this.map.length || x >= this.map[y].length)
-			return null;
-		return this.map[y][x];
+		return this.map?.[y]?.[x] ?? null;
 	};
 
 	// Возвращает все объекты клетки типа tileType (new Cell[])
@@ -60,12 +58,14 @@ export class GameMap {
 	};
 
 	// Перемещает, если не может, возвращает null иначе клетку в которую переместил
-	moveUnitFromCellToCoords(cellFrom, x, y) {
+	moveUnitFromCellToCoords(cellFrom: Cell, x: number, y: number) {
+
+		//console.trace()
 		let cellTo = this.getCell(x, y);
 		if (cellTo === null) return null;
 		if (cellTo.hasUnit()) return null;
 		cellTo.unit = cellFrom.unit;
-		cellFrom.unit = null;
+		cellFrom.killUnit();
 		return cellTo;
 	}
 }

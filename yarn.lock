@@ -602,6 +602,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4.14.172":
+  version: 4.14.172
+  resolution: "@types/lodash@npm:4.14.172"
+  checksum: d4b9c66aa1775ca9105f95fdaf92b8c7ee646fcb75fa8c0617020456470b140f9204335a66e152f269f9cd531634ac3d0caa3f85ce3acdad9bc6951aa6e89aae
+  languageName: node
+  linkType: hard
+
 "@types/long@npm:^4.0.1":
   version: 4.0.1
   resolution: "@types/long@npm:4.0.1"
@@ -1469,6 +1476,13 @@ __metadata:
   version: 1.1.1
   resolution: "create-require@npm:1.1.1"
   checksum: babd307893abfb26d77ae11cb9d6b6cfa6d18c9cee435cf70b5a3fb44aa8d90c9ec26ea89cbb16e0a94b8d34f5fcaee164b90ed526cdd3158955673ab9652d01
+  languageName: node
+  linkType: hard
+
+"css-animation-sync@npm:^0.4.0-beta-1":
+  version: 0.4.0-beta-1
+  resolution: "css-animation-sync@npm:0.4.0-beta-1"
+  checksum: c006cc334b2213448909db936d8d4a45449869b64edf0c9f08fd9e02780a380fca5abbdaaba27d7913ceccfd41fe4f9ad74bb5880099a5761f06392381bff92a
   languageName: node
   linkType: hard
 
@@ -2937,6 +2951,13 @@ fsevents@~2.3.2:
   version: 4.3.0
   resolution: "lodash.camelcase@npm:4.3.0"
   checksum: 3cb674ed3b37bb698f2ec5a1c3f607d157279f3015877132e8be5c22cf8048988cb9bf1e61c90dbefea3895a459c095773cc266a5b1a9f4202bcd062b3983e37
+  languageName: node
+  linkType: hard
+
+"lodash@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash@npm:4.17.21"
+  checksum: 4983720b9abca930a4a46f18db163d7dad8dd00dbed6db0cc7b499b33b717cce69f80928b27bbb1ff2cbd3b19d251ee90669a8b5ea466072ca81c2ebe91e7468
   languageName: node
   linkType: hard
 
@@ -5056,14 +5077,17 @@ typescript@^4.3.5:
   version: 0.0.0-use.local
   resolution: "warriors-vs-creeps-next@workspace:."
   dependencies:
+    "@types/lodash": ^4.14.172
     "@types/seedrandom": ^3.0.1
     "@vitejs/plugin-vue": ^1.3.0
     "@vue/compiler-sfc": ^3.1.5
     animated-scroll-to: ^2.2.0
     axios: ^0.21.1
     clipboard: ^2.0.8
+    css-animation-sync: ^0.4.0-beta-1
     events: ^3.3.0
     firebase: ^8.8.0
+    lodash: ^4.17.21
     nanoid: ^3.1.23
     sass: ^1.36.0
     seedrandom: ^3.0.5

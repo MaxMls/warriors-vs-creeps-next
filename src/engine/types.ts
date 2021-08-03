@@ -15,9 +15,11 @@ export enum ECardAction {Rotate, Move, Attack}
 export enum EDirection {_0, _90, _180, _270, _length}
 
 export type TUserId = any
-export type TCardInd = number
-// 0..5
-export type TStackInd = number
+export type TCardId = number
+// -2 trash <br>
+// -1 effect <br>
+// 0..5 terminal
+export type TStackId = -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5
 
 export interface IVector {
 	x: number,

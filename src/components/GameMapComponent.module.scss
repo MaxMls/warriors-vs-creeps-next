@@ -6,7 +6,7 @@
 	border-radius: 10px;
 }
 
-.units {
+.units, .select {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -14,10 +14,12 @@
 	bottom: 0;
 }
 
+
 .grid {
 	display: grid;
 	width: 100%;
 	aspect-ratio: 12/6;
+	grid-auto-rows: 1fr;
 }
 
 .cell {
@@ -26,21 +28,104 @@
 	margin: -1px;
 }
 
+.cellDark {
+	background: #edecdc;
+	background: #f7f7ed;
+}
+
+.cellType, {
+	width: 65%;
+	height: 65%;
+	margin: (100% - 65%) / 2;
+	border-radius: 10%;
+}
+
+.selType {
+	position: absolute;
+
+	outline: 3px solid #32b7ffb8;
+	outline-offset: -4px;
+	cursor: pointer;
+
+	&:hover {
+		background: rgba(255, 255, 255, .0);
+		outline: 3px solid rgba(255, 255, 255, .9);
+	}
+}
+
+.selType_Rotate {
+
+}
+
+.selType_Move {
+
+}
+
+.selType_Attack {
+
+}
+
+.selType_Hook {
+
+}
+
+// {Grass, Base, Runes, Target, _length}
+.cell_Grass {
+	//background: #118811;
+}
+
+.cell_Base {
+	background-color: #DCEAFF;
+}
+
+.cell_Runes {
+	// background-color: #A6F9B3;
+	background-color: #bbfec5;
+}
+
+.cell_Target {
+	background-color: #ABFFFA;
+}
+
 .unit {
 	position: absolute;
-	opacity: .2;
+	//opacity: .2;
 	transition: left .5s, top .5s;
+
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+	animation-duration: 1.5s;
+	animation-iteration-count: infinite;
+	animation-name: unitAnimation;
+	transform-origin: bottom;
+	//animation-timing-function: linear;
+
+}
+
+@keyframes unitAnimation {
+	from {
+		transform: scaleY(1);
+	}
+	50% {
+
+		transform: scaleY(.9);
+	}
+
+	to {
+		transform: scaleY(1);
+	}
 }
 
 // Hero, Creep, Bomb
 .unitType_Hero {
-	background: blue;
+	background-image: url("../assets/icons/units/gura.gif");
 }
 
 .unitType_Creep {
-	background: red;
+	background-image: url("../assets/icons/units/greenSlime.svg");
 }
 
 .unitType_Bomb {
-	background: hotpink;
+	background-image: url("../assets/icons/units/cake.svg");
 }
