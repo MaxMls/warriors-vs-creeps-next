@@ -1,5 +1,5 @@
 import {cardsJSON} from "./cards";
-import {ECardType, EHighlight, EDirection, TCardId, TStackId} from "./types";
+import {ECardType, EHighlight, EDirection, TCardId, TStackId, ERotation} from "./types";
 import {AbstractAgent} from "./agents/abstract-agent";
 import {Cell} from "./cell";
 import {LocalAgent} from "./agents/local-agent";
@@ -41,9 +41,6 @@ export class User {
 		return cardId
 	}
 
-	async chooseRotate(rotateArray: EDirection[]) {
-		return await this.agent.chooseRotate(rotateArray)
-	}
 
 	private get stacksNoDefects() {
 		let notDisabledStacks: TStackId[] = [];
@@ -143,6 +140,9 @@ export class User {
 		}
 	}
 
+	async chooseRotate(rotateArray: ERotation[], currentDirection: EDirection) {
+		return await this.agent.chooseRotate(rotateArray, currentDirection)
+	}
 	/* count - количество индексов которые нужно вернуть default было 1 */
 	async selectCells(cells: Cell[], highlight: EHighlight, count: number) {
 		return this.agent.selectCells(cells, highlight, count)

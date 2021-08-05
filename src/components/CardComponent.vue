@@ -36,7 +36,7 @@
 
 <script lang=ts>
 import {cardsJSON, ICardStep} from "../engine/cards";
-import {ECardAction, ECardType, EDirection, TCardId} from "../engine/types";
+import {directionToDeg, ECardAction, ECardType, EDirection, TCardId} from "../engine/types";
 import sty from './CardComponent.module.scss'
 import SvgIcon from "./SvgIcon.vue";
 import {computed, defineComponent, PropType} from "vue";
@@ -101,16 +101,10 @@ export default defineComponent({
 			if (step.desc) {
 				return step.desc
 			} else if (step.action === ECardAction.Rotate) {
-				const str = {
-					[EDirection._0]: 360,
-					[EDirection._90]: 90,
-					[EDirection._180]: 180,
-					[EDirection._270]: 270,
-				}
 
 				return step.directions.length === 4 ?
 					 'В любую сторону' :
-					 '' + step.directions.map(v => str[v]).join(', ') + ' градусов'
+					 '' + step.directions.map(v => directionToDeg(v)).join(', ') + ' градусов'
 			} else if (step.action === ECardAction.Move) {
 				return 'move'
 

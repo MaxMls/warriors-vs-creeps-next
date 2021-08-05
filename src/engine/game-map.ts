@@ -4,16 +4,13 @@ import {Cell} from "./cell";
 // Структура данных для работы с полем игры
 export class GameMap {
 
-	private readonly _size: { x: number, y: number }
-	public get size(): { x: number; y: number } {
-		return this._size;
-	}
+	readonly size: { x: number, y: number }
 
 	private map: Cell[][] = [];
 	private typesCells: Cell[][] = [];
 
 	constructor(private readonly inputMap) {
-		this._size = {x: this.inputMap[0].length, y: this.inputMap.length};
+		this.size = {x: this.inputMap[0].length, y: this.inputMap.length};
 
 		for (let i = 0; i < ETileType._length; i++) {
 			this.typesCells.push([]);

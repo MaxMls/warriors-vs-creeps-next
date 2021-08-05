@@ -1,7 +1,7 @@
 <template>
 	<div>
-		<router-link to='/webtrctest/host'>host </router-link>
-		<router-link to='/webtrctest/member'>member</router-link>
+<!--		<router-link to='/webtrctest/host'>host </router-link>
+		<router-link to='/webtrctest/member'>member</router-link>-->
 		<h1 :class="$style.title">
 			Warriors vs Creeps 2
 		</h1>
@@ -14,7 +14,10 @@
 				<a target=_blank href="https://github.com/blazzer-band/Warriors-vs-Creeps">Warriors vs Creeps 1</a>
 			</div>
 			<div :class="cs.link">
-				<router-link to="/rules">Читать правила игры</router-link>
+				<router-link  target='_blank' to="/rules">Читать правила игры</router-link>
+			</div>
+			<div :class="cs.link">
+				Анимации персонажей: <a target=_blank href="https://walfiegif.wordpress.com/">Walfie Gif</a>
 			</div>
 			<div :class="cs.link">
 				<a target=_blank href="https://github.com/blazzer-band/Warriors-vs-Creeps">Исходный код</a>

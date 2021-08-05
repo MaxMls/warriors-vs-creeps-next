@@ -1,15 +1,13 @@
 // Straight - Убивать по прямой пока не достигнута координата
 //const attackType = {Straight, Coordinates}
-import {ECardAction, ECardType, EDirection, IVector} from "./types";
-import * as stream from "stream";
-
+import {ECardAction, ECardType, ERotation, IVector} from "./types";
 
 export type ICardStep = ({
 	action: ECardAction.Move,
 	coords: IVector[]
 } | {
 	action: ECardAction.Rotate,
-	directions: EDirection[]
+	directions: ERotation[]
 } | {
 	action: ECardAction.Attack,
 	coords: IVector[],
@@ -28,7 +26,7 @@ export interface ICardLevel {
 	// Атака пока только после движения
 	attack: IVector[],
 	// Варианты поворота на выбор, можно выбрать только 1
-	rotate: EDirection[],
+	rotate: ERotation[],
 	steps: ICardStep[]
 }
 
@@ -56,11 +54,11 @@ export const cardsJSON: ICard[] = [
 				targetCount: 0,
 				move: [],
 				attack: [],
-				rotate: [EDirection._90, EDirection._270,],
+				rotate: [ERotation._90, ERotation._270,],
 				steps: [
 					{
 						action: ECardAction.Rotate,
-						directions: [EDirection._90, EDirection._270,],
+						directions: [ERotation._90, ERotation._270,],
 					}
 				]
 			},
@@ -68,11 +66,11 @@ export const cardsJSON: ICard[] = [
 				targetCount: 0,
 				move: [],
 				attack: [],
-				rotate: [EDirection._90, EDirection._180, EDirection._270,],
+				rotate: [ERotation._90, ERotation._180, ERotation._270,],
 				steps: [
 					{
 						action: ECardAction.Rotate,
-						directions: [EDirection._90, EDirection._180, EDirection._270,],
+						directions: [ERotation._90, ERotation._180, ERotation._270,],
 					}
 				]
 			},
@@ -80,11 +78,11 @@ export const cardsJSON: ICard[] = [
 				targetCount: 0,
 				move: [],
 				attack: [],
-				rotate: [EDirection._0, EDirection._90, EDirection._180, EDirection._270,],
+				rotate: [ERotation._0, ERotation._90, ERotation._180, ERotation._270,],
 				steps: [
 					{
 						action: ECardAction.Rotate,
-						directions: [EDirection._0, EDirection._90, EDirection._180, EDirection._270,],
+						directions: [ERotation._0, ERotation._90, ERotation._180, ERotation._270,],
 					}
 				]
 			}
@@ -213,11 +211,11 @@ export const cardsJSON: ICard[] = [
 				targetCount: 0,
 				move: [],
 				attack: [],
-				rotate: [EDirection._90, EDirection._270,],
+				rotate: [ERotation._90, ERotation._270,],
 				steps: [
 					{
 						action: ECardAction.Rotate,
-						directions: [EDirection._90, EDirection._270,],
+						directions: [ERotation._90, ERotation._270,],
 					},
 				]
 			},
@@ -225,11 +223,11 @@ export const cardsJSON: ICard[] = [
 				targetCount: 0,
 				move: [],
 				attack: [],
-				rotate: [EDirection._90, EDirection._180, EDirection._270,],
+				rotate: [ERotation._90, ERotation._180, ERotation._270,],
 				steps: [
 					{
 						action: ECardAction.Rotate,
-						directions: [EDirection._90, EDirection._180, EDirection._270,],
+						directions: [ERotation._90, ERotation._180, ERotation._270,],
 					},
 				]
 			},
@@ -237,11 +235,11 @@ export const cardsJSON: ICard[] = [
 				targetCount: 0,
 				move: [],
 				attack: [],
-				rotate: [EDirection._0, EDirection._90, EDirection._180, EDirection._270,],
+				rotate: [ERotation._0, ERotation._90, ERotation._180, ERotation._270,],
 				steps: [
 					{
 						action: ECardAction.Rotate,
-						directions: [EDirection._0, EDirection._90, EDirection._180, EDirection._270]
+						directions: [ERotation._0, ERotation._90, ERotation._180, ERotation._270]
 					},
 				]
 			}
@@ -249,7 +247,7 @@ export const cardsJSON: ICard[] = [
 	},
 	{
 		name: "Сальто",
-	/*	name: "Omni Stomp",*/
+		/*	name: "Omni Stomp",*/
 		type: ECardType.Computer,
 		effects: [],
 		levels: [
@@ -356,11 +354,11 @@ export const cardsJSON: ICard[] = [
 				targetCount: 1,
 				move: [],
 				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}],
-				rotate: [EDirection._90, EDirection._270,],
+				rotate: [ERotation._90, ERotation._270,],
 				steps: [
 					{
 						action: ECardAction.Rotate,
-						directions: [EDirection._90, EDirection._270,]
+						directions: [ERotation._90, ERotation._270,]
 					},
 					{
 						action: ECardAction.Attack,
@@ -374,11 +372,11 @@ export const cardsJSON: ICard[] = [
 				targetCount: 2,
 				move: [],
 				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}],
-				rotate: [EDirection._90, EDirection._180, EDirection._270,],
+				rotate: [ERotation._90, ERotation._180, ERotation._270,],
 				steps: [
 					{
 						action: ECardAction.Rotate,
-						directions: [EDirection._90, EDirection._180, EDirection._270,],
+						directions: [ERotation._90, ERotation._180, ERotation._270,],
 					},
 					{
 						action: ECardAction.Attack,
@@ -393,11 +391,11 @@ export const cardsJSON: ICard[] = [
 				targetCount: 3,
 				move: [],
 				attack: [{x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1}, {x: 0, y: -1}, {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1}],
-				rotate: [EDirection._0, EDirection._90, EDirection._180, EDirection._270,],
+				rotate: [ERotation._0, ERotation._90, ERotation._180, ERotation._270,],
 				steps: [
 					{
 						action: ECardAction.Rotate,
-						directions: [EDirection._0, EDirection._90, EDirection._180, EDirection._270,],
+						directions: [ERotation._0, ERotation._90, ERotation._180, ERotation._270,],
 					},
 					{
 						action: ECardAction.Attack,
@@ -517,11 +515,11 @@ export const cardsJSON: ICard[] = [
 				targetCount: 999,
 				move: [],
 				attack: [{x: 1, y: 1}, {x: -1, y: -1}, {x: 1, y: -1}, {x: -1, y: 1}],
-				rotate: [EDirection._90, EDirection._270,],
+				rotate: [ERotation._90, ERotation._270,],
 				steps: [
 					{
 						action: ECardAction.Rotate,
-						directions: [EDirection._90, EDirection._270,],
+						directions: [ERotation._90, ERotation._270,],
 					},
 					{
 						action: ECardAction.Attack,
@@ -534,11 +532,11 @@ export const cardsJSON: ICard[] = [
 				targetCount: 999,
 				move: [],
 				attack: [{x: 1, y: 1}, {x: -1, y: -1}, {x: 1, y: -1}, {x: -1, y: 1},/**/{x: 2, y: 2}, {x: -2, y: -2}, {x: 2, y: -2}, {x: -2, y: 2}],
-				rotate: [EDirection._90, EDirection._180, EDirection._270,],
+				rotate: [ERotation._90, ERotation._180, ERotation._270,],
 				steps: [
 					{
 						action: ECardAction.Rotate,
-						directions: [EDirection._90, EDirection._180, EDirection._270,],
+						directions: [ERotation._90, ERotation._180, ERotation._270,],
 					},
 					{
 						action: ECardAction.Attack,
@@ -551,11 +549,11 @@ export const cardsJSON: ICard[] = [
 				targetCount: 999,
 				move: [],
 				attack: [{x: 1, y: 1}, {x: -1, y: -1}, {x: 1, y: -1}, {x: -1, y: 1},/**/{x: 2, y: 2}, {x: -2, y: -2}, {x: 2, y: -2}, {x: -2, y: 2},/**/{x: 3, y: 3}, {x: -3, y: -3}, {x: 3, y: -3}, {x: -3, y: 3}],
-				rotate: [EDirection._0, EDirection._90, EDirection._180, EDirection._270,],
+				rotate: [ERotation._0, ERotation._90, ERotation._180, ERotation._270,],
 				steps: [
 					{
 						action: ECardAction.Rotate,
-						directions: [EDirection._0, EDirection._90, EDirection._180, EDirection._270,],
+						directions: [ERotation._0, ERotation._90, ERotation._180, ERotation._270,],
 					},
 					{
 						action: ECardAction.Attack,

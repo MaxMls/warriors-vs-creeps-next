@@ -86,13 +86,14 @@
 	position: relative;
 	display: grid;
 	grid-template-columns: 0fr 1fr 0fr;
-	grid-template-rows: auto 1fr;
+	grid-template-rows: auto auto 1fr;
 	//grid-gap: 1px;
 	border: none;
 
 	//padding: 1px;
-	height: calc(100vh - 40px);
+	height: calc(100vh - 20px);
 	margin: 20px;
+	margin-top: 0;
 	//height: 700px;
 	//height: 100vh;
 
@@ -107,13 +108,13 @@
 
 .statsPanel {
 	grid-column: 1;
-	grid-row: 1;
+	grid-row: span 1;
 }
 
 .gamePanel {
 	// background: white;
 	grid-column: 2;
-	grid-row: 1;
+	grid-row: span 1;
 	border: 1px solid white;
 	padding: 10px;
 	border-left: none;
@@ -125,7 +126,7 @@
 	position: relative;
 
 	grid-column: 3;
-	grid-row: 1;
+	grid-row: span 1;
 	width: 213px;
 }
 
@@ -153,7 +154,7 @@
 .termPanel {
 	//background: white;
 	grid-column: 1/-1;
-	grid-row: 2;
+	grid-row: span 1;
 	//min-height: 100px;
 	border: 1px solid white;
 	border-top: none;
@@ -232,31 +233,98 @@
 	font-size: 18px;
 	text-align: center;
 	max-width: 100%;
-	position: absolute;
-	top: 0;
-	left: 50%;
-	transform: translateX(-50%);
+	//	position: absolute;
+	//	top: 0;
+	//	left: 50%;
+	//	transform: translateX(-50%);
 	background: white;
 
 	opacity: .7;
 	pointer-events: none;
+	grid-column: 1/-1;
+
 }
 
-.selectPopupCtn {
-	position: absolute;
+.header {
+	grid-row: span 1;
+	grid-column: 1/-1;
+	display: grid;
+	justify-content: space-between;
+	grid-template-columns: 215px 1fr 215px;
+}
 
+.headerMessage {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+}
+
+.headerMessageText {
+	font-weight: 500;
+	font-size: 16px;
+	padding: 15px 30px;
+	background: white;
+	border-radius: 0px 0px 10px 10px;
+	margin-bottom: 10px;
+}
+
+.headerMessageTextCtn {
+	position: relative;
+	display: inline;
+}
+
+.headerMessageTextRepeat {
+	color: #6E286B;
+	display: block;
+	position: absolute;
+	top: -2px;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.headerLinks {
+	padding: 15px 15px;
+	// flex: none;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+
+}
+
+.headerLink {
+	font-size: 14px;
+	color: #367FC3;
+	border-bottom: 1px solid transparent;
+
+	&:hover {
+		border-bottom-color: #367FC3;
+	}
+
+	& + .headerLink {
+		margin-top: 5px;
+	}
+}
+
+.directionPopupCtn, .selectPopupCtn, .messagePopupCtn {
+	position: absolute;
 	z-index: 3;
+
 	top: 50%;
-	transform: translateY(-50%);
 	max-width: 100%;
 	overflow: hidden;
 	overflow-x: auto;
-	left: 0;
-	right: 0;
+
+	width: fit-content;
+	left: 50%;
+	transform: translateY(-50%) translateX(-50%);
+}
+
+.directionPopupCtn, .selectPopupCtn {
 	opacity: .2;
 
-	//margin-left: calc(100% - 200px);
 	transition: opacity .15s;
+
 	&::-webkit-scrollbar {
 		display: none;
 	}
@@ -265,6 +333,49 @@
 		opacity: 1;
 		//margin-left: calc(0px);
 	}
+}
+
+.directionPopup {
+	border-radius: 10px;
+	background: white;
+	border: 1px solid #eee;
+	padding: 25px 35px 35px;
+}
+
+.directionPopupTitle, .messagePopupTitle, .messagePopupText {
+	text-align: center;
+	font-size: 18px;
+	font-weight: 500;
+	color: #333;
+	margin-bottom: 15px;
+}
+
+.directionPopupChoose {
+	display: flex;
+	justify-content: center;
+}
+
+.directionPopupDirection {
+	border-radius: 7px;
+	padding: 15px;
+	border: 3px solid #2295FF;
+	display: flex;
+
+	cursor: pointer;
+
+	&:hover {
+		border-color: #333;
+	}
+
+	& + .directionPopupDirection {
+		margin-left: 10px;
+	}
+}
+
+.directionPopupIcon {
+	width: 30px;
+	height: 30px;
+	--icon-color: black
 }
 
 .selectPopup {
@@ -278,4 +389,42 @@
 
 .selectPopupCard {
 	width: 200px;
+}
+
+.messagePopup {
+	background: white;
+	border: 1px solid #eee;
+	border-radius: 10px;
+	padding: 25px 40px 40px;
+}
+
+.messagePopupText {
+	font-weight: 400;
+	font-size: 16px;
+
+	& + .messagePopupButton {
+		margin-top: 20px;
+	}
+}
+
+.messagePopupButton {
+	border-radius: 7px;
+	border: 1px solid #2295FF;
+	font-size: 16px;
+	color: #2295FF;
+	text-align: center;
+	display: block;
+	padding: 15px 35px;
+	 width: 100%;
+	// margin: 0 auto;
+
+	& + .messagePopupButton {
+		margin-top: 10px;
+	}
+
+	&:hover {
+		color: #fff;
+		background: #2295FF;
+
+	}
 }

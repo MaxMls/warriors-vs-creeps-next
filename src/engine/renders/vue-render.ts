@@ -326,11 +326,18 @@ export class VueRender extends AbstractRender {
 
 }
 */
+export type TUnitSkin = 'ame' | 'cake' | 'cali' | 'greenSlime' | 'gura' | 'ina' | 'kiara'
+export type TUnitState = 'idle' | 'walk' | 'attack'
 
 export interface IRenderMap {
 	onCellClick: ((cell: Cell) => void) | null
 	cellsToSelect: Map<Cell, { highlight: EHighlight, ind: number }>
 	gameMap: GameMap | null
-	units: Map<Unit, { cell: Cell, key: number }>
+	units: Map<Unit, {
+		cell: Cell,
+		key: number,
+		state: TUnitState,
+		skin: TUnitSkin
+	}>
 	cellsDirection: Map<Unit, EDirection>
 }

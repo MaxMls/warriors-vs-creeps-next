@@ -1,5 +1,28 @@
 <template>
 	<div :class='[cs.ctn, style.ctn]' ref="ctn">
+
+		<div :class="style.header">
+			<div :class="style.headerLinks">
+
+			</div>
+			<div :class="style.headerMessage">
+				<div :class="style.headerMessageText">
+					<div :class="style.headerMessageTextCtn">
+						<span style="visibility: hidden">{{ game.message }}</span>
+						<span v-typer="game.message" :class="style.headerMessageTextRepeat"/>
+					</div>
+				</div>
+			</div>
+			<div :class="style.headerLinks">
+				<router-link target='_blank' to="/rules" :class="style.headerLink">
+					Читать правила игры
+				</router-link>
+				<router-link target='_blank' to="/" :class="style.headerLink">
+					Исходный код
+				</router-link>
+			</div>
+
+		</div>
 		<div :class="style.statsPanelCtn">
 			<div :class="style.statsPanel">
 				<div :class="[style.statCtn,  style.statCtnCounter]" v-for="i in ['creep', 'heart', 'time']">
@@ -27,7 +50,6 @@
 				</div>
 			</div>
 		</div>
-
 		<div :class="style.gamePanel">
 			<GameMapComponent v-if=map.gameMap :renderMap="map"/>
 		</div>
@@ -49,10 +71,9 @@
 				</div>
 			</div>
 		</div>
-		<div v-show=game.message :class="style.message">
-			{{ game.message }}
-		</div>
-		<div v-if=game.selectsCards.length v-horizontal-scroll :class="style.selectPopupCtn">
+
+		<div v-click-outside v-opacity-delay v-if=game.selectsCards.length v-horizontal-scroll
+		     :class="style.selectPopupCtn">
 			<div :class="style.selectPopup">
 				<div v-for="(idx, i) in game.selectsCards"
 				     :class="style.selectPopupCard"
@@ -62,27 +83,53 @@
 				</div>
 			</div>
 		</div>
+		<div v-click-outside v-opacity-delay v-if=game.rotationsSelect.length :class="style.directionPopupCtn">
+
+			<div :class="style.directionPopup">
+				<div :class="style.directionPopupTitle">
+					Выберите направление
+				</div>
+				<div :class="style.directionPopupChoose">
+					<button
+						 v-for="(rot, i) in game.rotationsSelect"
+						 type=button
+						 :class="style.directionPopupDirection"
+						 @click="game.onRotationClick(i)"
+					>
+						<SvgIcon
+							 :style="`transform: rotate(${directionToDeg(rotateDirection(game.rotationsSelectCurrentDirection, rot))}deg)`"
+							 name="direction"
+							 :class="style.directionPopupIcon"/>
+					</button>
+				</div>
+			</div>
+		</div>
+		<div v-if=game.popupMessage :class="style.messagePopupCtn">
+			<div :class="style.messagePopup">
+				<div :class="style.messagePopupTitle">
+					{{ game.popupMessage?.title }}
+				</div>
+				<div :class="style.messagePopupText">
+					{{ game.popupMessage?.text }}
+				</div>
+				<button :class="style.messagePopupButton"
+				        v-for="({text, handler}) in game.popupMessage?.buttons"
+				        @click="handler"
+				>{{ text }}
+				</button>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script lang=ts>
 import style from "./game.module.scss";
 import cs from "./common.module.scss";
-import {
-	computed, defineComponent,
-	inject,
-	isRef,
-	onBeforeMount,
-	onBeforeUnmount, onBeforeUpdate,
-	onMounted, onUpdated, reactive,
-	ref,
-	shallowRef,
-	triggerRef,
-	unref
-} from "vue";
+
+import {defineComponent, onBeforeUnmount, onMounted, reactive, ref, unref} from "vue";
 import CardComponent from "../components/CardComponent.vue";
 import GameMapComponent from "../components/GameMapComponent.vue";
-import {IRenderMap} from "../engine/renders/vue-render";
+import {IRenderMap, TUnitSkin, TUnitState} from "../engine/renders/vue-render";
 import SvgIcon from "../components/SvgIcon.vue";
 import {Game} from "../engine/game";
 import {GameMap} from "../engine/game-map";
@@ -90,10 +137,25 @@ import {AbstractAgent} from "../engine/agents/abstract-agent";
 import {LocalAgent} from "../engine/agents/local-agent";
 import {BotAgent} from "../engine/agents/bot-agent";
 import {AbstractRender} from "../engine/renders/abstract-render";
-import {ECardType, EDirection, EHighlight, TCardId, TStackId} from "../engine/types";
+import {
+	directionToDeg,
+	ECardType,
+	EDirection,
+	EHighlight,
+	ERotation, EUnitType,
+	rotateDirection,
+	TCardId,
+	TStackId
+} from "../engine/types";
 import {Cell} from "../engine/cell";
 import cloneDeep from "lodash/cloneDeep";
 import {cardsJSON} from "../engine/cards";
+import {horizontalScrollDirective} from "../plugins/horizontal-scroll-directive";
+import {typerDirective} from "../plugins/typer-directive";
+import {opacityDelayDirective} from "../plugins/opacity-delay-directive";
+import {clickOutsideDirective} from "../plugins/click-outside-directive";
+import {useRouter} from "vue-router";
+import {User} from "../engine/user";
 
 const useVisualGame = () => {
 	const termPanelRef = ref<HTMLElement | null>(null);
@@ -182,24 +244,80 @@ const useVisualGame = () => {
 
 export default defineComponent({
 	components: {SvgIcon, GameMapComponent, CardComponent},
+	directives: {
+		'horizontal-scroll': horizontalScrollDirective,
+		'typer': typerDirective,
+		'opacity-delay': opacityDelayDirective,
+		'click-outside': clickOutsideDirective
+	},
 	data: () => ({style, cs,}),
+	methods: {
+		directionToDeg,
+		rotateDirection,
+	},
 	setup() {
 
 		const onRotationClick = ref<((ind: number) => void) | null>(null)
-		const rotationsSelect = ref<EDirection[]>([])
+		const rotationsSelect = ref<ERotation[]>([])
+		const rotationsSelectCurrentDirection = ref<EDirection | null>(null)
 
-		const chooseRotate: AbstractRender["chooseRotate"] = (rotateArray: EDirection[]): Promise<number> =>
+		const chooseRotate: AbstractRender["chooseRotate"] = (rotateArray: ERotation[], currentDirection: EDirection): Promise<number> =>
 			 new Promise<number>((resolve, reject) => {
 				 rotationsSelect.value = rotateArray
+				 rotationsSelectCurrentDirection.value = currentDirection
 				 onRotationClick.value = (ind: number) => {
 					 onRotationClick.value = null
+					 rotationsSelectCurrentDirection.value = null
 					 rotationsSelect.value = []
 					 resolve(ind)
 				 }
 			 })
 
-		const defeat: AbstractRender["defeat"] = () => {
+		const popupMessage = ref<null | {
+			title: string, text: string,
+			buttons: { text: string, handler: () => void }[]
+		}>(null)
 
+		const router = useRouter()
+		const defeat: AbstractRender["defeat"] = (text) => {
+			message.value = 'Конец игры'
+			popupMessage.value = {
+				title: 'Вы проиграли',
+				text: text || 'Тортик уничтожен',
+				buttons: [
+					{
+						text: 'На главную',
+						handler: () => router.push('/')
+					}
+				]
+			}
+		}
+		const win: AbstractRender["win"] = () => {
+			message.value = 'Конец игры'
+			popupMessage.value = {
+				title: 'Успех',
+				text: 'Вы победили',
+				buttons: [
+					{
+						text: 'На главную',
+						handler: () => router.push('/')
+					}
+				]
+			}
+		}
+
+		const error: AbstractRender["error"] = (text) => {
+			message.value = 'Конец игры'
+			popupMessage.value = {
+				title: 'Непредвиденная ошибка',
+				text,
+				buttons: [
+					{
+						text: 'На главную',
+						handler: () => router.push('/')
+					}
+				]
+			}
 		}
 
 		const message = ref('')
@@ -209,11 +327,27 @@ export default defineComponent({
 		const showMessage: AbstractRender["showMessage"] = (text: string) => {
 			message.value = text
 		}
+		const skins = ref<Map<User, TUnitSkin>>(new Map())
 
 		const units = ref<IRenderMap['units']>(new Map())
 		let keyGen = 0
 		const initUnit: AbstractRender["initUnit"] = (cell: Cell) => {
-			units.value.set(cell.unit, {cell, key: keyGen++})
+			const tts = {
+				[EUnitType.Creep]: 'greenSlime' as TUnitSkin,
+				[EUnitType.Bomb]: 'cake' as TUnitSkin,
+				[EUnitType.Hero]: skins.value.get(cell.unit?.ownerUser) as TUnitSkin,
+			}
+			const instance = {
+				cell,
+				key: keyGen++,
+				skin: tts[cell.unit.type],
+				state: 'idle' as TUnitState
+			}
+			units.value.set(cell.unit, instance)
+
+			/*setInterval(() => {
+				units.value.get(cell.unit)!.state = instance.state === 'idle' ? 'walk' : 'idle'
+			}, 2000)*/
 		}
 		const killUnit: AbstractRender["killUnit"] = (cell: Cell) => {
 			console.log('killUnit', cell)
@@ -222,9 +356,14 @@ export default defineComponent({
 		const moveUnit: AbstractRender["moveUnit"] = (cellFrom: Cell, cellTo: Cell) =>
 			 new Promise<void>((resolve) => {
 				 const unit = cellFrom.unit || cellTo.unit
-				 const {key} = units.value.get(unit)!
-				 units.value.set(unit, {cell: cellTo, key})
-				 setTimeout(resolve, 500)
+				 const unitInstance = units.value.get(unit)!
+				 unitInstance.cell = cellTo
+				 unitInstance.state = 'walk'
+
+				 setTimeout(() => {
+					 unitInstance.state = 'idle'
+					 resolve()
+				 }, 500)
 			 })
 
 		const cellsDirection = ref<IRenderMap['cellsDirection']>(new Map())
@@ -354,20 +493,12 @@ export default defineComponent({
 		let timerInterval: NodeJS.Timer | null = null
 
 		const startTimer = (secCount: number): void => {
-			let realSecond = secCount;
+			console.log('startTimer')
+			let date = new Date(0, 0, 0, 0, 0, 0)
 
 			const updateTimer = () => {
-				let seconds = realSecond % 60;
-				let minutes = (realSecond / 60) | 0;
-				if (realSecond < 0) {
-					if (timerInterval !== null) {
-						clearInterval(timerInterval);
-						timerInterval = null
-					}
-				} else {
-					time.value = realSecond < 10 ? minutes + ":0" + seconds : minutes + ":" + seconds;
-					realSecond--;
-				}
+				date = new Date(date.getTime() + 1000)
+				time.value = date.toLocaleTimeString(undefined, {minute: 'numeric', second: '2-digit'})
 			}
 			updateTimer();
 			timerInterval = setInterval(updateTimer, 1000);
@@ -380,6 +511,7 @@ export default defineComponent({
 			}
 			time.value = '0:00'
 		}
+
 		const stopSelect = () => {
 			onRotationClick.value = null
 			onCardClick.value = null
@@ -399,7 +531,9 @@ export default defineComponent({
 		}
 
 		const render: AbstractRender = {
-			chooseRotate, defeat, hideMessage, initUnit, killUnit,
+			chooseRotate,
+			defeat, win, error,
+			hideMessage, initUnit, killUnit,
 			moveUnit, updateHeroDirection, selectCard, setHand,
 			showMessage, setStacks, selectStacks,
 			programming, renderMap, selectCells,
@@ -425,21 +559,29 @@ export default defineComponent({
 			agents.push(new BotAgent(seed))
 			agents.push(new BotAgent(seed))
 			agents.push(new BotAgent(seed))
+			agents.push(new BotAgent(seed))
 
-			const game = new Game(unref(render), agents, gameMap, seed)
+
+			const users = agents.map((a, i) => {
+				const user = new User(a)
+				skins.value.set(user, ['cali', 'ame', 'ina', 'gura', 'kiara'][i] as TUnitSkin)
+				return user
+			})
+
+			const game = new Game(unref(render), users, gameMap, seed, users[0])
 
 			game.start()
-
-			// render.setStacks([[15], [], [], [], [], []])
+			render.startTimer(0)
 		})
 
 		return {
 			game: reactive({
-				onRotationClick, rotationsSelect,
+				onRotationClick, rotationsSelect, rotationsSelectCurrentDirection,
 				message,
 				selectsCards, onCardClick,
 				handCards,
 				stacks,
+				popupMessage,
 				onStackClick, stacksToClick,
 				onHandClick, handActiveCardInd, scrapType,
 				time,

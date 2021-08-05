@@ -1,12 +1,12 @@
 import {User} from "./user";
-import {EDirection} from "./types";
+import {EDirection, ERotation, EUnitType, rotateDirection} from "./types";
 import {Cell} from "./cell";
 
 export class Unit {
 
-	constructor(public type) {}
+	constructor(public type: EUnitType) {}
 
-	rotation = EDirection._90;
+	direction = EDirection._90;
 
 	private _ownerUser!: User;
 	set ownerUser(value) {
@@ -26,8 +26,7 @@ export class Unit {
 		return this._attachedCell;
 	}
 
-	rotate(angle: EDirection) {  // 1: 90, 2: 180, 3: -90(270)
-		this.rotation += angle;
-		this.rotation %= EDirection._length;
+	rotate(angle: ERotation) {
+		this.direction = rotateDirection(this.direction, angle);
 	}
 }

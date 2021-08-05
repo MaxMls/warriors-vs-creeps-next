@@ -51,21 +51,19 @@ export class Game {
 
 
 	private readonly random: ReturnType<seedrandom>;
-	private readonly users: User[]
 
 	//private constructor();
 	constructor(
 		private readonly render: AbstractRender,
-		agents: AbstractAgent[],
+		private readonly users: User[],
 		private readonly gameMap: GameMap,
-		private readonly seed: { toString(): string } | string
+		private readonly seed: { toString(): string } | string,
+		private readonly localUser: User
 	) {
 		/* 0.5297204857065221 */
 		// Общее случайное число, получать его от хоста
 		// this.seedRandom =  0.12800927790647165 // - рядом с бомбой
 		this.random = seedrandom(seed.toString());
-		this.users = agents.map(a => new User(a))
-
 		this.render.renderMap(this.gameMap);
 	}
 
@@ -80,20 +78,17 @@ export class Game {
 	private readonly damageCardsDeck: TCardId[] = []
 	private isStarted = false
 
-
-	private declare localUser: User;
-	private declare globalUserId: User;
-
 	/*
 	Инициализация
 	newUsers - массив уникальных идентификаторов
 	TODO: users: AbstractAgent[] array - инициализированные обьекты пользователей
 	 */
 	public start() {
-		console.log('start')
+		//console.log('start')
 		if (this.isStarted) throw new Error('Game already started')
 		this.isStarted = true
 
+		this.render.updateBombCounter(this.bombHP);
 
 		// Генерация колоды c командными картами
 		for (let i = 0; i < 12; i++) {
@@ -127,6 +122,7 @@ export class Game {
 			user.myHero = hero;
 			hero.ownerUser = user;
 			this.render.initUnit(heroCell);
+			this.render.updateHeroDirection(heroCell, user.myHero.direction)
 		}
 		// Спаун бомбы
 		const bombCell = baseFree.pop()
@@ -138,16 +134,21 @@ export class Game {
 		setTimeout(() => this.chooseCards(), 0)
 	};
 
-	private lose(message: string) {
+	private lose(message?: string) {
 		this.render.stopSelect();
 		this.render.stopTimer();
-		this.render.defeat();
-		this.render.showMessage(`${this.users.length === 1 ? 'Поражение' : 'Вы проиграли'}!<br>` + message);
+		this.render.defeat(message);
+	}
+
+	private win() {
+		this.render.stopSelect();
+		this.render.stopTimer();
+		this.render.win();
 	}
 
 
 	private async chooseCards() {
-		console.log('chooseCards')
+		//console.log('chooseCards')
 		let isFirstRound = this.roundCounter === 0;
 		let selectionCards: TCardId[] = [];
 		let countCards = isFirstRound ? 10 : 5; // TODO: добавить еще условие для core карт
@@ -161,36 +162,40 @@ export class Game {
 		let countGiven = 0;
 		let userId = 0
 
-		//
 		while (isFirstRound && countGiven < (this.users.length * 2) || !isFirstRound && countGiven < 4) {
 			if (selectionCards.length === 0) {
-				this.lose("Карты в колоде закончились!");
-				return;
+				this.lose("Карты в колоде закончились");
+				return
+			} else {
+				this.render.showMessage(this.users[userId].current ?
+					'Выберите карту' :
+					'Сейчас карту выбирает другой игрок'
+				)
+
+				const selectCardId = await this.users[userId].selectCard(selectionCards)
+
+				selectionCards.splice(selectCardId, 1);
+
+				countGiven++
+				userId = (userId + 1) % this.users.length
 			}
-			if (this.localUser !== this.users[userId]) this.render.showMessage('Сейчас карту выбирает другой пользователь')
-
-			const selectCardId = await this.users[userId].selectCard(selectionCards)
-			this.render.hideMessage()
-
-			selectionCards.splice(selectCardId, 1);
-
-			countGiven++
-			userId = (userId + 1) % this.users.length
 		}
 
 		setTimeout(() => this.programmingAct(), 0);
 	}
 
 
-	private async programmingAct() { // DONE!
+	private async programmingAct() {
 
 		await Promise.all(this.users.map(user =>
 			user.programming().then(() => {
-				if (user.current)
-					this.render.showMessage('Другой пользователь ещё расставляет карты,<br>пожалуйста подождите')
+				this.render.showMessage(user.current ?
+					'Другой пользователь ещё расставляет карты, пожалуйста подождите' :
+					'Установите выбранные карты в терминал или утилизируйте'
+				)
 			})
 		))
-		this.render.hideMessage()
+		// this.render.hideMessage()
 
 		setTimeout(() => this.warriorsAct(), 0)
 	}
@@ -198,11 +203,19 @@ export class Game {
 
 	// Исполняется карта, верхняя в каждом стеке в порядке игроков
 	private warriorsAct() {
+
 		const go = async (userId = 0) => {
 
 			for (let stack of this.users[userId].stacks) {
 				if (stack.length === 0) continue;
-				await this.runStack(this.users[userId], stack)
+				const user = this.users[userId]
+
+				this.render.showMessage(user.current ?
+					'Ваш ход' :
+					'Ходит другой игрок, подождите'
+				)
+
+				await this.runStack(user, stack)
 			}
 
 			if (userId + 1 < this.users.length) {
@@ -222,12 +235,13 @@ export class Game {
 		let heroCell = this.gameMap.getAllCellHasUnits(EUnitType.Hero).filter(cell => cell.unit === user.myHero)[0]
 
 		if (card?.rotate?.length) {
-			let rotateAngleId = 0;
-			if (card.rotate.length > 1) {
-				rotateAngleId = await user.chooseRotate(card.rotate);
-			}
-			user.myHero.rotate(card.rotate[rotateAngleId]);
-			this.render.updateHeroDirection(heroCell, user.myHero.rotation)
+			this.render.showMessage(user.current ?
+				'Выберите, в какую сторону повернуться' :
+				'Другой игрок выбирает куда повернуться'
+			)
+			const rotateAngleId = card.rotate[card.rotate.length > 1 ? await user.chooseRotate(card.rotate, user.myHero.direction) : 0]
+			user.myHero.rotate(rotateAngleId);
+			this.render.updateHeroDirection(heroCell, user.myHero.direction)
 		}
 
 
@@ -242,7 +256,7 @@ export class Game {
 				let sellArray: Cell[] = []
 				let sellVec: IVector[] = []
 				for (let sel of card.move) {
-					let v = vectorRotate(sel, user.myHero.rotation)
+					let v = vectorRotate(sel, user.myHero.direction)
 					let temp = Math.max(Math.abs(v.x), Math.abs(v.y))
 					let next = {x: heroCell.x + v.x, y: heroCell.y - v.y};
 
@@ -264,6 +278,10 @@ export class Game {
 				} else if (sellVec.length === 1) {
 					selVect = sellVec[0];
 				} else {
+					this.render.showMessage(user.current ?
+						'Выберите клетку, в которую хотите перейти' :
+						'Другой игрок выбирает куда идти'
+					)
 					let moveCellIds = await user.selectCells(sellArray, EHighlight.Move, 1);
 					selVect = sellVec[moveCellIds[0]];
 				}
@@ -271,7 +289,7 @@ export class Game {
 
 
 			if (selVect !== null) {
-				let v = vectorRotate(selVect, user.myHero.rotation)
+				let v = vectorRotate(selVect, user.myHero.direction)
 				await this.goRamming(user, heroCell, v.x, -v.y);
 			}
 
@@ -289,9 +307,9 @@ export class Game {
 	private async goRamming(user: User, thisCell: Cell, vecX, vecY) {
 		let hookArray: Cell[] = []
 		let hookVectors = [
-			vectorRotate({x: -1, y: 0}, thisCell.unit.rotation),
-			vectorRotate({x: 0, y: -1}, thisCell.unit.rotation),
-			vectorRotate({x: 1, y: 0}, thisCell.unit.rotation)
+			vectorRotate({x: -1, y: 0}, thisCell.unit.direction),
+			vectorRotate({x: 0, y: -1}, thisCell.unit.direction),
+			vectorRotate({x: 1, y: 0}, thisCell.unit.direction)
 		]
 		let hookSelect: Cell | null = null
 
@@ -305,6 +323,10 @@ export class Game {
 		let unit = thisCell.unit;
 
 		if (hookArray.length > 1) {
+			this.render.showMessage(user.current ?
+				'Выберите игрока или предмет который хотите тащить за собой' :
+				'Другой игрок выбирает цель для перемещения'
+			)
 			hookSelect = hookArray[(await user.selectCells(hookArray, EHighlight.Hook, 1))[0]]
 			if (hookSelect !== thisCell)
 				unit.attachedCell = hookSelect
@@ -349,6 +371,7 @@ export class Game {
 				this.gameMap.moveUnitFromCellToCoords(atCell, curCell.x, curCell.y);
 				next.unit.attachedCell = curCell
 			}
+			this.render.showMessage('Перемещение юнитов')
 			await Promise.all(movements)
 
 			recStack.push(next)
@@ -371,6 +394,10 @@ export class Game {
 		let attCells: Cell[] = []
 		if (attArray.length > count) {
 			//если найдено больше юнитов чем нужно, спросить каких нужно бить
+			this.render.showMessage(user.current ?
+				'Выберите цель для атаки' :
+				'Другой игрок выбирает цель для атаки'
+			)
 			let atIds = await user.selectCells(attArray, EHighlight.Attack, count)
 			for (let atId of atIds) {
 				attCells.push(attArray[atId]);
@@ -393,6 +420,7 @@ export class Game {
 
 
 	private async creepsMoveAct() { // TODO: таранят бомбу или героя если они на пути
+		this.render.showMessage('Ход противников')
 
 		let creepsCells = this.gameMap.getAllCellHasUnits(EUnitType.Creep);
 		let bombCells = this.gameMap.getAllCellHasUnits(EUnitType.Bomb);
@@ -404,6 +432,7 @@ export class Game {
 
 			if (to !== null) movements.push(this.render.moveUnit(cellFrom, to));
 		}
+
 		await Promise.all(movements)
 
 		setTimeout(() => this.creepsSpawnAct(), 0);
@@ -459,7 +488,7 @@ export class Game {
 			} else if (atEv.attacked.unit.type === EUnitType.Bomb) {
 				this.render.updateBombCounter(--this.bombHP);
 				if (this.bombHP === 0) {
-					this.lose("Бомба уничтожена!!!");
+					this.lose("Тортик уничтожен");
 					return;
 				}
 			}
@@ -480,7 +509,7 @@ export class Game {
 	}
 
 	private getDisable(user: User) {
-		console.log('getDisable', user)
+		//console.log('getDisable', user)
 
 		if (this.damageCardsDeck.length !== 0) {
 			let ranId = getRandomInt(this.random, 0, 6);
@@ -497,19 +526,20 @@ export class Game {
 
 
 	private finalAct() {
+		this.render.showMessage('Конец хода')
 		let bombCell = this.gameMap.getAllCellHasUnits(EUnitType.Bomb)[0];
 		let target = this.gameMap.getAllCellsByType(ETileType.Target)[0];
 		if (bombCell === target) {
-			this.lose("Ты выиграл, молодец!");
-			return;
+			this.win();
+		} else {
+			const lastUser = this.users.pop()
+			if (lastUser === undefined) throw new Error('Impossible error')
+			this.users.unshift(lastUser);
 
+			this.roundCounter++;
+			setTimeout(() => this.chooseCards(), 500);
 		}
-		const lastUser = this.users.pop()
-		if (lastUser === undefined) throw new Error('Impossible error')
-		this.users.unshift(lastUser);
 
-		this.roundCounter++;
-		setTimeout(() => this.chooseCards(), 500);
 	}
 
 

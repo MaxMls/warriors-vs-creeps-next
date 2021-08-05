@@ -14,13 +14,27 @@
 		</div>
 		<div v-if="!!gridRef && !!cellsRefs.size" :class="sty.units">
 			<div
-				 v-for="[unit, {cell, key}] in map.units"
+				 v-for="[unit, {cell, key, state, skin}] in map.units"
 				 :style="layerPositionStyle(cell)"
-				 :class="unitClass(unit)"
 				 :key="key"
-			/>
+				 :class="sty.unitCtn"
+			>
+				<div :class="[sty.unitSkinCtn]">
+					<div :class="[sty.unitSkin, sty[`unitSkin_${skin}`], sty[`unitState_${state}`]]"/>
+				</div>
+				<div
+					 v-if="map.cellsDirection.has(unit)"
+					 :class="sty.unitDirection"
+					 :style="`transform: rotate(${directionToDeg(map.cellsDirection.get(unit))}deg)`"
+				>
+					<SvgIcon
+						 :class="sty.unitDirectionIcon"
+						 name="direction"/>
+				</div>
+
+			</div>
 		</div>
-		<div :class="sty.select">
+		<div v-if="map.cellsToSelect.size" :class="sty.select">
 			<div
 				 v-for="([cell, {highlight}]) in map.cellsToSelect"
 				 :style="layerPositionStyle(cell)"
@@ -39,7 +53,6 @@ import sty from "./GameMapComponent.module.scss"
 import {IRenderMap} from "../engine/renders/vue-render";
 import {
 	defineComponent,
-	onBeforeMount,
 	onBeforeUnmount,
 	onMounted,
 	PropType,
@@ -51,19 +64,25 @@ import {
 } from "vue";
 import {Cell} from "../engine/cell";
 import {Unit} from "../engine/unit";
-import {EHighlight, ETileType, EUnitType, TCardId} from "../engine/types";
+import {directionToDeg, EHighlight, ETileType, EUnitType, TCardId} from "../engine/types";
 import {sync} from "../common/sync";
+import SvgIcon from "./SvgIcon.vue";
 
 export default defineComponent({
+	components: {SvgIcon},
 	data: () => ({sty}),
 	props: {
 		renderMap: {type: Object as PropType<IRenderMap>, required: true},
+	},
+	methods: {
+		directionToDeg
 	},
 	setup(props) {
 
 		let animation: any = null
 		onMounted(() => {
-			animation = sync(sty.unitAnimation)
+			animation = sync([sty.unitAnimation, sty.unitDirectionAnimation,])
+			// animation = sync([sty.spriteXAnimation, sty.spriteYAnimation,])
 		})
 
 		onBeforeUnmount(() => {
@@ -101,8 +120,8 @@ export default defineComponent({
 			cellClass: (cell: Cell) => {
 				return cell ? sty['cell_' + ETileType[cell.type]] : null
 			},
-			unitClass: (unit: Unit) => {
-				return [sty.unit, sty['unitType_' + EUnitType[unit.type]]]
+			unitTypeClass: (unit: Unit) => {
+				return sty['unitSkinType_' + EUnitType[unit.type]]
 			},
 			selClass: (highlight) => {
 				return [sty.selType, sty['selType_' + EHighlight[highlight]]]

@@ -1,9 +1,16 @@
+@use "sass:math";
+@use "sass:list";
 
 .map {
 	position: relative;
-	overflow: hidden;
+	// overflow: hidden;
 	border: 1px solid #C5C7D0;
 	border-radius: 10px;
+	max-height: 100%;
+}
+
+.select {
+	//pointer-events: none; // todo
 }
 
 .units, .select {
@@ -20,6 +27,7 @@
 	width: 100%;
 	aspect-ratio: 12/6;
 	grid-auto-rows: 1fr;
+	max-height: 100%;
 }
 
 .cell {
@@ -36,7 +44,7 @@
 .cellType, {
 	width: 65%;
 	height: 65%;
-	margin: (100% - 65%) / 2;
+	margin: math.div(100% - 65%, 2);
 	border-radius: 10%;
 }
 
@@ -87,10 +95,61 @@
 	background-color: #ABFFFA;
 }
 
-.unit {
+.unitCtn {
 	position: absolute;
-	//opacity: .2;
 	transition: left .5s, top .5s;
+}
+
+.unitSkinCtn, .unitDirection {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	// display: flex;
+}
+
+/*.unitSkinCtn {
+}*/
+
+.unitDirection {
+	//pointer-events: none;
+	display: flex;
+	justify-content: center;
+	position: relative;
+
+}
+
+.unitDirectionIcon {
+	// transform: translateY(-50%);
+	transform: translateY(-50%);
+	width: 50%;
+	height: 50%;
+	--icon-color: #000;
+
+	animation-duration: 1.5s;
+	animation-iteration-count: infinite;
+	animation-name: unitDirectionAnimation;
+}
+
+@keyframes unitDirectionAnimation {
+	from {
+		transform: translateY(-50%);
+	}
+	50% {
+		transform: translateY(-40%);
+	}
+
+	to {
+		transform: translateY(-50%);
+	}
+}
+
+
+.unitSkinCtn {
+	position: absolute;
 
 	background-size: contain;
 	background-position: center;
@@ -99,7 +158,6 @@
 	animation-iteration-count: infinite;
 	animation-name: unitAnimation;
 	transform-origin: bottom;
-	//animation-timing-function: linear;
 
 }
 
@@ -109,7 +167,7 @@
 	}
 	50% {
 
-		transform: scaleY(.9);
+		transform: scaleY(.95);
 	}
 
 	to {
@@ -117,15 +175,252 @@
 	}
 }
 
-// Hero, Creep, Bomb
-.unitType_Hero {
-	background-image: url("../assets/icons/units/gura.gif");
+/*
+
+.unitCtn {
+	.unitSkinType_Hero {
+		animation-duration: .7s;
+		animation-iteration-count: infinite;
+		animation-name: spriteWalkAnimation;
+		background-size: cover;
+		margin: auto;
+		max-width: 100%;
+		max-height: 100%;
+		aspect-ratio: list.slash((4720 / 8), 780);
+		background-position: 0% 0%;
+		animation-timing-function: steps(7);
+		background-position-x: 100%;
+		background-repeat: no-repeat;
+	}
+
+	&:nth-of-type(4n + 1) .unitSkinType_Hero {
+	}
+
+	&:nth-of-type(4n + 2) .unitSkinType_Hero {
+		background-image: url("../assets/icons/units/ame-sprite-walk-8.png");
+	}
+
+	&:nth-of-type(4n + 3) .unitSkinType_Hero {
+		background-image: url("../assets/icons/units/cali-sprite-walk-8.png");
+	}
+
+	&:nth-of-type(4n + 4) .unitSkinType_Hero {
+		background-image: url("../assets/icons/units/kiara-sprite-walk-8.png");
+	}
 }
 
-.unitType_Creep {
+
+.unitSkinType_Creep {
 	background-image: url("../assets/icons/units/greenSlime.svg");
+	width: 100%;
+	height: 100%;
+	background-size: contain;
 }
 
-.unitType_Bomb {
+.unitSkinType_Bomb {
 	background-image: url("../assets/icons/units/cake.svg");
+	width: 100%;
+	height: 100%;
+	background-size: contain;
 }
+*/
+
+// unitSkin_ 'ame' | 'cake' | 'cali' | 'greenSlime' | 'gura' | 'ina' | 'kiara'
+// unitState_ 'idle' | 'walk' | 'attack'
+
+.unitSkin {
+
+}
+
+@keyframes spriteXAnimationWalk {
+	0% {
+		background-position-x: 0%;
+	}
+	100% {
+		background-position-x: 100%;
+	}
+}
+@keyframes spriteYAnimationWalk {
+	0% {
+		background-position-y: 0%;
+	}
+	100% {
+		background-position-y: 100%;
+	}
+}
+@keyframes spriteXAnimationIdle {
+	0% {
+		background-position-x: 0%;
+	}
+	100% {
+		background-position-x: 100%;
+	}
+}
+@keyframes spriteYAnimationIdle {
+	0% {
+		background-position-y: 0%;
+	}
+	100% {
+		background-position-y: 100%;
+	}
+}
+
+.unitSkin_ame, .unitSkin_cali,
+.unitSkin_gura, .unitSkin_ina,
+.unitSkin_kiara {
+	background-size: cover;
+	margin: auto;
+	max-width: 100%;
+	max-height: 100%;
+	aspect-ratio: list.slash((4720 / 8), 780);
+	background-repeat: no-repeat;
+	background-position: 0% 0%;
+
+	&.unitState_walk {
+		animation-duration: .8s;
+		animation-iteration-count: infinite;
+		animation-name: spriteXAnimationWalk;
+		animation-timing-function: steps(8, jump-none);
+	}
+}
+
+.unitSkin_ame {
+	&.unitState_walk {
+		background-image: url("../assets/icons/units/ame-sprite-walk-8.png");
+	}
+
+	&.unitState_idle {
+		margin-top: 12%;
+		margin-bottom: 2%;
+		height: 85%;
+		aspect-ratio: list.slash((2460 / 4), (1380 / 2));
+		background-size: 700% 100%;
+		animation-iteration-count: infinite;
+
+		animation-name: spriteXAnimationIdle;
+		animation-timing-function: steps(7, jump-none);
+		animation-duration: .7s;
+
+		background-image: url("../assets/icons/units/ame-sprite-idle-7.png");
+	}
+}
+
+.unitSkin_kiara {
+	&.unitState_walk {
+		background-image: url("../assets/icons/units/kiara-sprite-walk-8.png");
+	}
+
+	&.unitState_idle {
+		margin-top: 6%;
+		margin-bottom: 2%;
+		height: 92%;
+		$fps: .4s;
+		aspect-ratio: list.slash((4000 / 5), (1860 / 2));
+		background-size: 500% 200%;
+		animation-iteration-count: infinite;
+
+		animation-name: spriteXAnimationIdle, spriteYAnimationIdle;
+		animation-timing-function: steps(5, jump-none), steps(2, jump-none);
+		animation-duration: $fps, $fps * 2;
+		background-image: url("../assets/icons/units/kiara-sprite-idle-2x4.png");
+	}
+}
+
+.unitSkin_cali {
+	&.unitState_walk {
+		background-image: url("../assets/icons/units/cali-sprite-walk-8.png");
+	}
+/*
+	&.unitState_idle {
+		margin-top: 10%;
+		margin-bottom: 2%;
+		height: 87%;
+
+		$fps: .2s;
+		aspect-ratio: list.slash((1023 / 3), (682 / 2));
+		background-size: 300% 200%;
+		animation-iteration-count: infinite;
+
+		animation-name: spriteXAnimationIdle, spriteYAnimationIdle;
+		animation-timing-function: steps(3, jump-none), steps(2, jump-none);
+		animation-duration: $fps, $fps * 2;
+		background-image: url("src/assets/icons/units/cali-sprite-idle-2x3.png");
+	}*/
+	&.unitState_idle {
+		margin-top: 10%;
+		margin-bottom: 2%;
+		height: 87%;
+
+		$fps: .2s;
+		aspect-ratio: list.slash((3080 / 4), (1640 / 2));
+		background-size: 400% 200%;
+		animation-iteration-count: infinite;
+
+		animation-name: spriteXAnimationIdle, spriteYAnimationIdle;
+		animation-timing-function: steps(4, jump-none), steps(2, jump-none);
+		animation-duration: $fps, $fps * 2;
+		background-image: url("src/assets/icons/units/cali-sprite-idle2-2x4.png");
+	}
+}
+
+
+.unitSkin_gura {
+	&.unitState_walk {
+		background-image: url("../assets/icons/units/gura-sprite-walk-8.png");
+	}
+
+	&.unitState_idle {
+		margin-top: 20%;
+		margin-bottom: 5%;
+		height: 75%;
+		$fps: .3s;
+		aspect-ratio: list.slash((2325 / 3), (1500 / 2));
+		background-size: 300% 200%;
+		animation-iteration-count: infinite;
+		animation-name: spriteXAnimationIdle, spriteYAnimationIdle;
+		animation-timing-function: steps(3, jump-none), steps(2, jump-none);
+		animation-duration: $fps, $fps * 2;
+		background-image: url("src/assets/icons/units/gura-sprite-idle-2x3.png");
+	}
+}
+
+.unitSkin_ina {
+	&.unitState_walk {
+		background-image: url("../assets/icons/units/ina-sprite-walk-8.png");
+	}
+
+	&.unitState_idle {
+		margin-top: 10%;
+		margin-bottom: 2%;
+		height: 88%;
+		$fps: .4s;
+		aspect-ratio: list.slash((1860 / 3), (1440 / 2));
+		background-size: 300% 200%;
+		animation-iteration-count: infinite;
+
+		animation-name: spriteXAnimationIdle, spriteYAnimationIdle;
+		animation-timing-function: steps(3, jump-none), steps(2, jump-none);
+		animation-duration: $fps, $fps * 2;
+		background-image: url("src/assets/icons/units/ina-sprite-idle-2x3.png");
+	}
+}
+
+
+
+.unitSkin_cake {
+	background-image: url("../assets/icons/units/cake.svg");
+	width: 100%;
+	height: 100%;
+	background-size: contain;
+}
+
+.unitSkin_greenSlime {
+	background-image: url("../assets/icons/units/greenSlime.svg");
+	width: 90%;
+	height: 90%;
+	margin: auto;
+	margin-top: 3%;
+
+	background-size: contain;
+}
+
