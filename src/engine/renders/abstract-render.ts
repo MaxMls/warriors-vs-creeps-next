@@ -1,13 +1,14 @@
 import {GameMap} from "../game-map";
 import {EHighlight, EDirection, TCardId, TStackId, ERotation} from "../types";
 import {Cell} from "../cell";
+import {Unit} from "../unit";
 
 /* UI render */
 export abstract class AbstractRender {
 
 	abstract renderMap(inputMap: GameMap);
 
-	abstract moveUnit(cellFrom: Cell, cellTo: Cell): Promise<void>
+	abstract moveUnit(unit: Unit, cellTo: Cell): Promise<void>
 
 	abstract initUnit(cell: Cell): void
 

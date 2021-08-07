@@ -2,6 +2,11 @@ import {User} from "./user";
 import {EDirection, ERotation, EUnitType, rotateDirection} from "./types";
 import {Cell} from "./cell";
 
+/*const getLength = (vector) => case (vector) {
+	when { x, y, z } -> Math.sqrt(x ** 2 + y ** 2 + z ** 2)
+	when { x, y } -> Math.sqrt(x ** 2 + y ** 2)
+	when [...etc] -> vector.length
+}*/
 export class Unit {
 
 	constructor(public type: EUnitType) {}

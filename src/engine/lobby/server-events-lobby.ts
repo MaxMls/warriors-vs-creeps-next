@@ -119,6 +119,7 @@ export class ServerEventsLobby extends AbstractLobby {
 	}
 
 	async createRoom(peerName: string): Promise<void> {
+		await this.destroy()
 		try {
 			this.roomId = genId()
 			this.playerName = genId()
@@ -133,6 +134,7 @@ export class ServerEventsLobby extends AbstractLobby {
 	private onJoin: ((error?: RequestError) => void) | null = null
 
 	async joinRoom(initName: string, roomId: string): Promise<void> {
+		await this.destroy()
 		if (!this.roomId && !this.playerName) {
 			this.roomId = roomId
 			this.playerName = genId()
@@ -178,6 +180,10 @@ export class ServerEventsLobby extends AbstractLobby {
 		const bot: ILobbyPlayer = {name: genId(), master: this.playerName, bot: true, ready: true, alias: 'Bot'}
 		this.addPlayer(bot)
 		await this.roomEventEmit({type: 'addPlayerEvent', initName: this.playerName, data: {player: bot}})
+	}
+
+	public async setPlayerData(data) {
+		//this.players.
 	}
 
 	private onRoomEventThis = this.onRoomEvent.bind(this)
@@ -273,6 +279,7 @@ export class ServerEventsLobby extends AbstractLobby {
 		this.players.length = 0
 		this.onJoin = null
 	}
+
 
 	private async startGame() {
 		if (this.game) throw  new Error('game already start')

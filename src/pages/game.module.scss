@@ -9,10 +9,10 @@
 	color: var(--icon-color);
 }
 
-.statCtn_selected {
+button.statCtn:enabled {
 	outline: 2px solid #f8e502;
 	outline-offset: -3px;
-	cursor: pointer;
+	// cursor: pointer;
 	background: white;
 
 	&:hover {
@@ -182,6 +182,7 @@
 	display: flex;
 	flex-direction: column;
 	transition: top .15s;
+	width: 100%;
 
 	& > * {
 		flex: none;
@@ -415,7 +416,7 @@
 	text-align: center;
 	display: block;
 	padding: 15px 35px;
-	 width: 100%;
+	width: 100%;
 	// margin: 0 auto;
 
 	& + .messagePopupButton {

@@ -3,12 +3,11 @@ import {cardsJSON} from "./cards";
 import {GameMap} from "./game-map";
 import seedrandom from "seedrandom";
 import {User} from "./user";
-import {ECardType, EHighlight, IVector, TCardId, ETileType, TUserId, EUnitType} from "./types";
+import {ECardType, EHighlight, ETileType, EUnitType, IVector, TCardId} from "./types";
 import {createArray, getNextCellFromAToB, getRandomInt, shakeArray, vectorRotate} from "./extension-functions";
 import {Unit} from "./unit";
 import {Cell} from "./cell";
 import {AbstractRender} from "./renders/abstract-render";
-import {AbstractAgent} from "./agents/abstract-agent";
 
 /*private readonly map = new MapObject([ // Ландшафт
 	[1, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0],
@@ -47,6 +46,8 @@ import {AbstractAgent} from "./agents/abstract-agent";
 }*/
 
 
+let i = 0
+
 export class Game {
 
 
@@ -72,7 +73,10 @@ export class Game {
 	// Колода карт по 8 карт
 	private readonly cardsDeck: TCardId[] = []
 	private readonly cardsCount = 96
+	private readonly cardsDefectCount = 96
+	//private readonly cardsCount = 3000
 	private bombHP = 8
+	//private bombHP = 800
 	private roundCounter = 0
 	private killsCount = 0
 	private readonly damageCardsDeck: TCardId[] = []
@@ -83,28 +87,29 @@ export class Game {
 	newUsers - массив уникальных идентификаторов
 	TODO: users: AbstractAgent[] array - инициализированные обьекты пользователей
 	 */
+
+	private fillDeck(deck, cards, count) {
+		for (let i = 0; i < count; i++) {
+			deck.push(cards[i % cards.length].i)
+		}
+		shakeArray(this.cardsDeck, this.random);
+	}
+
 	public start() {
-		//console.log('start')
 		if (this.isStarted) throw new Error('Game already started')
 		this.isStarted = true
 
 		this.render.updateBombCounter(this.bombHP);
 
 		// Генерация колоды c командными картами
-		for (let i = 0; i < 12; i++) {
-			for (let j = 0; j < this.cardsCount / (cardsJSON.length - 2); j++) {
-				this.cardsDeck.push(i);
-			}
-		}
-		shakeArray(this.cardsDeck, this.random);
+		const cards = cardsJSON.map((c, i) => ({c, i}))
 
-		// Генерация колоды с картами повреждений
-		for (let i = 0; i < 13; i++) {
-			for (let j = 12; j < 16; j++) {
-				this.damageCardsDeck.push(j);
-			}
-		}
-		shakeArray(this.damageCardsDeck, this.random);
+		const noDefectCards = cards.filter((v) => v.c.type !== ECardType.Defect)
+		this.fillDeck(this.cardsDeck, noDefectCards, this.cardsCount)
+
+
+		const defectCards = cards.filter((v) => v.c.type === ECardType.Defect)
+		this.fillDeck(this.damageCardsDeck, defectCards, this.cardsDefectCount)
 
 		// Начальный спаун мобов на рунах
 		this.creepsSpawn()
@@ -148,40 +153,33 @@ export class Game {
 
 
 	private async chooseCards() {
-		//console.log('chooseCards')
-		let isFirstRound = this.roundCounter === 0;
-		let selectionCards: TCardId[] = [];
-		let countCards = isFirstRound ? 10 : 5; // TODO: добавить еще условие для core карт
 
-		for (let i = 0; i < countCards; i++) {
-			const card = this.cardsDeck.pop()
-			if (card === undefined) break
-			selectionCards.push(card);
-		}
+		// let countCards = isFirstRound ? 10 : 5; // TODO: добавить еще условие для core карт
+		let countCards = this.users.length * (this.roundCounter === 0 ? 2 : 1);
 
-		let countGiven = 0;
-		let userId = 0
+		if (this.cardsDeck.length < countCards) {
+			this.lose("Карты в колоде закончились");
+		} else {
+			const selectionCards = this.cardsDeck.splice(0, countCards);
 
-		while (isFirstRound && countGiven < (this.users.length * 2) || !isFirstRound && countGiven < 4) {
-			if (selectionCards.length === 0) {
-				this.lose("Карты в колоде закончились");
-				return
-			} else {
-				this.render.showMessage(this.users[userId].current ?
-					'Выберите карту' :
-					'Сейчас карту выбирает другой игрок'
-				)
+			while (selectionCards.length > 0) {
+				if (selectionCards.length === 0) {
+					this.lose("Карты в колоде закончились");
+					return
+				} else {
+					const userId = i % this.users.length
+					this.render.showMessage(this.users[userId].current ?
+						'Выберите карту' :
+						'Сейчас карту выбирает другой игрок'
+					)
 
-				const selectCardId = await this.users[userId].selectCard(selectionCards)
-
-				selectionCards.splice(selectCardId, 1);
-
-				countGiven++
-				userId = (userId + 1) % this.users.length
+					const selectCardInd = await this.users[userId].selectCard(selectionCards)
+					selectionCards.splice(selectCardInd, 1);
+				}
 			}
-		}
 
-		setTimeout(() => this.programmingAct(), 0);
+			setTimeout(() => this.programmingAct(), 0);
+		}
 	}
 
 
@@ -195,40 +193,32 @@ export class Game {
 				)
 			})
 		))
-		// this.render.hideMessage()
 
 		setTimeout(() => this.warriorsAct(), 0)
 	}
 
 
 	// Исполняется карта, верхняя в каждом стеке в порядке игроков
-	private warriorsAct() {
+	private async warriorsAct() {
 
-		const go = async (userId = 0) => {
+		for (let user of this.users) {
+			this.render.showMessage(user.current ?
+				'Ваш ход' :
+				'Ходит другой игрок, подождите'
+			)
 
-			for (let stack of this.users[userId].stacks) {
-				if (stack.length === 0) continue;
-				const user = this.users[userId]
-
-				this.render.showMessage(user.current ?
-					'Ваш ход' :
-					'Ходит другой игрок, подождите'
-				)
-
+			for (let stack of user.stacks) {
 				await this.runStack(user, stack)
 			}
-
-			if (userId + 1 < this.users.length) {
-				setTimeout(() => go(userId + 1), 0);
-			} else {
-				setTimeout(() => this.creepsMoveAct(), 0);
-			}
 		}
-		setTimeout(() => go(), 0);
+
+		setTimeout(() => this.creepsMoveAct(), 0);
+
 	}
 
 	private async runStack(user: User, stack: TCardId[]) {
 		let level = stack.length;
+		if (level === 0) return
 
 		let cardId = stack[level - 1];
 		let card = cardsJSON[cardId].levels[level - 1];
@@ -328,8 +318,9 @@ export class Game {
 				'Другой игрок выбирает цель для перемещения'
 			)
 			hookSelect = hookArray[(await user.selectCells(hookArray, EHighlight.Hook, 1))[0]]
-			if (hookSelect !== thisCell)
-				unit.attachedCell = hookSelect
+			if (hookSelect !== thisCell) {
+				thisCell.unit.attachedCell = hookSelect
+			}
 		}
 
 		let toX = thisCell.x + vecX;
@@ -340,8 +331,16 @@ export class Game {
 		let recStack: Cell[] = []
 		recStack.push(thisCell) // клетка которую двигаем
 		let stopMatrix = createArray(this.gameMap.size.x, this.gameMap.size.y)
+
+		const movements: Promise<void>[] = []
 		while (recStack.length) {
+			i++
+			/*if (i === 982) {
+				debugger
+			}*/
+			//console.log(i)
 			const curCell = recStack.pop() as Cell;
+			if (!curCell) throw new Error('error')
 			let next = this.gameMap.getCell((curCell.x + vecX / temp) | 0, (curCell.y + vecY / temp) | 0)
 
 			// Можно ли двигать дальше
@@ -359,23 +358,25 @@ export class Game {
 
 			if (next.unit !== null && next.unit.type === EUnitType.Creep) this.creepKill(next)
 
-			const movements: Promise<void>[] = []
 
-			movements.push(this.render.moveUnit(curCell, next))
+			movements.push(this.render.moveUnit(curCell.unit, next))
 			this.gameMap.moveUnitFromCellToCoords(curCell, next.x, next.y)
 
 			// Если юнит кого-то тащит, то тот занимает ячейку юнита
 			if (next.unit.attachedCell !== null) {
 				let atCell = next.unit.attachedCell;
-				movements.push(this.render.moveUnit(atCell, curCell))
-				this.gameMap.moveUnitFromCellToCoords(atCell, curCell.x, curCell.y);
-				next.unit.attachedCell = curCell
+				if (next.unit.attachedCell !== next && atCell.unit) { // todo bug: it should be impossible, but not
+					movements.push(this.render.moveUnit(atCell.unit, curCell))
+					this.gameMap.moveUnitFromCellToCoords(atCell, curCell.x, curCell.y);
+					next.unit.attachedCell = curCell
+				}
 			}
 			this.render.showMessage('Перемещение юнитов')
-			await Promise.all(movements)
 
 			recStack.push(next)
 		}
+		await Promise.all(movements)
+		await Promise.all(movements)
 
 		unit.attachedCell = null
 	}
@@ -428,9 +429,10 @@ export class Game {
 		const movements: Promise<void>[] = []
 		for (let cellFrom of creepsCells) {
 			let next = getNextCellFromAToB(cellFrom, bombCells[0]);
+
 			let to = this.gameMap.moveUnitFromCellToCoords(cellFrom, next.x, next.y);
 
-			if (to !== null) movements.push(this.render.moveUnit(cellFrom, to));
+			if (to !== null) movements.push(this.render.moveUnit(to.unit, to));
 		}
 
 		await Promise.all(movements)
@@ -451,7 +453,7 @@ export class Game {
 
 	private creepsSpawnAct() {
 		this.creepsSpawn()
-		setTimeout(() => this.creepsAttackAct(), 500);
+		setTimeout(() => this.creepsAttackAct(), 0);
 	}
 
 
@@ -509,7 +511,6 @@ export class Game {
 	}
 
 	private getDisable(user: User) {
-		//console.log('getDisable', user)
 
 		if (this.damageCardsDeck.length !== 0) {
 			let ranId = getRandomInt(this.random, 0, 6);
@@ -526,18 +527,18 @@ export class Game {
 
 
 	private finalAct() {
+		console.count('finalAct')
 		this.render.showMessage('Конец хода')
-		let bombCell = this.gameMap.getAllCellHasUnits(EUnitType.Bomb)[0];
-		let target = this.gameMap.getAllCellsByType(ETileType.Target)[0];
-		if (bombCell === target) {
+		if (!this.gameMap.getAllCellHasUnits(EUnitType.Bomb).find(cell => cell.type !== ETileType.Target)) {
 			this.win();
 		} else {
 			const lastUser = this.users.pop()
-			if (lastUser === undefined) throw new Error('Impossible error')
-			this.users.unshift(lastUser);
+			if (lastUser !== undefined) {
+				this.users.unshift(lastUser);
+			}
 
 			this.roundCounter++;
-			setTimeout(() => this.chooseCards(), 500);
+			setTimeout(() => this.chooseCards(), 0);
 		}
 
 	}

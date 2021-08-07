@@ -16,10 +16,13 @@
 	}
 
 }
+/*
 
 .linksGroup {
 	display: grid;
 	grid-gap: 100px;
 	justify-content: center;
-	grid-auto-flow: column;
+	align-items: center;
+	grid-template-columns: auto auto;
 }
+*/

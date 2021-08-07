@@ -77,6 +77,8 @@ export default {
 
 .ctn {
 	padding: 40px 50px 50px;
+	background: white;
+	border-radius: 15px;
 }
 
 .title {
@@ -123,6 +125,7 @@ export default {
 	padding: 16px 25px;
 	width: 100%;
 	display: block;
+
 }
 
 .button {
@@ -134,7 +137,9 @@ export default {
 }
 
 .input, .button {
-	border: 1px solid black;
+	border: 1px solid #808080;
+	background: white;
+	border-radius: 5px;
 }
 
 </style>

@@ -327,6 +327,7 @@ export class VueRender extends AbstractRender {
 }
 */
 export type TUnitSkin = 'ame' | 'cake' | 'cali' | 'greenSlime' | 'gura' | 'ina' | 'kiara'
+export const HeroesSkins: TUnitSkin[] = ['ame', 'cali', 'gura', 'ina', 'kiara']
 export type TUnitState = 'idle' | 'walk' | 'attack'
 
 export interface IRenderMap {
@@ -339,5 +340,6 @@ export interface IRenderMap {
 		state: TUnitState,
 		skin: TUnitSkin
 	}>
+	moveUnitMs: number
 	cellsDirection: Map<Unit, EDirection>
 }

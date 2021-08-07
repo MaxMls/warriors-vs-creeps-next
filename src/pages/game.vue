@@ -31,20 +31,24 @@
 						{{ game[i] }}
 					</div>
 				</div>
-				<div
-					 :class="[style.statCtn, style.statCtnCrane, {[style.statCtn_selected]: game.stacksToClick.has(-1)}]"
+				<button
+					 type=button
+					 :disabled="!game.stacksToClick.has(-1)"
+					 :class="[style.statCtn, style.statCtnCrane]"
 					 @click="game.stacksToClick.has(-1) && game.onStackClick(-1)"
 				>
 					<SvgIcon v-if="game.scrapType === 'fix'" :class="style.statIcon" name="fix"/>
 					<SvgIcon v-else-if="game.scrapType === 'move'" :class="style.statIcon" name="cranMove"/>
 					<SvgIcon v-else :class="style.statIcon" name="cran"/>
-				</div>
-				<div
-					 :class="[style.statCtn, style.statCtnTrash, {[style.statCtn_selected]: game.stacksToClick.has(-2)}]"
+				</button>
+				<button
+					 type=button
+					 :disabled="!game.stacksToClick.has(-1)"
+					 :class="[style.statCtn, style.statCtnTrash]"
 					 @click="game.stacksToClick.has(-2) && game.onStackClick(-2)"
 				>
 					<SvgIcon :class="style.statIcon" name="trash"/>
-				</div>
+				</button>
 				<div :class="[style.statCtn, style.statCtnDirection]">
 					<SvgIcon :class="style.statIcon" name="direction"/>
 				</div>
@@ -55,32 +59,44 @@
 		</div>
 		<div :class="style.handPanelCtn">
 			<div :class="style.handPanel">
-
-				<div v-for="(idx, i) in game.handCards" :class="style.handPanelCard" @click="game.onHandClick?.(i)">
+				<button
+					 type=button
+					 :disabled="!game.onHandClick"
+					 v-for="(idx, i) in game.handCards"
+					 :class="style.handPanelCard"
+					 @click="game.onHandClick?.(i)"
+				>
 					<CardComponent :idx="idx" :select="!!game.onHandClick" :active="game.handActiveCardInd === i"/>
-				</div>
+				</button>
 			</div>
 		</div>
 		<div :class="style.termPanel" :ref="visual.setItemTermPanelRef">
 			<div v-for="(stack, i) in game.stacks" :class="style.termSlot" :ref="visual.setItemTermSlotRef">
-				<div :class="style.termCard" @click="game.stacksToClick.has(i) && game.onStackClick(i)">
+				<button
+					 type=button
+					 :disabled="!game.stacksToClick.has(i)"
+					 :class="style.termCard"
+					 @click="game.onStackClick?.(i)">
 					<CardComponent :stack="stack" :select="game.stacksToClick.has(i)"/>
 					<div :class="[style.termGradient,
 						 {[style.termGradient_select]: game.stacksToClick.has(i),
 						  [style.termGradient_empty]: !stack.length}]"/>
-				</div>
+				</button>
 			</div>
 		</div>
 
 		<div v-click-outside v-opacity-delay v-if=game.selectsCards.length v-horizontal-scroll
 		     :class="style.selectPopupCtn">
 			<div :class="style.selectPopup">
-				<div v-for="(idx, i) in game.selectsCards"
-				     :class="style.selectPopupCard"
-				     @click="game.onCardClick(i)"
+				<button
+					 type=button
+					 :disabled="false"
+					 v-for="(idx, i) in game.selectsCards"
+					 :class="style.selectPopupCard"
+					 @click="game.onCardClick(i)"
 				>
 					<CardComponent :idx="idx" :select="true"/>
-				</div>
+				</button>
 			</div>
 		</div>
 		<div v-click-outside v-opacity-delay v-if=game.rotationsSelect.length :class="style.directionPopupCtn">
@@ -91,8 +107,8 @@
 				</div>
 				<div :class="style.directionPopupChoose">
 					<button
-						 v-for="(rot, i) in game.rotationsSelect"
 						 type=button
+						 v-for="(rot, i) in game.rotationsSelect"
 						 :class="style.directionPopupDirection"
 						 @click="game.onRotationClick(i)"
 					>
@@ -112,9 +128,11 @@
 				<div :class="style.messagePopupText">
 					{{ game.popupMessage?.text }}
 				</div>
-				<button :class="style.messagePopupButton"
-				        v-for="({text, handler}) in game.popupMessage?.buttons"
-				        @click="handler"
+				<button
+					 type=button
+					 :class="style.messagePopupButton"
+					 v-for="({text, handler}) in game.popupMessage?.buttons"
+					 @click="handler"
 				>{{ text }}
 				</button>
 			</div>
@@ -156,6 +174,7 @@ import {opacityDelayDirective} from "../plugins/opacity-delay-directive";
 import {clickOutsideDirective} from "../plugins/click-outside-directive";
 import {useRouter} from "vue-router";
 import {User} from "../engine/user";
+import {Unit} from "../engine/unit";
 
 const useVisualGame = () => {
 	const termPanelRef = ref<HTMLElement | null>(null);
@@ -350,12 +369,13 @@ export default defineComponent({
 			}, 2000)*/
 		}
 		const killUnit: AbstractRender["killUnit"] = (cell: Cell) => {
-			console.log('killUnit', cell)
+			//console.log('killUnit', cell)
 			units.value.delete(cell.unit)
 		}
-		const moveUnit: AbstractRender["moveUnit"] = (cellFrom: Cell, cellTo: Cell) =>
+		const moveUnitMs = 0
+		const moveUnit: AbstractRender["moveUnit"] = (unit: Unit, cellTo: Cell) =>
 			 new Promise<void>((resolve) => {
-				 const unit = cellFrom.unit || cellTo.unit
+				 // const unit = cellFrom.unit || cellTo.unit
 				 const unitInstance = units.value.get(unit)!
 				 unitInstance.cell = cellTo
 				 unitInstance.state = 'walk'
@@ -363,7 +383,7 @@ export default defineComponent({
 				 setTimeout(() => {
 					 unitInstance.state = 'idle'
 					 resolve()
-				 }, 500)
+				 }, moveUnitMs)
 			 })
 
 		const cellsDirection = ref<IRenderMap['cellsDirection']>(new Map())
@@ -493,7 +513,7 @@ export default defineComponent({
 		let timerInterval: NodeJS.Timer | null = null
 
 		const startTimer = (secCount: number): void => {
-			console.log('startTimer')
+			//console.log('startTimer')
 			let date = new Date(0, 0, 0, 0, 0, 0)
 
 			const updateTimer = () => {
@@ -542,8 +562,10 @@ export default defineComponent({
 		}
 
 		onMounted(() => {
-			const seed = 'test'
-
+			const seed = Math.random() + '4'
+			//const seed = 'test0.4917421312816932'
+			//const seed = 'test0.4917421312816932'
+			console.log({seed})
 			const gameMap = new GameMap([
 				[1, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0],
 				[1, 1, 0, 0, 0, 0, 0, 2, 0, 2, 2, 0],
@@ -552,19 +574,45 @@ export default defineComponent({
 				[1, 1, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0],
 				[1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0]
 			])
+			/*const gameMap = new GameMap([
+				[1, 1, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
+				[3, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
+				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
+				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
+				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
+				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
+				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
+				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
+				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
+				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
+			])*/
+			/*const gameMap = new GameMap([
+				[1, 2, 3, 2],
+				[1, 2, 3, 2],
+			])*/
 
 			const agents: AbstractAgent[] = []
 
-			agents.push(new LocalAgent(null, null, unref(render)))
-			agents.push(new BotAgent(seed))
-			agents.push(new BotAgent(seed))
-			agents.push(new BotAgent(seed))
-			agents.push(new BotAgent(seed))
+			// agents.push(new LocalAgent(null, null, unref(render)))
+			/*	agents.push(new BotAgent(seed))
+				agents.push(new BotAgent(seed))
+				agents.push(new BotAgent(seed))
+				agents.push(new BotAgent(seed))
+				agents.push(new BotAgent(seed))*/
+			/*for (let i = 0; i < gameMap.getAllCellsByType(1).length - 1; i++) {
+				agents.push(new BotAgent(seed))
+			}*/
+			for (let i = 0; i < 4; i++) {
+				agents.push(new BotAgent(seed))
+			}
+
+			// agents.push(new BotAgent(seed))
+			// agents.push(new BotAgent(seed))
 
 
 			const users = agents.map((a, i) => {
 				const user = new User(a)
-				skins.value.set(user, ['cali', 'ame', 'ina', 'gura', 'kiara'][i] as TUnitSkin)
+				skins.value.set(user, ['cali', 'ame', 'ina', 'gura', 'kiara'][i % 5] as TUnitSkin)
 				return user
 			})
 
@@ -593,6 +641,7 @@ export default defineComponent({
 				gameMap,
 				units,
 				cellsDirection,
+				moveUnitMs
 			}),
 			visual: useVisualGame(),
 		}

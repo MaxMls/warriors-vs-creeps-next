@@ -1,7 +1,7 @@
 <template>
 	<div :class="sty.map" v-if="map.gameMap">
 		<div :class="sty.grid"
-		     :style="`grid-template-columns: repeat(${map.gameMap?.size.x}, 1fr);`"
+		     :style="`grid-template-columns: repeat(${map.gameMap?.size.x}, 1fr);aspect-ratio: ${map.gameMap?.size.x}/${map.gameMap?.size.y};`"
 		     :ref="setGridRef"
 		>
 			<div
@@ -15,33 +15,28 @@
 		<div v-if="!!gridRef && !!cellsRefs.size" :class="sty.units">
 			<div
 				 v-for="[unit, {cell, key, state, skin}] in map.units"
-				 :style="layerPositionStyle(cell)"
+				 :style="layerPositionStyle(cell)+ `transition: left ${map.moveUnitMs}ms, top ${map.moveUnitMs}ms;`"
 				 :key="key"
 				 :class="sty.unitCtn"
 			>
-				<div :class="[sty.unitSkinCtn]">
-					<div :class="[sty.unitSkin, sty[`unitSkin_${skin}`], sty[`unitState_${state}`]]"/>
-				</div>
-				<div
-					 v-if="map.cellsDirection.has(unit)"
-					 :class="sty.unitDirection"
-					 :style="`transform: rotate(${directionToDeg(map.cellsDirection.get(unit))}deg)`"
-				>
-					<SvgIcon
-						 :class="sty.unitDirectionIcon"
-						 name="direction"/>
-				</div>
+				<UnitComponent
+					 :skin="skin"
+					 :state="state"
+					 :direction="map.cellsDirection.has(unit) ? map.cellsDirection.get(unit) : null"
+				/>
+
 
 			</div>
 		</div>
 		<div v-if="map.cellsToSelect.size" :class="sty.select">
-			<div
+			<button
+				 type=button
 				 v-for="([cell, {highlight}]) in map.cellsToSelect"
 				 :style="layerPositionStyle(cell)"
 				 :class="selClass(highlight)"
 				 @click="map.onCellClick(cell)"
 			>
-			</div>
+			</button>
 		</div>
 	</div>
 </template>
@@ -67,9 +62,10 @@ import {Unit} from "../engine/unit";
 import {directionToDeg, EHighlight, ETileType, EUnitType, TCardId} from "../engine/types";
 import {sync} from "../common/sync";
 import SvgIcon from "./SvgIcon.vue";
+import UnitComponent from "./UnitComponent.vue";
 
 export default defineComponent({
-	components: {SvgIcon},
+	components: {UnitComponent, SvgIcon},
 	data: () => ({sty}),
 	props: {
 		renderMap: {type: Object as PropType<IRenderMap>, required: true},
