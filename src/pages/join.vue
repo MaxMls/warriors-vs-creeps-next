@@ -12,84 +12,71 @@
 <script lang=ts>
 
 import Form from "../components/Form.vue";
-import {Vue, Options, setup} from "vue-class-component"
-//import firebase from "firebase/app";
-import {AbstractLobby, RequestError} from "../engine/lobby/abstract-lobby";
-import {unref} from "vue";
-import {LOBBY_PROVIDER} from "../context/network.context";
-
-class Props {
-	//propMessage!: string
-}
+import {defineComponent, inject, onMounted, ref, unref, watch} from "vue";
+import {APP_PROVIDER} from "../context/network.context";
+import {Room} from "../engine/lobby/server-events-lobby";
+import {TUnitSkin} from "../engine/renders/vue-render";
+import {useRouter} from "vue-router";
+import {RequestError} from "../engine/lobby/request-error";
 
 
-@Options({
+export default defineComponent({
 	components: {Form},
-	inject: [LOBBY_PROVIDER]
-})
-export default class Join extends Vue.with(Props) {
-	get lobby(): AbstractLobby | null {
-		return unref(this[LOBBY_PROVIDER])
-	}
+	setup() {
+		const app = unref(inject(APP_PROVIDER) as { room?: Room })
 
-	fields = [
-		{name: 'name', label: 'Введите имя'},
-		{name: 'room', label: 'Введите код приглашения'}
-	]
-	form = {
-		values: {name: '', room: '',},
-		errors: {name: null, room: null} as any
-	}
+		const router = useRouter()
+		const form = ref({
+			values: {name: '', room: '',},
+			errors: {name: null, room: null} as any
+		})
+		const fields = [
+			{name: 'name', label: 'Введите имя'},
+			{name: 'room', label: 'Введите код приглашения'}
+		]
 
-	mounted() {
-		this.setName()
-	}
+		onMounted(() => {
+			let name = localStorage.getItem('name');
+			form.value.values.name = name || ''
+		})
 
-	get name() {
-		return this.form.values.name
-	}
+		watch(form.value.values, () => {
+			localStorage.setItem('name', form.value.values.name);
+		})
 
-	created() {
-		this.$watch("name", () => {
-			localStorage.setItem('name', this.name);
-		});
-	}
+		return {
+			form, fields,
+			async submit() {
+				const {name} = form.value.values;
 
-	setName() {
-		let name = localStorage.getItem('name');
-		this.form.values.name = name || ''
-	}
-
-	async submit() {
-		// check name
-		const {name, room} = this.form.values;
-		//console.log('bubabubabubabuba')
-		if (!name) {
-			this.form.errors.name = 'Empty name'
-		} else if (!room) {
-			this.form.errors.room = 'Empty room'
-		} else if (name.length > 25) {
-			this.form.errors.name = 'Long name'
-		} else if (this.lobby) {
-			try {
-				await this.lobby.joinRoom(name, room);
-				await this.$router.push('/lobby/' + this.lobby.roomId)
-			} catch (e) {
-				if (e instanceof RequestError) {
-					this.form.errors = e.data
+				if (!name) {
+					form.value.errors.name = 'Empty name'
+				} else if (name.length > 25) {
+					form.value.errors.name = 'Long name'
 				} else {
-					throw e
+					try {
+						const skin = (localStorage.getItem('skin') ?? 'ame') as TUnitSkin;
+						app.room?.destroy()
+						app.room = new Room()
+
+						app.room.setCurrentPlayerData({skin, name})
+
+						await app.room.joinRoom(form.value.values.room)
+						await router.push('/room')
+					} catch (e) {
+						if (e instanceof RequestError) {
+							form.value.errors = e.data
+						} else {
+							throw e
+						}
+					}
 				}
 			}
 		}
 
 	}
-}
-
+})
 
 </script>
 
 <style module="cs" lang=scss src="./common.scss"/>
-<style module lang=scss>
-
-</style>

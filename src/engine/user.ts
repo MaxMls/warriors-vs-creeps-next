@@ -1,5 +1,5 @@
 import {cardsJSON} from "./cards";
-import {ECardType, EHighlight, EDirection, TCardId, TStackId, ERotation} from "./types";
+import {ECardType, EDirection, EHighlight, ERotation, TCardId, TStackId} from "./types";
 import {AbstractAgent} from "./agents/abstract-agent";
 import {Cell} from "./cell";
 import {LocalAgent} from "./agents/local-agent";

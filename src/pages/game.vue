@@ -144,7 +144,7 @@
 import style from "./game.module.scss";
 import cs from "./common.module.scss";
 
-import {defineComponent, onBeforeUnmount, onMounted, reactive, ref, unref} from "vue";
+import {defineComponent, inject, onBeforeUnmount, onMounted, reactive, ref, unref} from "vue";
 import CardComponent from "../components/CardComponent.vue";
 import GameMapComponent from "../components/GameMapComponent.vue";
 import {IRenderMap, TUnitSkin, TUnitState} from "../engine/renders/vue-render";
@@ -160,7 +160,8 @@ import {
 	ECardType,
 	EDirection,
 	EHighlight,
-	ERotation, EUnitType,
+	ERotation,
+	EUnitType,
 	rotateDirection,
 	TCardId,
 	TStackId
@@ -175,6 +176,12 @@ import {clickOutsideDirective} from "../plugins/click-outside-directive";
 import {useRouter} from "vue-router";
 import {User} from "../engine/user";
 import {Unit} from "../engine/unit";
+import {APP_PROVIDER} from "../context/network.context";
+import {Room} from "../engine/lobby/server-events-lobby";
+import {dynamicSort} from "../common";
+import {NetworkAgent} from "../engine/agents/network-agent";
+import {ServerEventsNetwork} from "../engine/networks/server-events-network";
+import {AbstractNetwork} from "../engine/networks/abstract-network";
 
 const useVisualGame = () => {
 	const termPanelRef = ref<HTMLElement | null>(null);
@@ -213,53 +220,388 @@ const useVisualGame = () => {
 
 	}
 }
-/*const useRenderGame = () => {
-	let render = new VueRender()
-	const lobby = unref(inject(LOBBY_PROVIDER) as AbstractLobby)
-	const router = useRouter()
 
-	let game: Game
 
-	onBeforeMount(async () => {
-		if (!lobby.game) {
-			await router.push('/')
-		} else {
-			const seed = lobby.players.map(p => p.seed ?? '').join('.')
+const useRenderGameMap = () => {
 
-			const singlePlayer = !lobby.players.filter(p => !p.bot && p.name !== lobby.playerName).length
-			//debugger
-			let network = singlePlayer ? null : new ServerEventsNetwork(lobby.roomId as string)
 
-			const gameMap = new GameMap([
-				[1, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0],
-				[1, 1, 0, 0, 0, 0, 0, 2, 0, 2, 2, 0],
-				[1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[1, 1, 1, 0, 0, 0, 0, 2, 0, 3, 0, 2],
-				[1, 1, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0],
-				[1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0]
-			])
+	const onCellClick = ref<IRenderMap['onCellClick']>(null)
+	const cellsToSelect = ref<IRenderMap['cellsToSelect']>(new Map())
 
-			const agents: AbstractAgent[] = []
-			for (const player of lobby.players) {
-				if (player.name == lobby.playerName) {
-					agents.push(new LocalAgent(network, player.name, render))
-				} else if (player.bot) {
-					agents.push(new BotAgent(seed))
-				} else {
-					agents.push(new NetworkAgent(network!, player.name))
+	const selectCells = (cells: Cell[], highlight: number & EHighlight, count: number): Promise<number[]> => {
+		//console.log({cells, highlight, count})
+		//const m = this.vueRender.showMessage('Select ' + count + ' cells for ' + EHighlight[highlight])
+		return new Promise((resolve, reject) => {
+			for (let i = 0; i < cells.length; i++) {
+				cellsToSelect.value.set(cells[i], {highlight, ind: i})
+			}
+			//	triggerRef(cellsToSelect.value)
+
+			const clickedInds: number[] = []
+			onCellClick.value = (cell) => {
+				const v = cellsToSelect.value.get(cell)
+				if (v) {
+					cellsToSelect.value.delete(cell)
+					const {ind, highlight} = v
+					clickedInds.push(ind)
+					if (clickedInds.length === count) {
+						onCellClick.value = null
+						//hideMessage()
+						cellsToSelect.value.clear()
+						resolve(clickedInds)
+					}
+					//triggerRef(cellsToSelect.value)
 				}
 			}
 
-			game = new Game(render, agents, gameMap, seed)
+		})
+	}
 
+	const gameMap = ref<IRenderMap['gameMap']>(null)
+	const renderMap = (inputMap: GameMap) => {
+		gameMap.value = inputMap
+	}
+	//const skins = ref<Map<User, TUnitSkin>>(new Map())
+	const skins = new Map<User, TUnitSkin>()
+
+	const units = ref<IRenderMap['units']>(new Map())
+	let keyGen = 0
+	const initUnit: AbstractRender["initUnit"] = (cell: Cell) => {
+		const tts = {
+			[EUnitType.Creep]: 'greenSlime' as TUnitSkin,
+			[EUnitType.Bomb]: 'cake' as TUnitSkin,
+			[EUnitType.Hero]: skins.get(cell.unit?.ownerUser) as TUnitSkin,
 		}
-	})
-	onMounted(() => {
+		const instance = {
+			cell,
+			key: keyGen++,
+			skin: tts[cell.unit.type],
+			state: 'idle' as TUnitState
+		}
+		units.value.set(cell.unit, instance)
+
+		/*setInterval(() => {
+			units.value.get(cell.unit)!.state = instance.state === 'idle' ? 'walk' : 'idle'
+		}, 2000)*/
+	}
+	const killUnit: AbstractRender["killUnit"] = (cell: Cell) => {
+		//console.log('killUnit', cell)
+		units.value.delete(cell.unit)
+	}
+	const moveUnitMs = 0
+	const moveUnit: AbstractRender["moveUnit"] = (unit: Unit, cellTo: Cell) =>
+		 new Promise<void>((resolve) => {
+			 // const unit = cellFrom.unit || cellTo.unit
+			 const unitInstance = units.value.get(unit)!
+			 unitInstance.cell = cellTo
+			 unitInstance.state = 'walk'
+
+			 setTimeout(() => {
+				 unitInstance.state = 'idle'
+				 resolve()
+			 }, moveUnitMs)
+		 })
+
+	const cellsDirection = ref<IRenderMap['cellsDirection']>(new Map())
+
+	const updateHeroDirection: AbstractRender["updateHeroDirection"] = (cell: Cell, orientation: EDirection) => {
+		cellsDirection.value.set(cell.unit, orientation)
+	}
+
+	const render = {
+		initUnit, killUnit,
+		moveUnit, updateHeroDirection,
+		renderMap, selectCells,
+	}
+
+	return {
+		skins,
+		render,
+		onCellClick, cellsToSelect,
+		gameMap,
+		units,
+		cellsDirection,
+		moveUnitMs
+	}
+
+}
+
+
+const useRenderGame = () => {
+
+	const onRotationClick = ref<((ind: number) => void) | null>(null)
+	const rotationsSelect = ref<ERotation[]>([])
+	const rotationsSelectCurrentDirection = ref<EDirection | null>(null)
+
+	const chooseRotate: AbstractRender["chooseRotate"] = (rotateArray: ERotation[], currentDirection: EDirection): Promise<number> =>
+		 new Promise<number>((resolve, reject) => {
+			 rotationsSelect.value = rotateArray
+			 rotationsSelectCurrentDirection.value = currentDirection
+			 onRotationClick.value = (ind: number) => {
+				 onRotationClick.value = null
+				 rotationsSelectCurrentDirection.value = null
+				 rotationsSelect.value = []
+				 resolve(ind)
+			 }
+		 })
+
+	const popupMessage = ref<null | {
+		title: string, text: string,
+		buttons: { text: string, handler: () => void }[]
+	}>(null)
+
+	const router = useRouter()
+	const defeat: AbstractRender["defeat"] = (text) => {
+		message.value = 'Конец игры'
+		popupMessage.value = {
+			title: 'Вы проиграли',
+			text: text || 'Тортик уничтожен',
+			buttons: [
+				{
+					text: 'На главную',
+					handler: () => router.push('/')
+				}
+			]
+		}
+	}
+	const win: AbstractRender["win"] = () => {
+		message.value = 'Конец игры'
+		popupMessage.value = {
+			title: 'Успех',
+			text: 'Вы победили',
+			buttons: [
+				{
+					text: 'На главную',
+					handler: () => router.push('/')
+				}
+			]
+		}
+	}
+
+	const error: AbstractRender["error"] = (text) => {
+		message.value = 'Конец игры'
+		popupMessage.value = {
+			title: 'Непредвиденная ошибка',
+			text,
+			buttons: [
+				{
+					text: 'На главную',
+					handler: () => router.push('/')
+				}
+			]
+		}
+	}
+
+	const message = ref('')
+	const hideMessage: AbstractRender["hideMessage"] = () => {
+		message.value = ''
+	}
+	const showMessage: AbstractRender["showMessage"] = (text: string) => {
+		message.value = text
+	}
+
+	const selectsCards = ref<TCardId[]>([])
+	const onCardClick = ref<((card: TCardId) => void) | null>(null)
+
+	const selectCard = (cards: TCardId[]): Promise<number> => {
+		return new Promise((resolve, reject) => {
+			selectsCards.value = cards
+
+			onCardClick.value = (card: TCardId) => {
+				onCardClick.value = null
+				selectsCards.value = []
+				resolve(card)
+			}
+		})
+	}
+
+	const handCards = ref<TCardId[]>([])
+	const setHand = (cards: TCardId[]) => {
+		handCards.value = cards
+	}
+
+	const stacks = ref<TCardId[][]>([[], [], [], [], [], []])
+	const setStacks = (value: TCardId[][]) => {
+		stacks.value = cloneDeep(value)
+	}
+
+	const onStackClick = ref<((stack: TStackId) => void) | null>(null)
+	const stacksToClick = ref<Map<TStackId, number>>(new Map())
+
+	const selectStacks: AbstractAgent["selectStacks"] = (stacks: TStackId[], count: number) =>
+		 new Promise<number[]>((resolve, reject) => {
+			 stacks.forEach((v, i) => stacksToClick.value.set(v, i))
+			 const res: number[] = []
+			 onStackClick.value = (num: TStackId) => {
+				 const ind = stacksToClick.value.get(num)!
+				 res.push(ind)
+				 if (res.length === count) {
+					 stacksToClick.value.clear()
+					 onStackClick.value = null
+					 resolve(res)
+				 }
+			 }
+		 })
+
+	const onHandClick = ref<((ind: number) => void) | null>(null)
+	const handActiveCardInd = ref<number | null>(null)
+	const scrapType = ref('')
+	const programming = (stacks: TStackId[]): Promise<[number, number]> => {
+		return new Promise(async (resolve, reject) => {
+			onHandClick.value = (ind: number) => {
+				handActiveCardInd.value = ind === handActiveCardInd.value ? null : ind
+
+				if (handActiveCardInd.value !== null) {
+					scrapType.value = {
+						[ECardType.Electro]: 'move',
+						[ECardType.Computer]: 'move',
+						[ECardType.Fire]: 'fix',
+						[ECardType.Metal]: 'fix',
+					}[cardsJSON[handCards.value[handActiveCardInd.value]].type]
+
+					stacks.forEach((v, i) => stacksToClick.value.set(v, i))
+					onStackClick.value = (stackId: TStackId) => {
+						const stackInd = stacksToClick.value.get(stackId)!
+						onStackClick.value = null
+						onHandClick.value = null
+						const handCardInd = handActiveCardInd.value!
+						stacksToClick.value.clear()
+						handActiveCardInd.value = null
+						scrapType.value = ''
+						resolve([handCardInd, stackInd])
+					}
+				} else {
+					scrapType.value = ''
+					stacksToClick.value.clear()
+					onStackClick.value = null
+				}
+			}
+
+		})
+	}
+
+
+	const time = ref('0:00')
+	let timerInterval: NodeJS.Timer | null = null
+
+	const startTimer = (secCount: number): void => {
+		//console.log('startTimer')
+		let date = new Date(0, 0, 0, 0, 0, 0)
+
+		const updateTimer = () => {
+			date = new Date(date.getTime() + 1000)
+			time.value = date.toLocaleTimeString(undefined, {minute: 'numeric', second: '2-digit'})
+		}
+		updateTimer();
+		timerInterval = setInterval(updateTimer, 1000);
+	}
+
+	const stopTimer = () => {
+		if (timerInterval !== null) {
+			clearInterval(timerInterval);
+			timerInterval = null
+		}
+		time.value = '0:00'
+	}
+
+	const stopSelect = () => {
+		onRotationClick.value = null
+		onCardClick.value = null
+		onStackClick.value = null
+		//onCellClick.value = null
+		onHandClick.value = null
+	}
+
+	const heart = ref(0)
+	const updateBombCounter = (value: number) => {
+		heart.value = value
+	}
+
+	const creep = ref(0)
+	const updateKillsCounter = (value: number) => {
+		creep.value = value
+	}
+
+	const render = {
+		chooseRotate,
+		defeat, win, error,
+		hideMessage,
+		selectCard, setHand,
+		showMessage, setStacks, selectStacks,
+		programming,
+		startTimer, stopTimer, stopSelect,
+		updateBombCounter, updateKillsCounter
+	}
+
+
+	return {
+		render,
+		onRotationClick, rotationsSelect, rotationsSelectCurrentDirection,
+		message,
+		selectsCards, onCardClick,
+		handCards,
+		stacks,
+		popupMessage,
+		onStackClick, stacksToClick,
+		onHandClick, handActiveCardInd, scrapType,
+		time,
+		heart,
+		creep
+	}
+
+}
+
+const useStartGame = (render: AbstractRender, skins) => {
+	const app = unref(inject(APP_PROVIDER))! as { room: Room }
+	const {room} = app
+	const router = useRouter()
+
+
+	onMounted(async () => {
+		if (!room) {
+			await router.push('/')
+			return
+		}
+		const players = room.players.sort(dynamicSort('selfId'))
+
+		const seed = players.map(p => p.selfId).join('/')
+
+		const gameMap = new GameMap([
+			[1, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0],
+			[1, 1, 0, 0, 0, 0, 0, 2, 0, 2, 2, 0],
+			[1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[1, 1, 1, 0, 0, 0, 0, 2, 0, 3, 0, 2],
+			[1, 1, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0],
+			[1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0]
+		])
+
+
+		const agents: AbstractAgent[] = []
+		let network: AbstractNetwork | null = null;
+
+		for (const player of players) {
+			if (player.selfId !== room.player.selfId && player.selfId === player.ownerId) {
+				network ??= new ServerEventsNetwork(await room.openRoom())
+			}
+		}
+		const users = players.map((player) => {
+			const agent =
+				 (player.selfId === room.player.selfId) ? new LocalAgent(network, room.player.selfId, unref(render)) :
+					  (player.selfId === player.ownerId) ? new NetworkAgent(network!, player.selfId) :
+							new BotAgent(seed)
+
+			const user = new User(agent)
+			skins.set(user, player.data.skin)
+			return user
+		})
+
+		const game = new Game(unref(render), users, gameMap, seed, users[0])
+
 		game.start()
+		render.startTimer(0)
 	})
 
-	return render
-}*/
+}
 
 export default defineComponent({
 	components: {SvgIcon, GameMapComponent, CardComponent},
@@ -275,376 +617,19 @@ export default defineComponent({
 		rotateDirection,
 	},
 	setup() {
+		const {render: gameRender, ...game} = useRenderGame()
+		const {render: mapRender, skins, ...map} = useRenderGameMap()
 
-		const onRotationClick = ref<((ind: number) => void) | null>(null)
-		const rotationsSelect = ref<ERotation[]>([])
-		const rotationsSelectCurrentDirection = ref<EDirection | null>(null)
+		const render: AbstractRender = {...gameRender, ...mapRender}
 
-		const chooseRotate: AbstractRender["chooseRotate"] = (rotateArray: ERotation[], currentDirection: EDirection): Promise<number> =>
-			 new Promise<number>((resolve, reject) => {
-				 rotationsSelect.value = rotateArray
-				 rotationsSelectCurrentDirection.value = currentDirection
-				 onRotationClick.value = (ind: number) => {
-					 onRotationClick.value = null
-					 rotationsSelectCurrentDirection.value = null
-					 rotationsSelect.value = []
-					 resolve(ind)
-				 }
-			 })
-
-		const popupMessage = ref<null | {
-			title: string, text: string,
-			buttons: { text: string, handler: () => void }[]
-		}>(null)
-
-		const router = useRouter()
-		const defeat: AbstractRender["defeat"] = (text) => {
-			message.value = 'Конец игры'
-			popupMessage.value = {
-				title: 'Вы проиграли',
-				text: text || 'Тортик уничтожен',
-				buttons: [
-					{
-						text: 'На главную',
-						handler: () => router.push('/')
-					}
-				]
-			}
-		}
-		const win: AbstractRender["win"] = () => {
-			message.value = 'Конец игры'
-			popupMessage.value = {
-				title: 'Успех',
-				text: 'Вы победили',
-				buttons: [
-					{
-						text: 'На главную',
-						handler: () => router.push('/')
-					}
-				]
-			}
-		}
-
-		const error: AbstractRender["error"] = (text) => {
-			message.value = 'Конец игры'
-			popupMessage.value = {
-				title: 'Непредвиденная ошибка',
-				text,
-				buttons: [
-					{
-						text: 'На главную',
-						handler: () => router.push('/')
-					}
-				]
-			}
-		}
-
-		const message = ref('')
-		const hideMessage: AbstractRender["hideMessage"] = () => {
-			message.value = ''
-		}
-		const showMessage: AbstractRender["showMessage"] = (text: string) => {
-			message.value = text
-		}
-		const skins = ref<Map<User, TUnitSkin>>(new Map())
-
-		const units = ref<IRenderMap['units']>(new Map())
-		let keyGen = 0
-		const initUnit: AbstractRender["initUnit"] = (cell: Cell) => {
-			const tts = {
-				[EUnitType.Creep]: 'greenSlime' as TUnitSkin,
-				[EUnitType.Bomb]: 'cake' as TUnitSkin,
-				[EUnitType.Hero]: skins.value.get(cell.unit?.ownerUser) as TUnitSkin,
-			}
-			const instance = {
-				cell,
-				key: keyGen++,
-				skin: tts[cell.unit.type],
-				state: 'idle' as TUnitState
-			}
-			units.value.set(cell.unit, instance)
-
-			/*setInterval(() => {
-				units.value.get(cell.unit)!.state = instance.state === 'idle' ? 'walk' : 'idle'
-			}, 2000)*/
-		}
-		const killUnit: AbstractRender["killUnit"] = (cell: Cell) => {
-			//console.log('killUnit', cell)
-			units.value.delete(cell.unit)
-		}
-		const moveUnitMs = 0
-		const moveUnit: AbstractRender["moveUnit"] = (unit: Unit, cellTo: Cell) =>
-			 new Promise<void>((resolve) => {
-				 // const unit = cellFrom.unit || cellTo.unit
-				 const unitInstance = units.value.get(unit)!
-				 unitInstance.cell = cellTo
-				 unitInstance.state = 'walk'
-
-				 setTimeout(() => {
-					 unitInstance.state = 'idle'
-					 resolve()
-				 }, moveUnitMs)
-			 })
-
-		const cellsDirection = ref<IRenderMap['cellsDirection']>(new Map())
-
-		const updateHeroDirection: AbstractRender["updateHeroDirection"] = (cell: Cell, orientation: EDirection) => {
-			cellsDirection.value.set(cell.unit, orientation)
-		}
-
-		const selectsCards = ref<TCardId[]>([])
-		const onCardClick = ref<((card: TCardId) => void) | null>(null)
-
-		const selectCard = (cards: TCardId[]): Promise<number> => {
-			return new Promise((resolve, reject) => {
-				selectsCards.value = cards
-
-				onCardClick.value = (card: TCardId) => {
-					onCardClick.value = null
-					selectsCards.value = []
-					resolve(card)
-				}
-			})
-		}
-
-		const handCards = ref<TCardId[]>([])
-		const setHand = (cards: TCardId[]) => {
-			handCards.value = cards
-		}
-
-		const stacks = ref<TCardId[][]>([[], [], [], [], [], []])
-		const setStacks = (value: TCardId[][]) => {
-			stacks.value = cloneDeep(value)
-		}
-
-		const onStackClick = ref<((stack: TStackId) => void) | null>(null)
-		const stacksToClick = ref<Map<TStackId, number>>(new Map())
-
-		const selectStacks: AbstractAgent["selectStacks"] = (stacks: TStackId[], count: number) =>
-			 new Promise<number[]>((resolve, reject) => {
-				 stacks.forEach((v, i) => stacksToClick.value.set(v, i))
-				 const res: number[] = []
-				 onStackClick.value = (num: TStackId) => {
-					 const ind = stacksToClick.value.get(num)!
-					 res.push(ind)
-					 if (res.length === count) {
-						 stacksToClick.value.clear()
-						 onStackClick.value = null
-						 resolve(res)
-					 }
-				 }
-			 })
-
-		const onHandClick = ref<((ind: number) => void) | null>(null)
-		const handActiveCardInd = ref<number | null>(null)
-		const scrapType = ref('')
-		const programming = (stacks: TStackId[]): Promise<[number, number]> => {
-			return new Promise(async (resolve, reject) => {
-				onHandClick.value = (ind: number) => {
-					handActiveCardInd.value = ind === handActiveCardInd.value ? null : ind
-
-					if (handActiveCardInd.value !== null) {
-						scrapType.value = {
-							[ECardType.Electro]: 'move',
-							[ECardType.Computer]: 'move',
-							[ECardType.Fire]: 'fix',
-							[ECardType.Metal]: 'fix',
-						}[cardsJSON[handCards.value[handActiveCardInd.value]].type]
-
-						stacks.forEach((v, i) => stacksToClick.value.set(v, i))
-						onStackClick.value = (stackId: TStackId) => {
-							const stackInd = stacksToClick.value.get(stackId)!
-							onStackClick.value = null
-							onHandClick.value = null
-							const handCardInd = handActiveCardInd.value!
-							stacksToClick.value.clear()
-							handActiveCardInd.value = null
-							scrapType.value = ''
-							resolve([handCardInd, stackInd])
-						}
-					} else {
-						scrapType.value = ''
-						stacksToClick.value.clear()
-						onStackClick.value = null
-					}
-				}
-
-			})
-		}
-
-		const onCellClick = ref<IRenderMap['onCellClick']>(null)
-		const cellsToSelect = ref<IRenderMap['cellsToSelect']>(new Map())
-
-		const selectCells = (cells: Cell[], highlight: number & EHighlight, count: number): Promise<number[]> => {
-			//console.log({cells, highlight, count})
-			//const m = this.vueRender.showMessage('Select ' + count + ' cells for ' + EHighlight[highlight])
-			return new Promise((resolve, reject) => {
-				for (let i = 0; i < cells.length; i++) {
-					cellsToSelect.value.set(cells[i], {highlight, ind: i})
-				}
-				//	triggerRef(cellsToSelect.value)
-
-				const clickedInds: number[] = []
-				onCellClick.value = (cell) => {
-					const v = cellsToSelect.value.get(cell)
-					if (v) {
-						cellsToSelect.value.delete(cell)
-						const {ind, highlight} = v
-						clickedInds.push(ind)
-						if (clickedInds.length === count) {
-							onCellClick.value = null
-							hideMessage()
-							cellsToSelect.value.clear()
-							resolve(clickedInds)
-						}
-						//triggerRef(cellsToSelect.value)
-					}
-				}
-
-			})
-		}
-
-		const gameMap = ref<IRenderMap['gameMap']>(null)
-		const renderMap = (inputMap: GameMap) => {
-			gameMap.value = inputMap
-		}
-
-		const time = ref('0:00')
-		let timerInterval: NodeJS.Timer | null = null
-
-		const startTimer = (secCount: number): void => {
-			//console.log('startTimer')
-			let date = new Date(0, 0, 0, 0, 0, 0)
-
-			const updateTimer = () => {
-				date = new Date(date.getTime() + 1000)
-				time.value = date.toLocaleTimeString(undefined, {minute: 'numeric', second: '2-digit'})
-			}
-			updateTimer();
-			timerInterval = setInterval(updateTimer, 1000);
-		}
-
-		const stopTimer = () => {
-			if (timerInterval !== null) {
-				clearInterval(timerInterval);
-				timerInterval = null
-			}
-			time.value = '0:00'
-		}
-
-		const stopSelect = () => {
-			onRotationClick.value = null
-			onCardClick.value = null
-			onStackClick.value = null
-			onCellClick.value = null
-			onHandClick.value = null
-		}
-
-		const heart = ref(0)
-		const updateBombCounter = (value: number) => {
-			heart.value = value
-		}
-
-		const creep = ref(0)
-		const updateKillsCounter = (value: number) => {
-			creep.value = value
-		}
-
-		const render: AbstractRender = {
-			chooseRotate,
-			defeat, win, error,
-			hideMessage, initUnit, killUnit,
-			moveUnit, updateHeroDirection, selectCard, setHand,
-			showMessage, setStacks, selectStacks,
-			programming, renderMap, selectCells,
-			startTimer, stopTimer, stopSelect,
-			updateBombCounter, updateKillsCounter
-		}
-
-		onMounted(() => {
-			const seed = Math.random() + '4'
-			//const seed = 'test0.4917421312816932'
-			//const seed = 'test0.4917421312816932'
-			console.log({seed})
-			const gameMap = new GameMap([
-				[1, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0],
-				[1, 1, 0, 0, 0, 0, 0, 2, 0, 2, 2, 0],
-				[1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[1, 1, 1, 0, 0, 0, 0, 2, 0, 3, 0, 2],
-				[1, 1, 0, 0, 0, 0, 0, 2, 0, 0, 2, 0],
-				[1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0]
-			])
-			/*const gameMap = new GameMap([
-				[1, 1, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
-				[3, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
-				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
-				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
-				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
-				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
-				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
-				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
-				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
-				[2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2],
-			])*/
-			/*const gameMap = new GameMap([
-				[1, 2, 3, 2],
-				[1, 2, 3, 2],
-			])*/
-
-			const agents: AbstractAgent[] = []
-
-			// agents.push(new LocalAgent(null, null, unref(render)))
-			/*	agents.push(new BotAgent(seed))
-				agents.push(new BotAgent(seed))
-				agents.push(new BotAgent(seed))
-				agents.push(new BotAgent(seed))
-				agents.push(new BotAgent(seed))*/
-			/*for (let i = 0; i < gameMap.getAllCellsByType(1).length - 1; i++) {
-				agents.push(new BotAgent(seed))
-			}*/
-			for (let i = 0; i < 4; i++) {
-				agents.push(new BotAgent(seed))
-			}
-
-			// agents.push(new BotAgent(seed))
-			// agents.push(new BotAgent(seed))
-
-
-			const users = agents.map((a, i) => {
-				const user = new User(a)
-				skins.value.set(user, ['cali', 'ame', 'ina', 'gura', 'kiara'][i % 5] as TUnitSkin)
-				return user
-			})
-
-			const game = new Game(unref(render), users, gameMap, seed, users[0])
-
-			game.start()
-			render.startTimer(0)
-		})
+		useStartGame(render, skins)
 
 		return {
-			game: reactive({
-				onRotationClick, rotationsSelect, rotationsSelectCurrentDirection,
-				message,
-				selectsCards, onCardClick,
-				handCards,
-				stacks,
-				popupMessage,
-				onStackClick, stacksToClick,
-				onHandClick, handActiveCardInd, scrapType,
-				time,
-				heart,
-				creep
-			}),
-			map: reactive({
-				onCellClick, cellsToSelect,
-				gameMap,
-				units,
-				cellsDirection,
-				moveUnitMs
-			}),
+			game: reactive(game),
+			map: reactive(map),
 			visual: useVisualGame(),
 		}
+
 	}
 })
 

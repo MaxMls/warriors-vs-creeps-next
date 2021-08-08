@@ -30,15 +30,15 @@
 
 <script lang=ts>
 
-import {Vue, Options, setup} from "vue-class-component"
-import {LOBBY_PROVIDER} from "../context/network.context";
+import {Options, Vue} from "vue-class-component"
+import {APP_PROVIDER} from "../context/network.context";
 
 class Props {
 }
 
 @Options({
 	components: {},
-	inject: [LOBBY_PROVIDER],
+	inject: [APP_PROVIDER],
 })
 export default class Index extends Vue.with(Props) {
 

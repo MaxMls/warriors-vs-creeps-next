@@ -1,5 +1,4 @@
 import {IVector} from "./types";
-import seedrandom from "seedrandom";
 
 export const getRandomInt = (random, min, max) => {
 	return Math.floor(random() * (max - min)) + min;
@@ -65,9 +64,9 @@ export const radius = (value: number): IVector[] => {
 export const uuid = (random: () => { toString(): string }): string => {
 	return random().toString()
 }
+
 export const symbol = (desc = ''): string => {
-	const id = uuid(Math.random)
-	return id
+	return desc
 }
 
 

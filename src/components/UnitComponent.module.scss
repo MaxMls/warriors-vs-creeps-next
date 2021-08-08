@@ -303,7 +303,7 @@
 		animation-name: spriteXAnimationIdle, spriteYAnimationIdle;
 		animation-timing-function: steps(3, jump-none), steps(2, jump-none);
 		animation-duration: $fps, $fps * 2;
-		background-image: url("src/assets/icons/units/ina-sprite-idle-2x3.png");
+		background-image: url("/src/assets/icons/units/ina-sprite-idle-2x3.png");
 	}
 }
 

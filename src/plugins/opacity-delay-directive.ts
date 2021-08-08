@@ -1,5 +1,3 @@
-import split from 'lodash/split'
-
 interface ITyperDirectiveElement extends HTMLElement {
 	opacityDelayDirective: {
 		free: () => void

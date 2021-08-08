@@ -1,6 +1,6 @@
 <template>
 	<div :class="[sty.unitSkinCtn]">
-		<div :class="[sty.unitSkin, sty[`unitSkin_${skin}`], sty[`unitState_${state}`]]"/>
+		<div :ref="setEl" :class="[sty.unitSkin, sty[`unitSkin_${skin}`], sty[`unitState_${state}`]]"/>
 	</div>
 	<div
 		 v-if="(direction ?? null) !== null"
@@ -15,7 +15,7 @@
 
 <script lang=ts>
 import sty from "./UnitComponent.module.scss"
-import {defineComponent, PropType} from "vue";
+import {defineComponent, onUpdated, PropType, ref} from "vue";
 import {TUnitSkin, TUnitState} from "../engine/renders/vue-render";
 import SvgIcon from "./SvgIcon.vue";
 import {directionToDeg, EDirection} from "../engine/types";
@@ -29,8 +29,19 @@ export default defineComponent({
 		skin: {type: String as PropType<TUnitSkin>, required: true},
 		direction: {type: Number as PropType<EDirection>, required: false},
 	},
+	setup() {
+		const el = ref<HTMLElement | null>(null)
+		onUpdated(() => {
+			if (el.value) {
+				el.value.style.animation = 'none';
+				el.value.offsetHeight;
+				el.value.style.animation = '';
+			}
+		})
+		return {setEl: v => el.value = v}
+	},
 	methods: {
-		directionToDeg
+		directionToDeg,
 	}
 })
 </script>

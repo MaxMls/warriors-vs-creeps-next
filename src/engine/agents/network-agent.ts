@@ -17,7 +17,7 @@ export class NetworkAgent extends AbstractAgent {
 
 	constructor(
 		private readonly network: AbstractNetwork,
-		private readonly name: string,
+		private readonly id: string,
 	) {
 		super()
 		this.chooseRotate = this.handlerFactory('chooseRotate')
@@ -32,6 +32,6 @@ export class NetworkAgent extends AbstractAgent {
 	private handlerFactory(name) {
 		this.network.defineAction(name).catch(e => console.error(e))
 
-		return () => this.network.waitAction(`${this.name}/${name}`)
+		return () => this.network.waitAction(`${this.id}/${name}`)
 	}
 }

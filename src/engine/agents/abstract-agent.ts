@@ -1,5 +1,4 @@
-
-import {EHighlight, EDirection, TCardId, TStackId, ERotation} from "../types";
+import {EDirection, EHighlight, ERotation, TCardId, TStackId} from "../types";
 import {Cell} from "../cell";
 
 /* users input agent */

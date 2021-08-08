@@ -46,20 +46,10 @@
 import sty from "./GameMapComponent.module.scss"
 
 import {IRenderMap} from "../engine/renders/vue-render";
-import {
-	defineComponent,
-	onBeforeUnmount,
-	onMounted,
-	PropType,
-	reactive,
-	ref,
-	toRaw,
-	toRef,
-	unref
-} from "vue";
+import {defineComponent, onBeforeUnmount, onMounted, PropType, ref, toRef} from "vue";
 import {Cell} from "../engine/cell";
 import {Unit} from "../engine/unit";
-import {directionToDeg, EHighlight, ETileType, EUnitType, TCardId} from "../engine/types";
+import {directionToDeg, EHighlight, ETileType, EUnitType} from "../engine/types";
 import {sync} from "../common/sync";
 import SvgIcon from "./SvgIcon.vue";
 import UnitComponent from "./UnitComponent.vue";

@@ -1,6 +1,8 @@
 /*async function genRoom() {
 	return Math.random().toString()
 }*/
+import {genId} from "./engine/lobby/server-events-lobby";
+
 export type ArrayElement<ArrayType extends readonly unknown[]> =
 	ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
 const fixedEncodeURIComponent = (str) => {
@@ -21,29 +23,29 @@ export class GlobalEventEmitter {
 
 	private sources = new Map<string, EventSource>()
 	private events = new Map<string, Set<(...args: any[]) => void>>()
+	private id = genId()
 
-	async on(event: string | string[], listener: (...args: any[]) => void): Promise<void> {
+	async on(event: string | string[], listener: (...args: any[]) => void): Promise<string> {
 		if (Array.isArray(event)) event = genEvent(...event)
 
 		if (this.events.has(event)) {
 			this.events.get(event)?.add(listener)
 		} else {
 			await new Promise<void>((resolve, reject) => {
-				const source = new EventSource(this.url + event, {
+				const source = new EventSource(this.url + event + '?id=' + this.id, {
 					withCredentials: false
 				})
 				const eventListeners = new Set<(...args: any[]) => void>([listener])
 
 				source.onmessage = (e) => {
-					if (e.data === 'ok') {
+					const payload = JSON.parse(e.data)
+					if (payload.type === 'ok') {
 						console.log('ok', event, e.data)
 						this.sources.set(event as string, source)
 						this.events.set(event as string, eventListeners)
 						resolve()
 					} else {
-						//console.log('on', event, e.data)
-						//console.log('on', {eventListeners})
-						eventListeners.forEach(l => l(JSON.parse(e.data)))
+						eventListeners.forEach(l => l(payload))
 					}
 				}
 				source.onerror = (e) => {
@@ -51,6 +53,7 @@ export class GlobalEventEmitter {
 				}
 			})
 		}
+		return this.id
 	}
 
 	off(event: string | string[], listener: (...args: any[]) => void): void {
@@ -70,7 +73,7 @@ export class GlobalEventEmitter {
 
 	async emit(event: string | string[], data: any): Promise<void> {
 		if (Array.isArray(event)) event = genEvent(...event)
-		const res = await fetch(this.url + event, {
+		const res = await fetch(this.url + event + '?id=' + this.id, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

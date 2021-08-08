@@ -1,0 +1,185 @@
+$e: #eee;
+.buttonsGroup {
+	padding: 40px 50px 39px;
+}
+
+.ctn {
+	background: white;
+	border-color: $e;
+	border-radius: 15px;
+}
+
+.button {
+	cursor: pointer;
+	display: inline-block;
+	border: 1px solid #808080;
+	padding: 15px 40px;
+
+
+	background: white;
+	border-radius: 5px;
+}
+
+.buttonTop {
+	font-size: 16px;
+
+	& + .buttonTop {
+		margin-left: 10px;
+		//border-left: none;
+	}
+}
+
+.buttonsTop {
+	border-bottom: 1px solid $e;
+	display: flex;
+	justify-content: space-between;
+}
+
+.slotsGroup {
+	padding: 60px 0 50px;
+	border-bottom: 1px solid $e;
+	display: grid;
+	justify-content: space-around;
+	grid-template-columns:repeat(auto-fit, 150px);
+	grid-row-gap: 30px;
+}
+
+.slotCtn, .skinSelectItemCtn {
+	min-width: 100px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	max-width: 200px;
+	word-break: break-word;
+}
+
+.slotImage, .skinSelectItem {
+	position: relative;
+	width: 100px;
+	height: 100px;
+	border: 1px solid #808080;
+	border-radius: 10px;
+	//background: #fff;
+
+	& + .slotName {
+		margin-top: 15px;
+	}
+}
+
+.slotName {
+	font-size: 18px;
+	text-align: center;
+
+	& + .slotKick {
+		margin-top: 5px;
+	}
+}
+
+.slotNameMe {
+	font-weight: bold;
+}
+
+.slotKick {
+	$c: #808080;
+	$c: #7a7a7a;
+	text-align: center;
+	font-size: 16px;
+	color: $c;
+	display: block;
+	margin: 0 auto;
+
+	border-bottom: 1px solid transparent;
+
+	&:not([disabled]) {
+		&:hover {
+			border-bottom-color: $c;
+		}
+	}
+
+	&[disabled] {
+		color: #dedede;
+		cursor: default;
+		//opacity: 0;
+	}
+}
+
+.buttonsBot {
+	display: flex;
+	justify-content: center;
+}
+
+.buttonStart {
+	font-size: 20px;
+}
+
+
+.buttonStart_ready, .slotImage_ready {
+	border: 2px solid #95f180;
+	//outline-offset: -3px;
+	//border-color: #95f180;
+	margin: -1px;
+}
+
+.slotImage_ready {
+
+}
+
+.buttonStart_ready {
+	color: #2dc00a;
+}
+
+.popup {
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	background: rgb(255, 255, 255, .5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.popupClose {
+	width: 100%;
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+}
+
+.skinSelectCtn {
+	position: relative;
+	border-radius: 10px;
+	border: 1px solid #eee;
+	background: white;
+	padding: 25px 40px 40px;
+
+}
+
+
+.skinSelectTitle {
+	text-align: center;
+	font-size: 18px;
+	font-weight: 500;
+	color: #333;
+	margin-bottom: 15px;
+	margin-bottom: 20px;
+}
+
+.skinSelectItems {
+	display: grid;
+	grid-gap: 20px;
+	grid-auto-flow: column;
+}
+
+.skinSelectItemCtn {
+
+}
+
+.skinSelectItem {
+	position: relative;
+
+}

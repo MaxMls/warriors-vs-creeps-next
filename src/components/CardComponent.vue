@@ -36,7 +36,7 @@
 
 <script lang=ts>
 import {cardsJSON, ICardStep} from "../engine/cards";
-import {directionToDeg, ECardAction, ECardType, EDirection, TCardId} from "../engine/types";
+import {directionToDeg, ECardAction, ECardType, TCardId} from "../engine/types";
 import sty from './CardComponent.module.scss'
 import SvgIcon from "./SvgIcon.vue";
 import {computed, defineComponent, PropType} from "vue";

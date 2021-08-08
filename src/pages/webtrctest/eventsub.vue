@@ -3,6 +3,7 @@
 		<input v-model="roomId" placeholder='Room id'/><br/>-->
 	<button @click=join><b>[sub]</b></button>
 	<button @click=close><b>[close]</b></button>
+	<button @click=emit><b>[emit]</b></button>
 	<ul>
 		<li v-for="m in messages">
 			{{ m }}
@@ -11,7 +12,32 @@
 </template>
 
 <script lang=ts>
-import {Vue} from "vue-class-component";
+import {defineComponent, ref} from "vue";
+import {GlobalEventEmitter} from "../../common";
+
+export default defineComponent({
+	setup() {
+
+		console.log(JSON.stringify(ref(23).value))
+		const listener = (data) => {
+			console.log(data)
+		}
+		const ge = new GlobalEventEmitter('https://localhost/e/')
+
+		return {
+			join() {
+				ge.on(['buba'], listener)
+			},
+			close() {
+				ge.off(['buba'], listener)
+			},
+			emit() {
+				ge.emit(['buba'], [1, 2])
+			},
+		}
+	}
+})
+/*
 
 export default class RTCSubTest extends Vue {
 	name: string = ''
@@ -27,9 +53,10 @@ export default class RTCSubTest extends Vue {
 	}
 
 	join() {
-		if (this.source !== null) return
 
-		this.source = new EventSource(" http://127.0.0.1:8125/e/buba", {
+		/!*if (this.source !== null) return
+
+		this.source = new EventSource(" http://127.0.0.1:8125/e/buba?id=45", {
 			withCredentials: false
 		})
 		console.log('create')
@@ -37,34 +64,13 @@ export default class RTCSubTest extends Vue {
 		this.source.onerror = (e) => {
 			console.error('error', e)
 		}
-		/*		this.source.onopen = (e) => {
-					console.log('onopen', e)
-				}*/
 
 		this.source.onmessage = (e) => {
 			console.log('message', JSON.parse(e.data))
 			this.messages.unshift(e.data)
-		}
-
-		/*
-				this.source.addEventListener('message', (soure, ev) => {
-
-				}, {})
-
-				this.source.onopen = () => {
-
-				}*/
-		/*	const connection = new RTCPeerConnection(rtcConfig)
-			const offer = await createOffer(connection)
-			const answer = await sendOfferAndWaitAnswer(this.roomId, this.name, offer)
-
-			const [peerName] = await Promise.all([
-				waitName(connection),
-				acceptAnswer(connection, answer),
-			])
-
-			console.log({peerName})*/
+		}*!/
 	}
 }
+*/
 
 </script>

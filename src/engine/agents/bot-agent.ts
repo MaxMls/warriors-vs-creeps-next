@@ -1,7 +1,6 @@
 // бот, автоматически действующий как игрок
 import {AbstractAgent} from "./abstract-agent";
-import {getRandomInt, shakeArray} from "../extension-functions";
-import {Game} from "../game";
+import {shakeArray} from "../extension-functions";
 import {TCardId, TStackId} from "../types";
 import seedrandom from "seedrandom";
 

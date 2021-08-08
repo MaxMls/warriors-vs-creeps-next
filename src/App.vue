@@ -4,38 +4,14 @@
 
 <script lang="ts">
 
-import {Vue, Options, setup} from "vue-class-component"
-import {LOBBY_PROVIDER} from "./context/network.context";
-import {ref, onMounted, provide, onBeforeUnmount, unref, computed} from 'vue'
+import {APP_PROVIDER} from "./context/network.context";
+import {defineComponent, provide} from 'vue'
 
-//import firebase from 'firebase/app';
-//import 'firebase/database';
-
-import {AbstractLobby} from "./engine/lobby/abstract-lobby";
-import {ServerEventsLobby} from "./engine/lobby/server-events-lobby";
-
-class Props {
-}
-
-function useProvideLobby() {
-
-	const lobby = ref<AbstractLobby | null>(null)
-
-	// lobby.value = new ServerEventsLobby('https://my-events-server.herokuapp.com/e/')
-	lobby.value = new ServerEventsLobby('https://localhost/e/')
-
-	onBeforeUnmount(async () => {
-		await unref(lobby)?.destroy()
-	})
-
-	provide(LOBBY_PROVIDER.toString(), lobby)
-	return {}
-}
-
-@Options({})
-export default class App extends Vue.with(Props) {
-	counter = setup(() => useProvideLobby())
-}
+export default defineComponent({
+	setup() {
+		provide(APP_PROVIDER, {})
+	}
+})
 
 </script>
 

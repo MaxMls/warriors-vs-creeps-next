@@ -1,5 +1,5 @@
 import {GameMap} from "../game-map";
-import {EHighlight, EDirection, TCardId, TStackId, ERotation} from "../types";
+import {EDirection, EHighlight, ERotation, TCardId, TStackId} from "../types";
 import {Cell} from "../cell";
 import {Unit} from "../unit";
 
