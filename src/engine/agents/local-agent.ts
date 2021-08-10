@@ -1,6 +1,7 @@
 import {AbstractAgent} from "./abstract-agent";
 import {AbstractNetwork} from "../networks/abstract-network";
 import {AbstractRender} from "../renders/abstract-render";
+import {ServerEventsNetwork} from "../networks/server-events-network";
 
 /* get input from local user and send to others */
 export class LocalAgent extends AbstractAgent {
@@ -15,7 +16,7 @@ export class LocalAgent extends AbstractAgent {
 
 	constructor(
 		private readonly network: AbstractNetwork | null,
-		private readonly name: string | null,
+		private readonly id: string | null,
 		private readonly render: AbstractRender
 	) {
 		super();
@@ -30,7 +31,7 @@ export class LocalAgent extends AbstractAgent {
 
 	private handlerFactory(name) {
 		return (...args) => this.render[name](...args).then(async (res) => {
-			if (this.network) await this.network.sendAction(`${this.name}/${name}`, res)
+			if (this.network) await this.network.sendAction(name, res)
 			return res
 		})
 	}

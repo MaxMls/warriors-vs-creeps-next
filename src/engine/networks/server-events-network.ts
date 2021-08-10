@@ -1,55 +1,99 @@
 import {AbstractNetwork} from "./abstract-network";
-import {GlobalEventEmitter} from "../../common";
+import {GlobalEventEmitter, makeOperationQueue, QueuedOperation} from "../../common";
+import {eventsServerUrl, genId} from "../lobby/server-events-lobby";
 
+//const operationQueue = makeOperationQueue()
+
+interface IRequestData {
+	name: string
+	init?: true
+	payload?: any
+}
+
+interface IResponse {
+	type: 'data' | 'on' | 'off'
+	id: string
+	data: IRequestData
+}
 
 export class ServerEventsNetwork extends AbstractNetwork {
-	private readonly callbacks = new Map<string, (payload: any) => void>()
-	private readonly results = new Map<string, any>()
-	private readonly listeners: { actionUuid: string, listener: Parameters<GlobalEventEmitter["on"]>[1] }[] = []
+	private readonly resultsCallbacks: { [_id: string]: { [_name: string]: ((payload: any) => void)[] } } = {}
+	private readonly results: { [_id: string]: { [_name: string]: any[] } } = {}
+	private readonly gameEventName: string[]
+	private openId: string | null = null
+	private leaversIds = new Set<string>()
 
 	constructor(
 		private readonly roomId: string,
-		private readonly emitter: GlobalEventEmitter = new GlobalEventEmitter('https://localhost/e/')
+		private readonly emitter: GlobalEventEmitter
 	) {
 		super();
+		this.gameEventName = [`room`, this.roomId, 'game']
 	}
 
-	async defineAction(actionUuid: string): Promise<void> {
-		const listener = (function (this: ServerEventsNetwork, payload) {
-			const callback = this.callbacks.get(actionUuid)
-			if (callback) {
-				callback(payload)
-				this.callbacks.delete(actionUuid)
-			} else {
-				this.results.set(actionUuid, payload)
+
+	async sendAction(name: IRequestData['name'], payload: IRequestData['payload']): Promise<void> {
+		await this.emitter.emit(this.gameEventName, {name, payload} as IRequestData)
+	}
+
+	private receiveAction({type, id, data}: IResponse) {
+		if (id === this.openId) return
+		if (type === 'data') {
+			console.log('receiveAction', id, data.name, data.payload)
+			this.pushResult(id, data.name, data.payload)
+		} else if (type === 'off') {
+			if (this.resultsCallbacks[id]) {
+				Object.entries(this.resultsCallbacks[id])
+					.forEach(([name, array]) => array.forEach(c => c(null)))
 			}
-		}).bind(this)
+			this.leaversIds.add(id)
+		} else if (type === 'on') {
 
-		await this.emitter.on(`room/${this.roomId}/game/${actionUuid}`, listener)
-		this.listeners.push({actionUuid, listener})
-	}
-
-	destroy(): void {
-		while (this.listeners.length) {
-			const {actionUuid, listener} = this.listeners.pop() as any
-			this.emitter.off(actionUuid, listener)
 		}
 	}
 
-	async sendAction(actionUuid: string, payload: any): Promise<void> {
-		await this.emitter.emit(`room/${this.roomId}/game/${actionUuid}`, payload)
+	private listenerThis = this.receiveAction.bind(this)
+
+	async init(): Promise<void> {
+		this.openId = await this.emitter.on(this.gameEventName, this.listenerThis);
 	}
 
-	waitAction(actionUuid): Promise<any> {
+	destroy(): void {
+		this.emitter.off(this.gameEventName, this.listenerThis)
+	}
+
+	private pushResult(id, name, result) {
+		const resultCallback = this.resultsCallbacks?.[id]?.[name]?.shift() ?? null
+		if (resultCallback) {
+			resultCallback(result)
+		} else {
+			this.results[id] ??= {}
+			this.results[id][name] ??= []
+			this.results[id][name].push(result)
+		}
+	}
+
+	private async getResult(fromId, actionName) {
 		return new Promise((resolve, reject) => {
-			if (this.results.has(actionUuid)) {
-				const res = this.results.get(actionUuid)
-				this.results.delete(actionUuid)
-				resolve(res)
+			const result = this.results?.[fromId]?.[actionName]?.shift() ?? null
+			if (result) {
+				resolve(result)
 			} else {
-				this.callbacks.set(actionUuid, resolve)
+				this.resultsCallbacks[fromId] ??= {}
+				this.resultsCallbacks[fromId][actionName] ??= []
+				this.resultsCallbacks[fromId][actionName].push(resolve)
 			}
 		})
+	}
+
+
+	async waitAction(fromId, actionName): Promise<IRequestData['payload'] | null> {
+		console.log('waitAction', {fromId, actionName})
+		if (this.leaversIds.has(fromId)) {
+			return null
+		} else {
+			return await this.getResult(fromId, actionName)
+		}
 	}
 
 }

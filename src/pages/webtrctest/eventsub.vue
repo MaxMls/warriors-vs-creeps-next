@@ -14,6 +14,7 @@
 <script lang=ts>
 import {defineComponent, ref} from "vue";
 import {GlobalEventEmitter} from "../../common";
+import {eventsServerUrl} from "../../engine/lobby/server-events-lobby";
 
 export default defineComponent({
 	setup() {
@@ -22,7 +23,7 @@ export default defineComponent({
 		const listener = (data) => {
 			console.log(data)
 		}
-		const ge = new GlobalEventEmitter('https://localhost/e/')
+		const ge = new GlobalEventEmitter(eventsServerUrl)
 
 		return {
 			join() {

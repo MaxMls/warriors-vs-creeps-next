@@ -10,9 +10,9 @@ export abstract class AbstractNetwork {
 
 	abstract sendAction(actionUuid: string, payload: any): Promise<void>
 
-	abstract defineAction(actionUuid: string): Promise<void>
+	abstract init(): Promise<void>
 
-	abstract waitAction(actionUuid): Promise<any>
+	abstract waitAction(fromId, actionName): Promise<any>
 
 	abstract destroy(): void
 }

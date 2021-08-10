@@ -173,12 +173,12 @@ import {horizontalScrollDirective} from "../plugins/horizontal-scroll-directive"
 import {typerDirective} from "../plugins/typer-directive";
 import {opacityDelayDirective} from "../plugins/opacity-delay-directive";
 import {clickOutsideDirective} from "../plugins/click-outside-directive";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {User} from "../engine/user";
 import {Unit} from "../engine/unit";
 import {APP_PROVIDER} from "../context/network.context";
-import {Room} from "../engine/lobby/server-events-lobby";
-import {dynamicSort} from "../common";
+import {eventsServerUrl, Room} from "../engine/lobby/server-events-lobby";
+import {dynamicSort, GlobalEventEmitter} from "../common";
 import {NetworkAgent} from "../engine/agents/network-agent";
 import {ServerEventsNetwork} from "../engine/networks/server-events-network";
 import {AbstractNetwork} from "../engine/networks/abstract-network";
@@ -288,7 +288,7 @@ const useRenderGameMap = () => {
 		//console.log('killUnit', cell)
 		units.value.delete(cell.unit)
 	}
-	const moveUnitMs = 0
+	const moveUnitMs = 500
 	const moveUnit: AbstractRender["moveUnit"] = (unit: Unit, cellTo: Cell) =>
 		 new Promise<void>((resolve) => {
 			 // const unit = cellFrom.unit || cellTo.unit
@@ -553,14 +553,29 @@ const useRenderGame = () => {
 
 const useStartGame = (render: AbstractRender, skins) => {
 	const app = unref(inject(APP_PROVIDER))! as { room: Room }
-	const {room} = app
+	let {room} = app
 	const router = useRouter()
+	const route = useRoute()
 
+	let network: AbstractNetwork | null = null;
 
 	onMounted(async () => {
 		if (!room) {
-			await router.push('/')
-			return
+			if (route.query['testJoin'] !== undefined) {
+				room = new Room()
+				let roomName = localStorage.getItem('roomNameTest');
+				room.setCurrentPlayerData({skin: 'ame', name: 'ame'})
+				await room.joinRoom(roomName!)
+				await new Promise((resolve) => room.on('players', resolve))
+			} else if (route.query['testCreate'] !== undefined) {
+				room = new Room()
+				room.setCurrentPlayerData({skin: 'gura', name: 'gura'})
+				let roomName = await room.openRoom()
+				localStorage.setItem('roomNameTest', roomName);
+				await new Promise((resolve) => room.on('players', resolve))
+			} else {
+				await router.push('/')
+			}
 		}
 		const players = room.players.sort(dynamicSort('selfId'))
 
@@ -576,18 +591,22 @@ const useStartGame = (render: AbstractRender, skins) => {
 		])
 
 
-		const agents: AbstractAgent[] = []
-		let network: AbstractNetwork | null = null;
-
 		for (const player of players) {
 			if (player.selfId !== room.player.selfId && player.selfId === player.ownerId) {
-				network ??= new ServerEventsNetwork(await room.openRoom())
+				if (!network) {
+					network = new ServerEventsNetwork(
+						 await room.openRoom(),
+						 new GlobalEventEmitter(eventsServerUrl, room.player.selfId)
+					)
+					await network.init()
+				}
 			}
 		}
+
 		const users = players.map((player) => {
 			const agent =
 				 (player.selfId === room.player.selfId) ? new LocalAgent(network, room.player.selfId, unref(render)) :
-					  (player.selfId === player.ownerId) ? new NetworkAgent(network!, player.selfId) :
+					  (player.selfId === player.ownerId) ? new NetworkAgent(network!, player.selfId, seed) :
 							new BotAgent(seed)
 
 			const user = new User(agent)
@@ -601,6 +620,9 @@ const useStartGame = (render: AbstractRender, skins) => {
 		render.startTimer(0)
 	})
 
+	onBeforeUnmount(() => {
+		network?.destroy()
+	})
 }
 
 export default defineComponent({

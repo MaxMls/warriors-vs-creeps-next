@@ -156,13 +156,14 @@ export class Game {
 
 		// let countCards = isFirstRound ? 10 : 5; // TODO: добавить еще условие для core карт
 		let countCards = this.users.length * (this.roundCounter === 0 ? 2 : 1);
+		const selectionCardsCount = countCards + 1
 
-		if (this.cardsDeck.length < countCards) {
+		if (this.cardsDeck.length < selectionCardsCount) {
 			this.lose("Карты в колоде закончились");
 		} else {
-			const selectionCards = this.cardsDeck.splice(0, countCards);
+			const selectionCards = this.cardsDeck.splice(0, selectionCardsCount);
 
-			while (selectionCards.length > 0) {
+			for (let i = 0; i < countCards; i++) {
 				if (selectionCards.length === 0) {
 					this.lose("Карты в колоде закончились");
 					return
@@ -177,20 +178,18 @@ export class Game {
 					selectionCards.splice(selectCardInd, 1);
 				}
 			}
-
 			setTimeout(() => this.programmingAct(), 0);
 		}
 	}
 
 
 	private async programmingAct() {
+		this.render.showMessage('Установите выбранные карты в терминал или утилизируйте')
 
 		await Promise.all(this.users.map(user =>
 			user.programming().then(() => {
-				this.render.showMessage(user.current ?
-					'Другой пользователь ещё расставляет карты, пожалуйста подождите' :
-					'Установите выбранные карты в терминал или утилизируйте'
-				)
+				if (user.current)
+					this.render.showMessage('Другой пользователь ещё расставляет карты, пожалуйста подождите')
 			})
 		))
 

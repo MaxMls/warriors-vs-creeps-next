@@ -1,5 +1,7 @@
 import {AbstractAgent} from "./abstract-agent";
 import {AbstractNetwork} from "../networks/abstract-network";
+import {BotAgent} from "./bot-agent";
+import {ServerEventsNetwork} from "../networks/server-events-network";
 
 /* Агент получающий события через интернет.<br/>
  * Связан с local agents на других пк.<br/>
@@ -15,9 +17,12 @@ export class NetworkAgent extends AbstractAgent {
 	readonly setStacks: AbstractAgent["setStacks"]
 	readonly setHand: AbstractAgent["setHand"]
 
+	private reserveBotAgent: BotAgent | null = null
+
 	constructor(
 		private readonly network: AbstractNetwork,
 		private readonly id: string,
+		private readonly seed: string
 	) {
 		super()
 		this.chooseRotate = this.handlerFactory('chooseRotate')
@@ -29,9 +34,16 @@ export class NetworkAgent extends AbstractAgent {
 		this.setHand = () => {}
 	}
 
-	private handlerFactory(name) {
-		this.network.defineAction(name).catch(e => console.error(e))
+	reserveAgent(actionName, ...args) {
+		this.reserveBotAgent ??= new BotAgent(this.seed)
+		const result = this.reserveBotAgent[actionName](...args)
+		console.log('reserveAgent', result)
+		return result
+	}
 
-		return () => this.network.waitAction(`${this.id}/${name}`)
+	private handlerFactory(name) {
+		return (...args) => this.network.waitAction(this.id, name).then((result) =>
+			result ?? this.reserveAgent(name, ...args)
+		)
 	}
 }

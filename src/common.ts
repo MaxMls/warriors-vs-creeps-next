@@ -19,36 +19,43 @@ export const dynamicSort = (property) => (a, b) => (a[property] < b[property]) ?
 
 
 export class GlobalEventEmitter {
-	constructor(private readonly url) {}
+	constructor(
+		private readonly url,
+		private readonly id = genId()
+	) {}
 
 	private sources = new Map<string, EventSource>()
 	private events = new Map<string, Set<(...args: any[]) => void>>()
-	private id = genId()
 
 	async on(event: string | string[], listener: (...args: any[]) => void): Promise<string> {
 		if (Array.isArray(event)) event = genEvent(...event)
 
 		if (this.events.has(event)) {
 			this.events.get(event)?.add(listener)
+			console.log({event})
 		} else {
+			console.log({event})
 			await new Promise<void>((resolve, reject) => {
 				const source = new EventSource(this.url + event + '?id=' + this.id, {
 					withCredentials: false
 				})
 				const eventListeners = new Set<(...args: any[]) => void>([listener])
+				this.sources.set(event as string, source)
+				this.events.set(event as string, eventListeners)
 
 				source.onmessage = (e) => {
 					const payload = JSON.parse(e.data)
 					if (payload.type === 'ok') {
 						console.log('ok', event, e.data)
-						this.sources.set(event as string, source)
-						this.events.set(event as string, eventListeners)
 						resolve()
 					} else {
 						eventListeners.forEach(l => l(payload))
 					}
 				}
 				source.onerror = (e) => {
+					source.close()
+					this.sources.delete(event as string)
+					this.events.delete(event as string)
 					reject(e)
 				}
 			})
@@ -348,4 +355,27 @@ export const coordsToString = ({x, y}: { x: number, y: number }) => {
 export const coordsFromString = (str: string) => {
 	const [x, y] = str.split(',').map(v => +v)
 	return {x, y}
+}
+
+
+interface OperationQueue {
+	queue: Promise<void>;
+}
+
+export function makeOperationQueue(): OperationQueue {
+	return {queue: Promise.resolve()};
+}
+
+export function QueuedOperation(operationQueue: OperationQueue) {
+	return function (_target: any, _key: string, descriptor: TypedPropertyDescriptor<(...args: any[]) => any>) {
+		const method = descriptor.value!;
+		descriptor.value = function (...args: any[]) {
+			const operation = operationQueue.queue.then(() => {
+				return method.apply(this, args);
+			});
+			operationQueue.queue = operation.catch(() => {});
+			return operation;
+		};
+		return descriptor;
+	};
 }

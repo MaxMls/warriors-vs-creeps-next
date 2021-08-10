@@ -16,7 +16,7 @@ export interface IRoomPlayer {
 	}
 }
 
-const eventsServerUrl = 'https://localhost/e/'
+export const eventsServerUrl = 'https://localhost/e/'
 
 export class Room {
 	public players: IRoomPlayer[] = []
