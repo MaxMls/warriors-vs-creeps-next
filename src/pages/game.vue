@@ -138,7 +138,7 @@
 import style from "./game.module.scss";
 import cs from "./common.module.scss";
 
-import {defineComponent, inject, onBeforeUnmount, onMounted, reactive, ref, unref} from "vue";
+import {defineComponent, inject, onBeforeUnmount, onMounted, reactive, ref, unref, watch} from "vue";
 import CardComponent from "../components/CardComponent.vue";
 import GameMapComponent from "../components/GameMapComponent.vue";
 import {IRenderMap, TUnitSkin, TUnitState} from "../engine/renders/vue-render";
@@ -176,11 +176,11 @@ import {dynamicSort, GlobalEventEmitter} from "../common";
 import {NetworkAgent} from "../engine/agents/network-agent";
 import {ServerEventsNetwork} from "../engine/networks/server-events-network";
 import {AbstractNetwork} from "../engine/networks/abstract-network";
+import {useI18n} from "vue-i18n";
 
 const useVisualGame = (game) => {
 	const termPanelRef = ref<HTMLElement | null>(null);
 	const termSlotRefs: HTMLElement[] = []
-
 	const recalculateTermCardsBottomOffset = () => {
 		const termPanel = unref(termPanelRef) as HTMLElement
 		const ctnHeight = termPanel.getBoundingClientRect().height
@@ -190,6 +190,16 @@ const useVisualGame = (game) => {
 			if (card.style.top !== v) card.style.top = v
 		}
 	}
+	const {locale} = useI18n()
+
+	watch([game.stacks, locale], () => {
+		console.log('updated')
+		recalculateTermCardsBottomOffset()
+		setTimeout(() => {
+			recalculateTermCardsBottomOffset()
+		}, 0)
+	})
+
 	onMounted(() => {
 		recalculateTermCardsBottomOffset()
 		window.addEventListener("resize", recalculateTermCardsBottomOffset);
