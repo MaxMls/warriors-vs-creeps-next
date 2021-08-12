@@ -9,11 +9,7 @@ import {VitePWA} from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	base: '/warriors-vs-creeps-next/',
-	/*
-	alias: {
-		'@': path.resolve(__dirname, './src')
-	},*/
+	base: '',
 	plugins: [
 		VitePWA(),
 		vue({}),
@@ -26,7 +22,6 @@ export default defineConfig({
 			symbolId: 'icon-[dir]-[name]',
 		}),
 		vueJsx({
-
 			// options are passed on to @vue/babel-plugin-jsx
 		})
 	],
@@ -34,7 +29,6 @@ export default defineConfig({
 		sourcemap: false,
 		outDir: 'docs',
 		assetsInlineLimit: 0,
-
 	},
 	css: {
 		postcss: {
@@ -94,4 +88,9 @@ T2x94ecc9756y6rkEMjrUQAVPAZpiSiF25fTqMb9V9WzHTZMVDdPF/9tYUxJ+WbU
 `
 		}
 	}
+
+	/*
+	alias: {
+		'@': path.resolve(__dirname, './src')
+	},*/
 })

@@ -2,7 +2,7 @@ const favicons = require("favicons")
 const fs = require('fs');
 const source = "./src/assets/logo.svg"// Source image(s). `string`, `buffer` or array of `string`
 const configuration = {
-		path: "/", // Path for overriding default icons path. `string`
+		path: "", // Path for overriding default icons path. `string`
 		appName: 'WVC', // Your application's name. `string`
 		appShortName: 'WVC', // Your application's short_name. `string`. Optional. If not set, appName will be used
 		appDescription: 'Game', // Your application's description. `string`
@@ -16,7 +16,7 @@ const configuration = {
 		display: "standalone", // Preferred display mode: "fullscreen", "standalone", "minimal-ui" or "browser". `string`
 		orientation: "any", // Default orientation: "any", "natural", "portrait" or "landscape". `string`
 		scope: "/", // set of URLs that the browser considers within your app
-		start_url: "/warriors-vs-creeps-next/", // Start URL when launching the application from a device. `string`
+		start_url: "", // Start URL when launching the application from a device. `string`
 		version: "1.0", // Your application's version string. `string`
 		logging: false, // Print logs to console? `boolean`
 		pixel_art: false, // Keeps pixels "sharp" when scaling up, for pixel art.  Only supported in offline mode.

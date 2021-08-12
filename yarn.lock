@@ -1862,7 +1862,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-node-resolve@npm:^11.2.1":
+"@rollup/plugin-node-resolve@npm:^11.2.0, @rollup/plugin-node-resolve@npm:^11.2.1":
   version: 11.2.1
   resolution: "@rollup/plugin-node-resolve@npm:11.2.1"
   dependencies:
@@ -1903,7 +1903,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/pluginutils@npm:^4.1.1":
+"@rollup/pluginutils@npm:^4.1.0, @rollup/pluginutils@npm:^4.1.1":
   version: 4.1.1
   resolution: "@rollup/pluginutils@npm:4.1.1"
   dependencies:
@@ -3726,6 +3726,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"esbuild@npm:^0.9.6":
+  version: 0.9.7
+  resolution: "esbuild@npm:0.9.7"
+  bin:
+    esbuild: bin/esbuild
+  checksum: 78a45e561156d8ecedfdbccddb83486b14f892a2624c100ff4a5150353a416b85a881d298a11da3447d3a2655571237dc9049a011ca10f4fedded2ffaab397c9
+  languageName: node
+  linkType: hard
+
 "escalade@npm:^3.1.1":
   version: 3.1.1
   resolution: "escalade@npm:3.1.1"
@@ -5024,6 +5033,13 @@ fsevents@~2.3.2:
     tinycolor2: ^1.1.2
     url-regex: ^3.0.0
   checksum: da4b596379c7c9da8988ef4b91c3b18cc806f6a0ca6eacc3e21920294d01a0c77a6b41549ae4304102b96a9f928d625debbf3e62a4fe0d3ab7962a110b550646
+  languageName: node
+  linkType: hard
+
+"joycon@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "joycon@npm:3.0.1"
+  checksum: db64c93cf05d6f99ea832708ac9ec10e8bbb92d767e3cc38f8c5111b513dbce4b1419b0fe42620e664998639b455dd943e8dd493d8753c5034837501f8e823c4
   languageName: node
   linkType: hard
 
@@ -6758,6 +6774,20 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"rollup-plugin-esbuild@npm:^3.0.2":
+  version: 3.0.4
+  resolution: "rollup-plugin-esbuild@npm:3.0.4"
+  dependencies:
+    "@rollup/pluginutils": ^4.1.0
+    joycon: ^3.0.1
+    jsonc-parser: ^3.0.0
+  peerDependencies:
+    esbuild: ">=0.9.0"
+    rollup: ^1.20.0 || ^2.0.0
+  checksum: f08745900b38e226733b025bdb2621394277f63f1957ab8897806a16024efd7c22aee8a1624215661d98cf9e007812e7351b9e8b6c3c4ddc4575195bb3fb3539
+  languageName: node
+  linkType: hard
+
 "rollup-plugin-terser@npm:^7.0.0":
   version: 7.0.2
   resolution: "rollup-plugin-terser@npm:7.0.2"
@@ -6772,7 +6802,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.38.5, rollup@npm:^2.43.1, rollup@npm:^2.55.1":
+"rollup@npm:^2.38.5, rollup@npm:^2.42.1, rollup@npm:^2.43.1, rollup@npm:^2.55.1":
   version: 2.56.2
   resolution: "rollup@npm:2.56.2"
   dependencies:
@@ -7964,6 +7994,20 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
+"vite-plugin-singlefile@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "vite-plugin-singlefile@npm:0.5.1"
+  dependencies:
+    "@rollup/plugin-node-resolve": ^11.2.0
+    esbuild: ^0.9.6
+    rollup: ^2.42.1
+    rollup-plugin-esbuild: ^3.0.2
+  peerDependencies:
+    vite: ^2.1.2
+  checksum: 8690c9bb3a32ad75318cb01917676d57a2f833fcdf5c1593600f8e0618ecdfde7d279fee2756702f0c672b26ea8844a4aa70de700867a55391919b4d4dca86ef
+  languageName: node
+  linkType: hard
+
 "vite-plugin-svg-icons@npm:^1.0.1":
   version: 1.0.4
   resolution: "vite-plugin-svg-icons@npm:1.0.4"
@@ -8263,6 +8307,7 @@ typescript@^4.3.5:
     vite: ^2.4.4
     vite-plugin-pages: ^0.15.1
     vite-plugin-pwa: ^0.10.0
+    vite-plugin-singlefile: ^0.5.1
     vite-plugin-svg-icons: ^1.0.1
     vue: ^3.1.5
     vue-class-component: ^8.0.0-rc.1
