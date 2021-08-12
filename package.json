@@ -4,26 +4,21 @@
 	"scripts": {
 		"dev": "vite --host 0.0.0.0",
 		"build": "vue-tsc --noEmit && vite build",
-		"serve": "vite preview",
-		"server start": "ts-node ./server/main.ts",
-		"server dev": "tsnd ./server/main.ts"
-	},
-	"dependencies": {
-		"@vue/compiler-sfc": "^3.2.2",
-		"animated-scroll-to": "^2.2.0",
-		"events": "^3.3.0",
-		"lodash": "^4.17.21",
-		"nanoid": "^3.1.23",
-		"ts-node": "^10.1.0",
-		"vue-i18n": "^9.1.7"
+		"serve": "vite preview"
 	},
 	"devDependencies": {
 		"@types/lodash": "^4.14.172",
 		"@types/seedrandom": "^3.0.1",
 		"@vitejs/plugin-vue": "^1.3.0",
 		"@vitejs/plugin-vue-jsx": "^1.1.7",
+		"@vue/compiler-sfc": "^3.2.2",
+		"animated-scroll-to": "^2.2.0",
+		"events": "^3.3.0",
+		"lodash": "^4.17.21",
+		"nanoid": "^3.1.23",
 		"sass": "^1.36.0",
 		"seedrandom": "^3.0.5",
+		"ts-node": "^10.1.0",
 		"ts-node-dev": "^1.1.8",
 		"typescript": "^4.3.5",
 		"vite": "^2.4.4",
@@ -31,6 +26,7 @@
 		"vite-plugin-svg-icons": "^1.0.1",
 		"vue": "^3.1.5",
 		"vue-class-component": "^8.0.0-rc.1",
+		"vue-i18n": "^9.1.7",
 		"vue-router": "^4.0.10",
 		"vue-tsc": "^0.2.2"
 	}

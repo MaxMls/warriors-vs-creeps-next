@@ -1,6 +1,5 @@
 import {AbstractNetwork} from "./abstract-network";
-import {GlobalEventEmitter, makeOperationQueue, QueuedOperation} from "../../common";
-import {eventsServerUrl, genId} from "../lobby/server-events-lobby";
+import {GlobalEventEmitter} from "../../common";
 
 //const operationQueue = makeOperationQueue()
 

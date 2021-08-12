@@ -139,7 +139,6 @@
 import {defineComponent, onMounted, ref} from "vue";
 import GameMapComponent from "../components/GameMapComponent.vue";
 import {GameMap} from "../engine/game-map";
-import {IRenderMap} from "../engine/renders/vue-render";
 import {Unit} from "../engine/unit";
 import {EDirection, EHighlight, EUnitType} from "../engine/types";
 import SvgIcon from "../components/SvgIcon.vue";

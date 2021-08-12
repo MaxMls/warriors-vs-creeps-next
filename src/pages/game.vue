@@ -176,7 +176,6 @@ import {dynamicSort, GlobalEventEmitter} from "../common";
 import {NetworkAgent} from "../engine/agents/network-agent";
 import {ServerEventsNetwork} from "../engine/networks/server-events-network";
 import {AbstractNetwork} from "../engine/networks/abstract-network";
-import {useI18n} from "vue-i18n";
 
 const useVisualGame = (game) => {
 	const termPanelRef = ref<HTMLElement | null>(null);

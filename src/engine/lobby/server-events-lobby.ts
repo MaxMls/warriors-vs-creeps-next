@@ -16,8 +16,8 @@ export interface IRoomPlayer {
 	}
 }
 
-// export const eventsServerUrl = 'https://localhost/e/'
-export const eventsServerUrl = 'https://my-events-server.herokuapp.com/'
+//export const eventsServerUrl = 'https://localhost/e/'
+export const eventsServerUrl = 'https://my-events-server.herokuapp.com/e/'
 
 export class Room {
 	public players: IRoomPlayer[] = []

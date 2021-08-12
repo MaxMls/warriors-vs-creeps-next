@@ -8,7 +8,6 @@
 import {APP_PROVIDER} from "./context/network.context";
 import {defineComponent, provide} from 'vue'
 import LanguageSwitcher from "./components/LanguageSwitcher.vue";
-import {useI18n} from "vue-i18n";
 
 export default defineComponent({
 	components: {LanguageSwitcher},

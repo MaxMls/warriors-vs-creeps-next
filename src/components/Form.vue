@@ -25,9 +25,7 @@
 
 <script lang=ts>
 import cs from "../pages/common.module.scss"
-import {Options, prop, Vue} from "vue-class-component";
 import {defineComponent, PropType} from "vue";
-import {TUnitState} from "../engine/renders/vue-render";
 
 
 export default defineComponent({

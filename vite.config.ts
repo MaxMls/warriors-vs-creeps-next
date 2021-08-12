@@ -2,6 +2,7 @@ import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import pages from "vite-plugin-pages";
 import viteSvgIcons from 'vite-plugin-svg-icons';
+
 import * as path from "path";
 import vueJsx from '@vitejs/plugin-vue-jsx'
 
@@ -26,11 +27,13 @@ export default defineConfig({/*
 		})
 	],
 	build: {
-		sourcemap: true
+		sourcemap: false,
+		outDir: 'docs',
+		assetsInlineLimit: 0,
+
 	},
 	css: {
 		postcss: {
-
 			map: true
 		}
 	},

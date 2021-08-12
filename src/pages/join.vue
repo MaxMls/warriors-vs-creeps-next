@@ -14,7 +14,6 @@ import {Room} from "../engine/lobby/server-events-lobby";
 import {TUnitSkin} from "../engine/renders/vue-render";
 import {useRouter} from "vue-router";
 import {RequestError} from "../engine/lobby/request-error";
-import {useI18n} from "vue-i18n";
 
 
 export default defineComponent({

@@ -1,7 +1,6 @@
 import {AbstractAgent} from "./abstract-agent";
 import {AbstractNetwork} from "../networks/abstract-network";
 import {AbstractRender} from "../renders/abstract-render";
-import {ServerEventsNetwork} from "../networks/server-events-network";
 
 /* get input from local user and send to others */
 export class LocalAgent extends AbstractAgent {

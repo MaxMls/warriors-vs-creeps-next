@@ -1,7 +1,6 @@
 import {AbstractAgent} from "./abstract-agent";
 import {AbstractNetwork} from "../networks/abstract-network";
 import {BotAgent} from "./bot-agent";
-import {ServerEventsNetwork} from "../networks/server-events-network";
 
 /* Агент получающий события через интернет.<br/>
  * Связан с local agents на других пк.<br/>

@@ -13,7 +13,6 @@ import Form from "../components/Form.vue";
 import {useRouter} from "vue-router";
 import {TUnitSkin} from "../engine/renders/vue-render";
 import {RequestError} from "../engine/lobby/request-error";
-import {useI18n} from "vue-i18n";
 
 export default defineComponent({
 	components: {Form},
