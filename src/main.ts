@@ -1,5 +1,5 @@
 import {createApp} from 'vue'
-import {createRouter, createWebHistory} from 'vue-router'
+import {createRouter, createWebHashHistory} from 'vue-router'
 import routes from 'virtual:generated-pages'
 import App from './App.vue'
 import 'virtual:svg-icons-register';
@@ -11,7 +11,7 @@ import en from './locales/en.json'
 import de from './locales/de.json'
 
 const router = createRouter({
-	history: createWebHistory(import.meta.env.BASE_URL),
+	history: createWebHashHistory(import.meta.env.BASE_URL),
 	routes,
 })
 

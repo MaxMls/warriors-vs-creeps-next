@@ -15,7 +15,7 @@
 			</div>
 			<div :class="style.headerLinks">
 				<router-link target='_blank' to="/rules" :class="style.headerLink">{{ $t('pages.game.7310') }}</router-link>
-				<router-link target='_blank' to="/" :class="style.headerLink">{{ $t('pages.game.8708') }}</router-link>
+				<router-link to="/" :class="style.headerLink">{{ $t('game.3') }}</router-link>
 			</div>
 
 		</div>
@@ -206,13 +206,13 @@ const useVisualGame = (game) => {
 		setItemTermPanelRef(v: any) {
 			termPanelRef.value = v
 		},
-		rotateDirectionStyle(dir, rot){
+		rotateDirectionStyle(dir, rot) {
 			return `transform: rotate(${directionToDeg(rotateDirection(dir, rot))}deg)`
 		},
-		stackIsClickable(stackInd){
+		stackIsClickable(stackInd) {
 			return game.stacksToClick.value?.has(stackInd)
 		},
-		onStackClick(i){
+		onStackClick(i) {
 			game.onStackClick.value?.(i)
 		}
 
@@ -648,7 +648,6 @@ export default defineComponent({
 			map: reactive(map) as IRenderMap,
 			visual: useVisualGame(game),
 		}
-
 
 
 	}

@@ -1,4 +1,4 @@
-import{u as t,A as e}from"./vendor.a60aa299.js";
+import{u as t,A as e}from"./vendor.570f964d.js";
 /**
   * vue-class-component v8.0.0-rc.1
   * (c) 2015-present Evan You

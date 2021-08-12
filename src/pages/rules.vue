@@ -1,49 +1,49 @@
 <template>
 	<div :class="$style.c">
-		<a href="/">{{ $t('form.391') }}</a>
+		<router-link to="/">{{ $t('game.3') }}</router-link>
 		<p/>
 		<h1>{{ $t('pages.rules.7117') }}</h1>
 		<p>
 			<a target=_blank href="https://github.com/blazzer-band/Warriors-vs-Creeps/wiki"
 			>{{ $t('pages.rules.6794') }}</a><br>{{ $t('pages.rules.8365') }}</p>
-		<a id="index"><h2>{{ $t('pages.rules.8853') }}</h2></a>
+		<a :id="hid('index')"><h2>{{ $t('pages.rules.8853') }}</h2></a>
 		<div style="margin-left: 20px; margin-top: 20px;">
 			<ul>
 				<li>
-					<a href="#map">{{ $t('pages.rules.3365') }}</a>
+					<a :href="h('map')">{{ $t('pages.rules.3365') }}</a>
 				</li>
 				<li>
-					<a href="#monst">{{ $t('pages.rules.84') }}</a>
+					<a :href="h('monst')">{{ $t('pages.rules.84') }}</a>
 				</li>
 				<li>
-					<a href="#term">{{ $t('pages.rules.4868') }}</a>
+					<a :href="h('term')">{{ $t('pages.rules.4868') }}</a>
 				</li>
 				<li>
-					<a href="#stack">{{ $t('pages.rules.6701') }}</a>
+					<a :href="h('stack')">{{ $t('pages.rules.6701') }}</a>
 				</li>
 				<li>
-					<a href="#damage">{{ $t('pages.rules.288') }}</a>
+					<a :href="h('damage')">{{ $t('pages.rules.288') }}</a>
 				</li>
 				<li>
-					<a href="#uti">{{ $t('pages.rules.6154') }}</a>
+					<a :href="h('uti')">{{ $t('pages.rules.6154') }}</a>
 				</li>
 				<li>
-					<a href="#bots">{{ $t('pages.rules.8930') }}</a>
+					<a :href="h('bots')">{{ $t('pages.rules.8930') }}</a>
 				</li>
 				<li>
-					<a href="#disconnect">{{ $t('pages.rules.10000') }}</a>
+					<a :href="h('disconnect')">{{ $t('pages.rules.10000') }}</a>
 				</li>
 			</ul>
 		</div>
 
-		<a href="#index" id="map"><h2>{{ $t('pages.rules.8106') }}</h2></a>
+		<a :href="h('index')" :id="hid('map')"><h2>{{ $t('pages.rules.8106') }}</h2></a>
 
 		<div style=" width: 500px">
 			<GameMapComponent v-if=map3 :renderMap="map3"/>
 		</div>
 		<p>{{ $t('pages.rules.7338') }}<br/>{{ $t('pages.rules.2651') }}</p>
 
-		<a href="#index" id="monst"><h2>{{ $t('pages.rules.367') }}</h2></a>
+		<a :href="h('index')" :id="hid('monst')"><h2>{{ $t('pages.rules.367') }}</h2></a>
 		<div style=" width: 500px">
 			<GameMapComponent v-if=map1 :renderMap="map1"/>
 		</div>
@@ -55,7 +55,7 @@
 		<p>{{ $t('pages.rules.5146') }}</p>
 		<p>{{ $t('pages.rules.4867') }}</p>
 
-		<a href="#index" id="term"><h2>{{ $t('pages.rules.3706') }}</h2></a>
+		<a :href="h('index')" :id="hid('term')"><h2>{{ $t('pages.rules.3706') }}</h2></a>
 		<p>{{ $t('pages.rules.7118') }}</p>
 		<p>{{ $t('pages.rules.4345') }}<b>{{ $t('pages.rules.9728') }}</b>
 		</p>
@@ -63,7 +63,7 @@
 		<p>
 			<router-link to="/cards">{{ $t('pages.rules.8807') }}</router-link>
 		</p>
-		<a href="#index" id='stack'><h2>{{ $t('pages.rules.1963') }}</h2></a>
+		<a :href="h('index')" :id="hid('stack')"><h2>{{ $t('pages.rules.1963') }}</h2></a>
 
 		<div style="display: grid; grid-auto-columns: 220px; grid-gap: 20px; grid-auto-flow: column">
 			<div>
@@ -82,7 +82,7 @@
 		<p>{{ $t('pages.rules.5478') }}</p>
 		<p>{{ $t('pages.rules.6703') }}</p>
 		<p>{{ $t('pages.rules.7846') }}</p>
-		<a id="damage" href="#index">
+		<a :href="h('index')" :id="hid('damage')">
 			<h2 style="display: flex; align-items: center; gap:10px">{{ $t('pages.rules.4072') }}
 				<SvgIcon :class="$style.icon" name="types-warning"/>
 			</h2>
@@ -94,7 +94,7 @@
 		</div>
 		<p></p>
 		<p>{{ $t('pages.rules.5449') }}</p>
-		<a id="uti" href="#index">
+		<a :href="h('index')" :id="hid('uti')">
 			<h2 style="display: flex; align-items: center; gap:10px">{{ $t('pages.rules.5098') }}
 				<SvgIcon :class="$style.icon" name="cran"/>
 			</h2>
@@ -125,11 +125,11 @@
 				</p>
 			</li>
 		</ul>
-		<a id="bots" href="#index"><h2>{{ $t('pages.rules.8430') }}</h2></a>
+		<a :href="h('index')" :id="hid('bots')"><h2>{{ $t('pages.rules.8430') }}</h2></a>
 		<p>{{ $t('pages.rules.3350') }}</p>
 		<p>{{ $t('pages.rules.5524') }}</p>
 		<p>{{ $t('pages.rules.7192') }}</p>
-		<a id="disconnect" href="#index"><h2>{{ $t('pages.rules.10000') }}</h2></a>
+		<a :href="h('index')" :id="hid('disconnect')"><h2>{{ $t('pages.rules.10000') }}</h2></a>
 		<p>{{ $t('pages.rules.10001') }}</p>
 		<p>{{ $t('pages.rules.10002') }}</p>
 	</div>
@@ -147,6 +147,17 @@ import CardComponent from "../components/CardComponent.vue";
 export default defineComponent({
 	components: {CardComponent, SvgIcon, GameMapComponent},
 	name: "game",
+	mounted() {
+		// setTimeout(() => this.scrollFix(this.$route.hash), 1);
+	},
+	methods: {
+		h(tag) {
+			return '#/rules#' + tag
+		},
+		hid(tag) {
+			return '/rules#' + tag
+		},
+	},
 	setup() {
 		let keyGen = 0
 		const map1 = ref<any | null>(null)

@@ -1,4 +1,9 @@
 <template>
+
+	<router-link to="/rules">{{ $t('form.391') }}</router-link>
+	<p/>
+	<p/>
+	<p/>
 	<div :class=$style.c>
 
 		<div v-for="i in cards">

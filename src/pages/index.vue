@@ -11,7 +11,7 @@
 				   href="https://github.com/blazzer-band/Warriors-vs-Creeps">{{ $t('pages.index.warriorsVsCreeps1') }}</a>
 			</div>
 			<div :class="[cs.link, $style.link]">
-				<router-link target='_blank' to="/rules">{{ $t('pages.index.5920') }}</router-link>
+				<router-link to="/rules">{{ $t('pages.index.5920') }}</router-link>
 			</div>
 		</div>
 		<div :class="[cs.linksGroup, $style.linksGroup]">
