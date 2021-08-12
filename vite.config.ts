@@ -7,7 +7,9 @@ import * as path from "path";
 import vueJsx from '@vitejs/plugin-vue-jsx'
 
 // https://vitejs.dev/config/
-export default defineConfig({/*
+export default defineConfig({
+	base: '/warriors-vs-creeps-next/',
+	/*
 	alias: {
 		'@': path.resolve(__dirname, './src')
 	},*/
