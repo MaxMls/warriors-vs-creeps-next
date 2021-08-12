@@ -3,14 +3,21 @@
 		<div :class="[style.buttonsGroup, style.buttonsTop, ]">
 
 			<div>
-				<button type=button @click="addBot" :class="[style.buttonTop, style.button]">{{ $t('pages.room.5952') }}</button>
+				<button type=button @click="addBot" :class="[style.buttonTop, style.button]">{{
+						$t('pages.room.5952')
+					}}
+				</button>
 				<button type=button
 				        :class="[style.buttonTop, style.button]"
 				        @click="getRoomCode"
-				>{{ $t('pages.room.2605') }}</button>
+				>{{ $t('pages.room.2605') }}
+				</button>
 			</div>
 			<div>
-				<button type=button @click=exit :class="[style.buttonTop, style.button]">{{ $t('pages.room.4409') }}</button>
+				<button type=button @click=exit :class="[style.buttonTop, style.button]">{{
+						$t('pages.room.4409')
+					}}
+				</button>
 			</div>
 		</div>
 		<div :class="[style.slotsGroup]">
@@ -35,7 +42,8 @@
 					 type=button
 					 @click="kickBot(p.selfId)" :class="[style.slotKick]"
 					 :disabled="p.ownerId !== player.selfId || p.selfId === player.selfId"
-				>{{ $t('pages.room.1172') }}</button>
+				>{{ $t('pages.room.1172') }}
+				</button>
 			</div>
 
 			<div v-for="() in fillSlots" :class="[style.slotCtn]">
@@ -46,8 +54,11 @@
 		</div>
 		<div :class="[style.buttonsGroup, style.buttonsBot]">
 			<button @click="ready(false)" v-if="player.data.ready" type=button
-			        :class="[style.buttonStart, style.button,style.buttonStart_ready]">{{ $t('pages.room.9245') }}</button>
-			<button @click="ready(true)" v-else type=button :class="[style.buttonStart, style.button]">{{ $t('pages.room.6109') }}</button>
+			        :class="[style.buttonStart, style.button,style.buttonStart_ready]">{{ $t('pages.room.9245') }}
+			</button>
+			<button @click="ready(true)" v-else type=button :class="[style.buttonStart, style.button]">
+				{{ $t('pages.room.6109') }}
+			</button>
 		</div>
 	</div>
 	<div :class="style.popup" v-if=skinChanger.isOpen>
@@ -144,8 +155,11 @@ export default defineComponent({
 
 		const getRoomCode = async () => {
 			const key = await room.openRoom()
-			await navigator.clipboard.writeText(key)
-			console.log('copy!')
+			try {
+				await navigator.clipboard.writeText(key)
+			} catch (e) {
+				prompt("Copy code:", key);
+			}
 		}
 
 		const ready = (ready) => {

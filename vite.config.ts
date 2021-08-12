@@ -27,7 +27,7 @@ export default defineConfig({
 	],
 	build: {
 		sourcemap: false,
-		outDir: 'docs',
+		//outDir: 'docs',
 		assetsInlineLimit: 0,
 	},
 	css: {
