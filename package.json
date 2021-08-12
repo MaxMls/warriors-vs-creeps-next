@@ -4,6 +4,7 @@
 	"scripts": {
 		"dev": "vite --host 0.0.0.0",
 		"build": "vue-tsc --noEmit && vite build",
+		"buildGit": "vue-tsc --noEmit && vite build --base=/warriors-vs-creeps-next/",
 		"serve": "vite preview"
 	},
 	"devDependencies": {
