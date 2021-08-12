@@ -5,6 +5,7 @@ import viteSvgIcons from 'vite-plugin-svg-icons';
 
 import * as path from "path";
 import vueJsx from '@vitejs/plugin-vue-jsx'
+import {VitePWA} from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -14,6 +15,7 @@ export default defineConfig({
 		'@': path.resolve(__dirname, './src')
 	},*/
 	plugins: [
+		VitePWA(),
 		vue({}),
 		pages({
 			nuxtStyle: true,
