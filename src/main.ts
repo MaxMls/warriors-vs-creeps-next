@@ -11,7 +11,7 @@ import en from './locales/en.json'
 import de from './locales/de.json'
 
 const router = createRouter({
-	history: createWebHistory(),
+	history: createWebHistory(import.meta.env.BASE_URL),
 	routes,
 })
 

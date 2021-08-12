@@ -17,7 +17,7 @@ export default defineConfig({
 		vue({}),
 		pages({
 			nuxtStyle: true,
-			extensions: ['vue', 'ts', 'js', 'tsx', 'jsx']
+			extensions: ['vue', 'ts', 'js', 'tsx', 'jsx'],
 		}),
 		viteSvgIcons({
 			iconDirs: [path.resolve(__dirname, './src/assets/icons')],

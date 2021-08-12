@@ -10,7 +10,7 @@
 			 @keydown.up.exact.prevent="startArrowKeys"
 			 @keydown.down.exact.prevent="startArrowKeys"
 		>
-			<img :src="`/flags/flag_${$i18n.locale}.svg`" :alt="`flag ` + $i18n.locale " :class="$style.flagShadow"/>
+			<img :src="flagImg($i18n.locale)" :alt="`flag ` + $i18n.locale " :class="$style.flagShadow"/>
 		</button>
 		<transition :name="$style['dropdown-fade']">
 			<ul
@@ -29,7 +29,7 @@
 						 @keydown.down.exact.prevent="focusNext(true)"
 						 @keydown.esc.exact="hideDropdown"
 					>
-						<img :src="'flags/'+lang.flag" :alt="lang.longName" :class="$style.flag"/>
+						<img :src="flagImg(lang.shortName)" :alt="lang.longName" :class="$style.flag"/>
 						<span :class="$style.localLang">{{ lang.localName }}</span>
 					</button>
 				</li>
@@ -39,6 +39,9 @@
 </template>
 
 <script>
+
+const flagsImages = import.meta.globEager('/src/assets/flags/*');
+
 export default {
 	name: "LanguageSwitcher",
 	directives: {
@@ -102,6 +105,9 @@ export default {
 		};
 	},
 	methods: {
+		flagImg(locale){
+			return flagsImages[`/src/assets/flags/flag_${locale}.svg`].default
+		},
 		toggleVisibility() {
 			this.isVisible = !this.isVisible;
 		},
