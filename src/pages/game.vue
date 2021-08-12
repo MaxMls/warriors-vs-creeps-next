@@ -8,18 +8,14 @@
 			<div :class="style.headerMessage">
 				<div :class="style.headerMessageText">
 					<div :class="style.headerMessageTextCtn">
-						<span style="visibility: hidden">{{ game.message }}</span>
-						<span v-typer="game.message" :class="style.headerMessageTextRepeat"/>
+						<span style="visibility: hidden">{{ $t(game.message) }}</span>
+						<span v-typer="$t(game.message)" :class="style.headerMessageTextRepeat"/>
 					</div>
 				</div>
 			</div>
 			<div :class="style.headerLinks">
-				<router-link target='_blank' to="/rules" :class="style.headerLink">
-					Читать правила игры
-				</router-link>
-				<router-link target='_blank' to="/" :class="style.headerLink">
-					Исходный код
-				</router-link>
+				<router-link target='_blank' to="/rules" :class="style.headerLink">{{ $t('pages.game.7310') }}</router-link>
+				<router-link target='_blank' to="/" :class="style.headerLink">{{ $t('pages.game.8708') }}</router-link>
 			</div>
 
 		</div>
@@ -33,9 +29,9 @@
 				</div>
 				<button
 					 type=button
-					 :disabled="!game.stacksToClick.has(-1)"
+					 :disabled="!visual.stackIsClickable(-1)"
 					 :class="[style.statCtn, style.statCtnCrane]"
-					 @click="game.stacksToClick.has(-1) && game.onStackClick(-1)"
+					 @click="visual.stackIsClickable(-1) && visual.onStackClick(-1)"
 				>
 					<SvgIcon v-if="game.scrapType === 'fix'" :class="style.statIcon" name="fix"/>
 					<SvgIcon v-else-if="game.scrapType === 'move'" :class="style.statIcon" name="cranMove"/>
@@ -43,9 +39,9 @@
 				</button>
 				<button
 					 type=button
-					 :disabled="!game.stacksToClick.has(-1)"
+					 :disabled="!visual.stackIsClickable(-1)"
 					 :class="[style.statCtn, style.statCtnTrash]"
-					 @click="game.stacksToClick.has(-2) && game.onStackClick(-2)"
+					 @click="visual.stackIsClickable(-2) && visual.onStackClick(-2)"
 				>
 					<SvgIcon :class="style.statIcon" name="trash"/>
 				</button>
@@ -74,12 +70,12 @@
 			<div v-for="(stack, i) in game.stacks" :class="style.termSlot" :ref="visual.setItemTermSlotRef">
 				<button
 					 type=button
-					 :disabled="!game.stacksToClick.has(i)"
+					 :disabled="!visual.stackIsClickable(i)"
 					 :class="style.termCard"
-					 @click="game.onStackClick?.(i)">
-					<CardComponent :stack="stack" :select="game.stacksToClick.has(i)"/>
+					 @click="visual.onStackClick(i)">
+					<CardComponent :stack="stack" :select="visual.stackIsClickable(i)"/>
 					<div :class="[style.termGradient,
-						 {[style.termGradient_select]: game.stacksToClick.has(i),
+						 {[style.termGradient_select]: visual.stackIsClickable(i),
 						  [style.termGradient_empty]: !stack.length}]"/>
 				</button>
 			</div>
@@ -93,7 +89,7 @@
 					 :disabled="false"
 					 v-for="(idx, i) in game.selectsCards"
 					 :class="style.selectPopupCard"
-					 @click="game.onCardClick(i)"
+					 @click="game?.onCardClick?.(i)"
 				>
 					<CardComponent :idx="idx" :select="true"/>
 				</button>
@@ -102,18 +98,16 @@
 		<div v-click-outside v-opacity-delay v-if=game.rotationsSelect.length :class="style.directionPopupCtn">
 
 			<div :class="style.directionPopup">
-				<div :class="style.directionPopupTitle">
-					Выберите направление
-				</div>
+				<div :class="style.directionPopupTitle">{{ $t('pages.game.7101') }}</div>
 				<div :class="style.directionPopupChoose">
 					<button
 						 type=button
 						 v-for="(rot, i) in game.rotationsSelect"
 						 :class="style.directionPopupDirection"
-						 @click="game.onRotationClick(i)"
+						 @click="game?.onRotationClick?.(i)"
 					>
 						<SvgIcon
-							 :style="`transform: rotate(${directionToDeg(rotateDirection(game.rotationsSelectCurrentDirection, rot))}deg)`"
+							 :style="visual.rotateDirectionStyle(game.rotationsSelectCurrentDirection, rot)"
 							 name="direction"
 							 :class="style.directionPopupIcon"/>
 					</button>
@@ -123,17 +117,17 @@
 		<div v-if=game.popupMessage :class="style.messagePopupCtn">
 			<div :class="style.messagePopup">
 				<div :class="style.messagePopupTitle">
-					{{ game.popupMessage?.title }}
+					{{ $t(game.popupMessage?.title) }}
 				</div>
 				<div :class="style.messagePopupText">
-					{{ game.popupMessage?.text }}
+					{{ $t(game.popupMessage?.text) }}
 				</div>
 				<button
 					 type=button
 					 :class="style.messagePopupButton"
 					 v-for="({text, handler}) in game.popupMessage?.buttons"
 					 @click="handler"
-				>{{ text }}
+				>{{ $t(text) }}
 				</button>
 			</div>
 		</div>
@@ -182,8 +176,9 @@ import {dynamicSort, GlobalEventEmitter} from "../common";
 import {NetworkAgent} from "../engine/agents/network-agent";
 import {ServerEventsNetwork} from "../engine/networks/server-events-network";
 import {AbstractNetwork} from "../engine/networks/abstract-network";
+import {useI18n} from "vue-i18n";
 
-const useVisualGame = () => {
+const useVisualGame = (game) => {
 	const termPanelRef = ref<HTMLElement | null>(null);
 	const termSlotRefs: HTMLElement[] = []
 
@@ -196,11 +191,6 @@ const useVisualGame = () => {
 			if (card.style.top !== v) card.style.top = v
 		}
 	}
-	/*onBeforeUpdate(() => {
-	})
-	onUpdated(()=>{
-	})
-*/
 	onMounted(() => {
 		recalculateTermCardsBottomOffset()
 		window.addEventListener("resize", recalculateTermCardsBottomOffset);
@@ -217,10 +207,18 @@ const useVisualGame = () => {
 		setItemTermPanelRef(v: any) {
 			termPanelRef.value = v
 		},
+		rotateDirectionStyle(dir, rot){
+			return `transform: rotate(${directionToDeg(rotateDirection(dir, rot))}deg)`
+		},
+		stackIsClickable(stackInd){
+			return game.stacksToClick.value?.has(stackInd)
+		},
+		onStackClick(i){
+			game.onStackClick.value?.(i)
+		}
 
 	}
 }
-
 
 const useRenderGameMap = () => {
 
@@ -351,27 +349,28 @@ const useRenderGame = () => {
 	}>(null)
 
 	const router = useRouter()
+	//const {t} = useI18n()
 	const defeat: AbstractRender["defeat"] = (text) => {
-		message.value = 'Конец игры'
+		message.value = 'game.0'
 		popupMessage.value = {
-			title: 'Вы проиграли',
-			text: text || 'Тортик уничтожен',
+			title: 'game.1',
+			text: text || 'game.2',
 			buttons: [
 				{
-					text: 'На главную',
+					text: 'game.3',
 					handler: () => router.push('/')
 				}
 			]
 		}
 	}
 	const win: AbstractRender["win"] = () => {
-		message.value = 'Конец игры'
+		message.value = 'game.0'
 		popupMessage.value = {
-			title: 'Успех',
-			text: 'Вы победили',
+			title: 'game.4',
+			text: 'game.5',
 			buttons: [
 				{
-					text: 'На главную',
+					text: 'game.3',
 					handler: () => router.push('/')
 				}
 			]
@@ -379,13 +378,13 @@ const useRenderGame = () => {
 	}
 
 	const error: AbstractRender["error"] = (text) => {
-		message.value = 'Конец игры'
+		message.value = 'game.0'
 		popupMessage.value = {
-			title: 'Непредвиденная ошибка',
+			title: 'game.6',
 			text,
 			buttons: [
 				{
-					text: 'На главную',
+					text: 'game.3',
 					handler: () => router.push('/')
 				}
 			]
@@ -482,7 +481,7 @@ const useRenderGame = () => {
 
 
 	const time = ref('0:00')
-	let timerInterval: NodeJS.Timer | null = null
+	let timerInterval: any | null = null
 
 	const startTimer = (secCount: number): void => {
 		//console.log('startTimer')
@@ -575,6 +574,7 @@ const useStartGame = (render: AbstractRender, skins) => {
 				await new Promise((resolve) => room.on('players', resolve))
 			} else {
 				await router.push('/')
+				return
 			}
 		}
 		const players = room.players.sort(dynamicSort('selfId'))
@@ -641,16 +641,16 @@ export default defineComponent({
 	setup() {
 		const {render: gameRender, ...game} = useRenderGame()
 		const {render: mapRender, skins, ...map} = useRenderGameMap()
-
 		const render: AbstractRender = {...gameRender, ...mapRender}
-
 		useStartGame(render, skins)
 
 		return {
 			game: reactive(game),
-			map: reactive(map),
-			visual: useVisualGame(),
+			map: reactive(map) as IRenderMap,
+			visual: useVisualGame(game),
 		}
+
+
 
 	}
 })

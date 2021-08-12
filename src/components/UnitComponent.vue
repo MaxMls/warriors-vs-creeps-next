@@ -26,7 +26,7 @@ export default defineComponent({
 	data: () => ({sty}),
 	props: {
 		state: {type: String as PropType<TUnitState>, required: true},
-		skin: {type: String as PropType<TUnitSkin>, required: true},
+		skin: {type: String as PropType<TUnitSkin>, required: false, default: 'ame'},
 		direction: {type: Number as PropType<EDirection>, required: false},
 	},
 	setup() {

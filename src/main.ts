@@ -4,7 +4,11 @@ import routes from 'virtual:generated-pages'
 import App from './App.vue'
 import 'virtual:svg-icons-register';
 import {createI18n} from "vue-i18n";
-import {detectLanguage, loadLocaleMessages} from "./i18n";
+
+import ru from './locales/ru.json'
+import ja from './locales/ja.json'
+import en from './locales/en.json'
+import de from './locales/de.json'
 
 const router = createRouter({
 	history: createWebHistory(),
@@ -13,18 +17,15 @@ const router = createRouter({
 
 
 const i18n = createI18n({
-	locale:
-		localStorage.getItem('lang') ||
-		// Detect user's browser language
-		detectLanguage() ||
-		process.env.VUE_APP_I18N_LOCALE,
-	fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en',
-	// Load selected lang's .json file
-	messages: loadLocaleMessages()
+	locale: localStorage.getItem('lang') || 'ru',
+	fallbackLocale: 'en',
+	// @ts-ignore
+	messages: {ru, ja, en, de}
 })
 
 const app = createApp(App)
 
 app.use(router)
+app.use(i18n)
 
 app.mount('#app')

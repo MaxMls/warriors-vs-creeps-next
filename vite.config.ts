@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import pages from "vite-plugin-pages";
 import viteSvgIcons from 'vite-plugin-svg-icons';
 import * as path from "path";
+import vueJsx from '@vitejs/plugin-vue-jsx'
 
 // https://vitejs.dev/config/
 export default defineConfig({/*
@@ -11,11 +12,18 @@ export default defineConfig({/*
 	},*/
 	plugins: [
 		vue({}),
-		pages({nuxtStyle: true}),
+		pages({
+			nuxtStyle: true,
+			extensions: ['vue', 'ts', 'js', 'tsx', 'jsx']
+		}),
 		viteSvgIcons({
 			iconDirs: [path.resolve(__dirname, './src/assets/icons')],
 			symbolId: 'icon-[dir]-[name]',
 		}),
+		vueJsx({
+
+			// options are passed on to @vue/babel-plugin-jsx
+		})
 	],
 	build: {
 		sourcemap: true

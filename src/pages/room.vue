@@ -3,20 +3,14 @@
 		<div :class="[style.buttonsGroup, style.buttonsTop, ]">
 
 			<div>
-				<button type=button @click="addBot" :class="[style.buttonTop, style.button]">
-					Создать бота
-				</button>
+				<button type=button @click="addBot" :class="[style.buttonTop, style.button]">{{ $t('pages.room.5952') }}</button>
 				<button type=button
 				        :class="[style.buttonTop, style.button]"
 				        @click="getRoomCode"
-				>
-					Копировать код-приглашение
-				</button>
+				>{{ $t('pages.room.2605') }}</button>
 			</div>
 			<div>
-				<button type=button @click=exit :class="[style.buttonTop, style.button]">
-					Выйти из лобби
-				</button>
+				<button type=button @click=exit :class="[style.buttonTop, style.button]">{{ $t('pages.room.4409') }}</button>
 			</div>
 		</div>
 		<div :class="[style.slotsGroup]">
@@ -41,25 +35,19 @@
 					 type=button
 					 @click="kickBot(p.selfId)" :class="[style.slotKick]"
 					 :disabled="p.ownerId !== player.selfId || p.selfId === player.selfId"
-				>
-					Удалить
-				</button>
+				>{{ $t('pages.room.1172') }}</button>
 			</div>
 
 			<div v-for="() in fillSlots" :class="[style.slotCtn]">
 				<div :class="[style.slotImage]"/>
-				<div :class="[style.slotName]">Свободный слот</div>
+				<div :class="[style.slotName]">{{ $t('pages.room.3553') }}</div>
 			</div>
 
 		</div>
 		<div :class="[style.buttonsGroup, style.buttonsBot]">
 			<button @click="ready(false)" v-if="player.data.ready" type=button
-			        :class="[style.buttonStart, style.button,style.buttonStart_ready]">
-				Ждем других игроков
-			</button>
-			<button @click="ready(true)" v-else type=button :class="[style.buttonStart, style.button]">
-				Готов начать игру
-			</button>
+			        :class="[style.buttonStart, style.button,style.buttonStart_ready]">{{ $t('pages.room.9245') }}</button>
+			<button @click="ready(true)" v-else type=button :class="[style.buttonStart, style.button]">{{ $t('pages.room.6109') }}</button>
 		</div>
 	</div>
 	<div :class="style.popup" v-if=skinChanger.isOpen>
@@ -68,9 +56,7 @@
 			 @click="skinChanger.close"
 		/>
 		<div :class="style.skinSelectCtn">
-			<div :class="style.skinSelectTitle">
-				Выберите образ
-			</div>
+			<div :class="style.skinSelectTitle">{{ $t('pages.room.9997') }}</div>
 			<div :class="style.skinSelectItems">
 				<div :class="style.skinSelectItemCtn" v-for="s in skinChanger.values">
 					<button

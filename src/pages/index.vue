@@ -1,56 +1,40 @@
 <template>
 	<div>
-		<!--		<router-link to='/webtrctest/host'>host </router-link>
-				<router-link to='/webtrctest/member'>member</router-link>-->
-		<h1 :class="$style.title">
-			Warriors vs Creeps 2
-		</h1>
+		<h1 :class="$style.title">{{ $t('pages.index.warriorsVsCreeps') }}</h1>
 		<div :class="$style.buttonsGroup">
-			<router-link to="/create" :class="$style.button">Создать игру</router-link>
-			<router-link to="/join" :class="$style.button">Присоединится к игре</router-link>
+			<router-link to="/create" :class="$style.button">{{ $t('pages.index.7042') }}</router-link>
+			<router-link to="/join" :class="$style.button">{{ $t('pages.index.4706') }}</router-link>
 		</div>
 		<div :class="[cs.linksGroup, $style.linksGroup]">
 			<div :class="[cs.link, $style.link]">
-				<a target=_blank href="https://github.com/blazzer-band/Warriors-vs-Creeps">Warriors vs Creeps 1</a>
+				<a target=_blank
+				   href="https://github.com/blazzer-band/Warriors-vs-Creeps">{{ $t('pages.index.warriorsVsCreeps1') }}</a>
 			</div>
 			<div :class="[cs.link, $style.link]">
-				<router-link target='_blank' to="/rules">Читать правила игры</router-link>
+				<router-link target='_blank' to="/rules">{{ $t('pages.index.5920') }}</router-link>
 			</div>
 		</div>
 		<div :class="[cs.linksGroup, $style.linksGroup]">
 			<div :class="[cs.link, $style.link]">
-				<a target=_blank href="https://walfiegif.wordpress.com/">Анимация персонажей: Walfie Gif</a>
+				<a target=_blank href="https://walfiegif.wordpress.com/">{{ $t('pages.index.walfieGif') }}</a>
 			</div>
 			<div :class="[cs.link, $style.link]">
-				<a target=_blank href="https://github.com/blazzer-band/Warriors-vs-Creeps">Исходный код</a>
+				<a target=_blank href="https://github.com/blazzer-band/Warriors-vs-Creeps">{{ $t('pages.index.981') }}</a>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script lang=ts>
+import {defineComponent} from "vue";
+import cs from "./common.module.scss"
 
-import {Options, Vue} from "vue-class-component"
-import {APP_PROVIDER} from "../context/network.context";
+export default defineComponent({
+	data: () => ({cs})
 
-class Props {
-}
-
-@Options({
-	components: {},
-	inject: [APP_PROVIDER],
 })
-export default class Index extends Vue.with(Props) {
-
-	mounted() {
-		//console.log('inject', this[LOBBY_PROVIDER])
-	}
-
-
-}
 </script>
 
-<style module="cs" lang=scss src="./common.scss"/>
 <style module lang=scss>
 .linksGroup {
 	display: flex;
@@ -120,10 +104,10 @@ export default class Index extends Vue.with(Props) {
 
 .link {
 	font-size: 20px;
-	a {
-		border-bottom: 1px solid #366bff;
-		color: #3d71ff;
-	}
+
+	border-bottom: 1px solid #366bff;
+	color: #3d71ff;
+
 
 }
 

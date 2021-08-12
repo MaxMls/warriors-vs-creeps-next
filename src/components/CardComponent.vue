@@ -3,7 +3,7 @@
 		<SvgIcon v-for="e in cardIcons" :class="[sty.icon, {[sty['icon_' + e.t]]: !!topCard}]" :name="e.i"/>
 	</div>
 	<div :class="[sty.name]">
-		{{ damageCard ? 'Повреждение' : noDefectCard ? noDefectCard.name : 'Нет эффекта' }}
+		{{ damageCard ? $t('card.0') : noDefectCard ? $t('cards.' + noDefectCardIndex + '.name') : $t('card.1') }}
 	</div>
 	<div
 		 v-if=topCard
@@ -16,17 +16,19 @@
 			<div :class="sty.step">
 				<SvgIcon :class="[sty.icon]" :name="stepIcon(damageCard?.levels[0].steps[0])"/>
 				<div :class="sty.desc">
-					{{ damageCard?.levels[0].steps[0].desc }}
+					{{ desc(damageCard?.levels[0].steps[0], 0, 0, damageCardId) }}
 				</div>
 			</div>
 		</div>
 
-		<div v-if=noDefectCard :class="[sty.module, {[sty.module_active]: i === level, [sty.module_damaged]: damageCard}]"
-		     v-for="(l, i) in noDefectCard?.levels">
-			<div :class="[sty.step]" v-for="s in l.steps">
+		<div v-if=noDefectCard
+		     v-for="(l, i) in noDefectCard?.levels"
+		     :class="[sty.module, {[sty.module_active]: i === level, [sty.module_damaged]: damageCard}]"
+		>
+			<div :class="[sty.step]" v-for="(s, stepInd) in l.steps">
 				<SvgIcon :class="[sty.icon]" :name="stepIcon(s)"/>
 				<div :class="sty.desc">
-					{{ desc(s) }}
+					{{ desc(s, i, stepInd) }}
 				</div>
 			</div>
 		</div>
@@ -40,6 +42,7 @@ import {directionToDeg, ECardAction, ECardType, TCardId} from "../engine/types";
 import sty from './CardComponent.module.scss'
 import SvgIcon from "./SvgIcon.vue";
 import {computed, defineComponent, PropType} from "vue";
+import {useI18n} from "vue-i18n";
 
 
 export default defineComponent({
@@ -55,14 +58,22 @@ export default defineComponent({
 	},
 	setup: (props, context) => {
 
-		const single = computed(() => props.idx !== null ? cardsJSON[props.idx] : null)
+		const singleId = computed(() => props.idx !== null ? props.idx : null)
+		const single = computed(() => singleId.value ? cardsJSON[singleId.value] : null)
 		const outline = computed(() => props.select)
 		const outlineActive = computed(() => props.active)
-		const topCard = computed(() => single.value ?? cardsJSON[props.stack[props.stack.length - 1]])
-		const damageCard = computed(() => {
+
+		const topCardId = computed(() => singleId.value ?? props.stack[props.stack.length - 1])
+		const topCard = computed(() => single.value ?? cardsJSON[topCardId.value])
+
+		const damageCardId = computed(() => {
 			const c = topCard.value
-			return c?.type === ECardType.Defect ? c : null
+			return c?.type === ECardType.Defect ? topCardId.value : undefined
 		})
+		const damageCard = computed(() => {
+			return damageCardId.value ? cardsJSON[damageCardId.value] : null
+		})
+
 		const cardIcons = computed(() => {
 			const icons = {
 				[ECardType.Electro]: 'types-lightning',
@@ -81,10 +92,16 @@ export default defineComponent({
 			return res
 		})
 		const level = computed(() => props.stack.length - 1 - (damageCard.value ? 1 : 0))
-		const noDefectCard = computed((() => {
+
+		const noDefectCardIndex = computed((() => {
 			const ndc = props.stack.filter(v => cardsJSON[v].type !== ECardType.Defect)
-			return single.value ?? cardsJSON[ndc[ndc.length - 1]]
+			return props.idx ?? ndc[ndc.length - 1]
 		}))
+
+		const noDefectCard = computed((() => {
+			return cardsJSON[noDefectCardIndex.value]
+		}))
+
 		const cardTypeClass = computed(() => noDefectCard.value ? sty['ctn_' + ECardType[noDefectCard.value.type]] : '')
 
 
@@ -97,14 +114,16 @@ export default defineComponent({
 			return icons[step.action]
 		}
 
-		function desc(step: ICardStep) {
+		const {t} = useI18n()
+
+		const desc = (step: ICardStep, levelInd, stepInd, cardIndex = noDefectCardIndex.value) => {
 			if (step.desc) {
-				return step.desc
+				return t(`cards.${cardIndex}.levels.${levelInd}.${stepInd}`)
 			} else if (step.action === ECardAction.Rotate) {
 
 				return step.directions.length === 4 ?
-					 'В любую сторону' :
-					 '' + step.directions.map(v => directionToDeg(v)).join(', ') + ' градусов'
+					 t('card.2') :
+					 t('card.3', {values: step.directions.map(v => directionToDeg(v)).join(', ')})
 			} else if (step.action === ECardAction.Move) {
 				return 'move'
 
@@ -115,7 +134,7 @@ export default defineComponent({
 
 		return {
 			single, outline, outlineActive, topCard, damageCard, cardIcons, level, noDefectCard, cardTypeClass,
-			stepIcon, desc
+			stepIcon, desc, damageCardId, noDefectCardIndex
 		}
 	},
 })

@@ -15,14 +15,14 @@
 		<div v-if="!!gridRef && !!cellsRefs.size" :class="sty.units">
 			<div
 				 v-for="[unit, {cell, key, state, skin}] in map.units"
-				 :style="layerPositionStyle(cell)+ `transition: left ${map.moveUnitMs}ms, top ${map.moveUnitMs}ms;`"
+				 :style="layerPositionStyle(cell)+ `transition: left ${map.moveUnitMs || 500}ms, top ${map.moveUnitMs || 500}ms;`"
 				 :key="key"
 				 :class="sty.unitCtn"
 			>
 				<UnitComponent
 					 :skin="skin"
 					 :state="state"
-					 :direction="map.cellsDirection.has(unit) ? map.cellsDirection.get(unit) : null"
+					 :direction="map.cellsDirection.has(unit) ? map.cellsDirection.get(unit) : undefined"
 				/>
 
 
@@ -34,7 +34,7 @@
 				 v-for="([cell, {highlight}]) in map.cellsToSelect"
 				 :style="layerPositionStyle(cell)"
 				 :class="selClass(highlight)"
-				 @click="map.onCellClick(cell)"
+				 @click="map?.onCellClick?.(cell)"
 			>
 			</button>
 		</div>
@@ -82,28 +82,33 @@ export default defineComponent({
 			cellsRefs.value.set(cell, ref)
 		}
 
-		let gridRef = ref<HTMLElement>(null)
+		let gridRef = ref<HTMLElement | null>(null)
 		const setGridRef = (value) => {
 			gridRef.value = value
 		}
 
 		const layerPositionStyle = (cell: Cell) => {
 			const el = cellsRefs.value.get(cell)
+			if (!el || !gridRef.value) throw new Error('Impossible error')
+
 			const divWidth = gridRef.value.offsetWidth / 100
 			const divHeight = gridRef.value.offsetHeight / 100
+
 			return `
 				left: ${el.offsetLeft / divWidth}%;
 				top: ${el.offsetTop / divHeight}%;
 				width: ${el.clientWidth / divWidth}%;
 				height: ${el.clientHeight / divHeight}%;
 			`
+
+
 		}
 
 		const map = toRef(props, 'renderMap')
 		return {
 			map, setCellRef, gridRef, cellsRefs, setGridRef,
 			layerPositionStyle,
-			cellClass: (cell: Cell) => {
+			cellClass: (cell: Cell | undefined) => {
 				return cell ? sty['cell_' + ETileType[cell.type]] : null
 			},
 			unitTypeClass: (unit: Unit) => {
@@ -113,13 +118,15 @@ export default defineComponent({
 				return [sty.selType, sty['selType_' + EHighlight[highlight]]]
 			},
 			cell: (coord) => {
-				const x = ((coord - 1) % props.renderMap.gameMap?.size.x)
-				const y = (((coord - 1) / props.renderMap.gameMap?.size.x) | 0)
-				return props.renderMap.gameMap?.getCell(x, y)
+				const sizeX = props.renderMap.gameMap?.size.x!
+				const x = ((coord - 1) % sizeX)
+				const y = (((coord - 1) / sizeX) | 0)
+				return props.renderMap.gameMap?.getCell(x, y)!
 			},
 			chessCell(coord) {
-				const x = ((coord - 1) % props.renderMap.gameMap?.size.x)
-				const y = (((coord - 1) / props.renderMap.gameMap?.size.x) | 0)
+				const sizeX = props.renderMap.gameMap?.size.x!
+				const x = ((coord - 1) % sizeX)
+				const y = (((coord - 1) / sizeX) | 0)
 				return ((x % 2 === 0) && (y % 2 === 0)) || ((x % 2 !== 0) && (y % 2 !== 0))
 			}
 		}

@@ -1,15 +1,22 @@
 <template>
 	<router-view/>
+	<LanguageSwitcher/>
 </template>
 
 <script lang="ts">
 
 import {APP_PROVIDER} from "./context/network.context";
 import {defineComponent, provide} from 'vue'
+import LanguageSwitcher from "./components/LanguageSwitcher.vue";
+import {useI18n} from "vue-i18n";
 
 export default defineComponent({
+	components: {LanguageSwitcher},
 	setup() {
+		//const {t} = useI18n({useScope: 'global'}) // call `useI18n`, and spread `t` from  `useI18n` returning
 		provide(APP_PROVIDER, {})
+
+		//return {t} // return render context that included `t`
 	}
 })
 

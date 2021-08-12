@@ -4,11 +4,11 @@
 	<button @click=join><b>[sub]</b></button>
 	<button @click=close><b>[close]</b></button>
 	<button @click=emit><b>[emit]</b></button>
-	<ul>
+<!--	<ul>
 		<li v-for="m in messages">
 			{{ m }}
 		</li>
-	</ul>
+	</ul>-->
 </template>
 
 <script lang=ts>

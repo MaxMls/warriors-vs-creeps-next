@@ -1,86 +1,69 @@
 <template>
 	<div :class="$style.c">
-
-		<h1>Правила</h1>
+		<a href="/">{{ $t('form.391') }}</a>
+		<p/>
+		<h1>{{ $t('pages.rules.7117') }}</h1>
 		<p>
 			<a target=_blank href="https://github.com/blazzer-band/Warriors-vs-Creeps/wiki"
-			>Правила прошлой версии</a><br>
-			Читайте их если вам интересны все тонкие моменты, они актуальны за исключением некоторых обозначений
-
-		</p>
-		<a id="index"><h2>Указатель</h2></a>
+			>{{ $t('pages.rules.6794') }}</a><br>{{ $t('pages.rules.8365') }}</p>
+		<a id="index"><h2>{{ $t('pages.rules.8853') }}</h2></a>
 		<div style="margin-left: 20px; margin-top: 20px;">
 			<ul>
 				<li>
-					<a href="#map">Цель</a>
+					<a href="#map">{{ $t('pages.rules.3365') }}</a>
 				</li>
 				<li>
-					<a href="#monst">Монстры</a>
+					<a href="#monst">{{ $t('pages.rules.84') }}</a>
 				</li>
 				<li>
-					<a href="#term">Карты и терминал</a>
+					<a href="#term">{{ $t('pages.rules.4868') }}</a>
 				</li>
 				<li>
-					<a href="#stack">Стек</a>
+					<a href="#stack">{{ $t('pages.rules.6701') }}</a>
 				</li>
 				<li>
-					<a href="#damage">Повреждения</a>
+					<a href="#damage">{{ $t('pages.rules.288') }}</a>
 				</li>
 				<li>
-					<a href="#uti">Утилизация карт</a>
+					<a href="#uti">{{ $t('pages.rules.6154') }}</a>
 				</li>
 				<li>
-					<a href="#bots">Игра с ботами</a>
+					<a href="#bots">{{ $t('pages.rules.8930') }}</a>
+				</li>
+				<li>
+					<a href="#disconnect">{{ $t('pages.rules.10000') }}</a>
 				</li>
 			</ul>
 		</div>
 
-		<a href="#index" id="map"><h2>Цель</h2></a>
+		<a href="#index" id="map"><h2>{{ $t('pages.rules.8106') }}</h2></a>
 
 		<div style=" width: 500px">
 			<GameMapComponent v-if=map3 :renderMap="map3"/>
 		</div>
-		<p>
-			Ваша цель дотащить предмет до клетки выхода.<br/>
-			Игроки могут тащить и толкать предметы и других игроков
-		</p>
+		<p>{{ $t('pages.rules.7338') }}<br/>{{ $t('pages.rules.2651') }}</p>
 
-		<a href="#index" id="monst"><h2>Монстры</h2></a>
+		<a href="#index" id="monst"><h2>{{ $t('pages.rules.367') }}</h2></a>
 		<div style=" width: 500px">
 			<GameMapComponent v-if=map1 :renderMap="map1"/>
 		</div>
-		<p>
-			Места спауна монстров
-		</p>
+		<p>{{ $t('pages.rules.4950') }}</p>
 
 		<div style=" width: 500px">
 			<GameMapComponent v-if=map2 :renderMap="map2"/>
 		</div>
-		<p>
-			Монстры могут атаковать 4 соседние клетки,
-			в данном случае предмет получит 2 повреждения, а игрок - 0
-		</p>
-		<p>
-			Каждый ход монстры появляются на свободных клетках спауна и двигаются на одну клетку по направлению к предмету
-		</p>
+		<p>{{ $t('pages.rules.5146') }}</p>
+		<p>{{ $t('pages.rules.4867') }}</p>
 
-		<a href="#index" id="term"><h2>Карты и терминал</h2></a>
-		<p>
-			В начале игры создается колода из случайных карт, игроки по очереди выбирают карты и сохраняют на правой панели
+		<a href="#index" id="term"><h2>{{ $t('pages.rules.3706') }}</h2></a>
+		<p>{{ $t('pages.rules.7118') }}</p>
+		<p>{{ $t('pages.rules.4345') }}<b>{{ $t('pages.rules.9728') }}</b>
 		</p>
+		<p>{{ $t('pages.rules.5991') }}</p>
 		<p>
-			После того как все карты были розданы, каждому игроку нужно поместить карты в слоты на терминале или
-			утилизировать их, набор карт в слоте называется <b>стек</b>
+			<router-link to="/cards">{{ $t('pages.rules.8807') }}</router-link>
 		</p>
-		<p>
-			После того, как Командные карты программируются в Командную строку, их место и порядок становятся
-			фиксированными. Их можно только перепрограммировать (изменить порядок) путем утилизации электрических или
-			компьютерных карт во время фазы выбора карт.
-		</p>
-		<p>
-			<router-link to="/cards">Вы можете посмотреть все карты на этой странице</router-link>
-		</p>
-		<a href="#index" id='stack'><h2>Стек</h2></a>
+		<a href="#index" id='stack'><h2>{{ $t('pages.rules.1963') }}</h2></a>
 
 		<div style="display: grid; grid-auto-columns: 220px; grid-gap: 20px; grid-auto-flow: column">
 			<div>
@@ -94,30 +77,13 @@
 			</div>
 		</div>
 		<p></p>
-		<p>
-			Если в слоте Командной строки лежит более одной Командной карты, то это стек.
-		</p>
-		<p>
-			Стек может содержать до 3 Командных карт при условии, что все они одного цвета / стихии. Увеличение размера
-			стека усиливает эффект Командной карты. На каждой Командной карте указаны ее эффекты для различных уровней Силы
-			(стек из 1, 2, 3 карт). Когда карта помещена в стек, вы не можете выбрать меньший уровень силы.
-		</p>
-		<p>
-			В подфазе ходов игроков в каждой слоте будет выполнятся только та карта, которая находится на топе (т.е.
-			наверху) стека. Остальные же карты в стеке игнорируются.
-		</p>
-		<p>
-			Если четвертая Командная карта той же стихии играется в стек, самая нижняя Командная карта сбрасывается.
-			Стек
-			по-прежнему содержит 3 карты, и Сила равна 3, но верхняя карта становится новой активной картой.
-		</p>
-		<p>
-			Командная карта другой стихии (другого цвета) может быть сыграна в имеющийся стек, но тогда весь старый стек
-			должен быть сброшен, так что на его месте остается только одна новая Командная карта.
-		</p>
+		<p>{{ $t('pages.rules.8547') }}</p>
+		<p>{{ $t('pages.rules.8391') }}</p>
+		<p>{{ $t('pages.rules.5478') }}</p>
+		<p>{{ $t('pages.rules.6703') }}</p>
+		<p>{{ $t('pages.rules.7846') }}</p>
 		<a id="damage" href="#index">
-			<h2 style="display: flex; align-items: center; gap:10px">
-				Повреждения
+			<h2 style="display: flex; align-items: center; gap:10px">{{ $t('pages.rules.4072') }}
 				<SvgIcon :class="$style.icon" name="types-warning"/>
 			</h2>
 		</a>
@@ -127,67 +93,45 @@
 			</div>
 		</div>
 		<p></p>
-		<p>
-			Получаемое повреждение задается Картами повреждений, которые тянутся из Колоды повреждений (выбираются
-			случайным образом). Повреждение может затруднить управление Воином и усложнить достижение вашей цели! Но – не
-			волнуйтесь. Вы не можете умереть!
-		</p>
+		<p>{{ $t('pages.rules.5449') }}</p>
 		<a id="uti" href="#index">
-			<h2 style="display: flex; align-items: center; gap:10px">
-				Утилизация карт
+			<h2 style="display: flex; align-items: center; gap:10px">{{ $t('pages.rules.5098') }}
 				<SvgIcon :class="$style.icon" name="cran"/>
 			</h2>
 		</a>
-		<p>
-			Во время выбора карт взятые вами Командные карты могут быть тут же утилизированы (сброшены) вместо
-			программирования в Командную строку.
-		</p>
-		<p>
-			Вы можете утилизировать только карты из взятых вами при выборе карт. Карты, уже помещенные в слоты,
-			утилизировать нельзя.
-		</p>
+		<p>{{ $t('pages.rules.958') }}</p>
+		<p>{{ $t('pages.rules.8599') }}</p>
 		<ul>
 			<li>
 				<SvgIcon :class="$style.icon" name="trash"/>
-				<p>
-					Удаляет карту без эффектов
-				</p>
+				<p>{{ $t('pages.rules.7471') }}</p>
 			</li>
 			<li>
 				<SvgIcon :class="$style.icon" name="cranMove"/>
-				<p>
-					Только для
+				<p>{{ $t('pages.rules.3469') }}
 					<SvgIcon :class="$style.icon" name="types-crown"/>
 					и
 					<SvgIcon style="--icon-color: #6E286B" :class="$style.icon" name="types-fire"/>
-					Удаляет карту и позволяет удалить повреждение для одного слота
-
+					{{ $t('pages.rules.4250') }}
 				</p>
 			</li>
 			<li>
 				<SvgIcon :class="$style.icon" name="fix"/>
-				<p>
-					Только для
+				<p>{{ $t('pages.rules.7428') }}
 					<SvgIcon :class="$style.icon" name="types-lightning"/>
 					и
 					<SvgIcon :class="$style.icon" name="types-mech"/>
-					Удаляет карту и позволяет поменять местами 2 неповреждённый слота или переместить стек на пустой слот
-
+					{{ $t('pages.rules.4103') }}
 				</p>
 			</li>
 		</ul>
-		<a id="bots" href="#index"><h2>Боты</h2></a>
-		<p>
-			Действия ботов ничем не отличаются от действий обычных игроков
-		</p>
-		<p>
-			При игре с ботами не требуется подключение к сети, можно играть даже если сервер в данный момент недоступен.
-		</p>
-		<p>
-			Боты могут усложнить прохождение, так как они действуют по своему усмотрению, и их план действий может
-			отличатся от вашего
-		</p>
-
+		<a id="bots" href="#index"><h2>{{ $t('pages.rules.8430') }}</h2></a>
+		<p>{{ $t('pages.rules.3350') }}</p>
+		<p>{{ $t('pages.rules.5524') }}</p>
+		<p>{{ $t('pages.rules.7192') }}</p>
+		<a id="disconnect" href="#index"><h2>{{ $t('pages.rules.10000') }}</h2></a>
+		<p>{{ $t('pages.rules.10001') }}</p>
+		<p>{{ $t('pages.rules.10002') }}</p>
 	</div>
 </template>
 
@@ -206,9 +150,9 @@ export default defineComponent({
 	name: "game",
 	setup() {
 		let keyGen = 0
-		const map1 = ref<IRenderMap | null>(null)
-		const map2 = ref<IRenderMap | null>(null)
-		const map3 = ref<IRenderMap | null>(null)
+		const map1 = ref<any | null>(null)
+		const map2 = ref<any | null>(null)
+		const map3 = ref<any | null>(null)
 
 
 		onMounted(() => {
@@ -330,9 +274,7 @@ export default defineComponent({
 
 		})
 
-		return {
-			map1, map2, map3
-		}
+		return {map1, map2, map3}
 	}
 })
 </script>

@@ -1,11 +1,7 @@
 <template>
 	<Form :fields=fields v-model=form @formSubmit=submit>
-		<template v-slot:title>
-			Присоединится к игре
-		</template>
-		<template v-slot:next>
-			Войти
-		</template>
+		<template v-slot:title>{{ $t('pages.join.3082') }}</template>
+		<template v-slot:next>{{ $t('pages.join.4228') }}</template>
 	</Form>
 </template>
 
@@ -18,6 +14,7 @@ import {Room} from "../engine/lobby/server-events-lobby";
 import {TUnitSkin} from "../engine/renders/vue-render";
 import {useRouter} from "vue-router";
 import {RequestError} from "../engine/lobby/request-error";
+import {useI18n} from "vue-i18n";
 
 
 export default defineComponent({
@@ -30,9 +27,11 @@ export default defineComponent({
 			values: {name: '', room: '',},
 			errors: {name: null, room: null} as any
 		})
+
+		//const {t} = useI18n()
 		const fields = [
-			{name: 'name', label: 'Введите имя'},
-			{name: 'room', label: 'Введите код приглашения'}
+			{name: 'name', label: 'form.0'},
+			{name: 'room', label: 'form.1'}
 		]
 
 		onMounted(() => {
@@ -50,9 +49,9 @@ export default defineComponent({
 				const {name} = form.value.values;
 
 				if (!name) {
-					form.value.errors.name = 'Empty name'
+					form.value.errors.name = 'form.2'
 				} else if (name.length > 25) {
-					form.value.errors.name = 'Long name'
+					form.value.errors.name = 'form.3'
 				} else {
 					try {
 						const skin = (localStorage.getItem('skin') ?? 'ame') as TUnitSkin;

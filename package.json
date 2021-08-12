@@ -9,23 +9,19 @@
 		"server dev": "tsnd ./server/main.ts"
 	},
 	"dependencies": {
+		"@vue/compiler-sfc": "^3.2.2",
 		"animated-scroll-to": "^2.2.0",
-		"clipboard": "^2.0.8",
-		"css-animation-sync": "^0.4.0-beta-1",
 		"events": "^3.3.0",
 		"lodash": "^4.17.21",
 		"nanoid": "^3.1.23",
 		"ts-node": "^10.1.0",
-		"vue-i18n": "^9.1.7",
-		"vue-translation-manager": "^1.2.0"
+		"vue-i18n": "^9.1.7"
 	},
 	"devDependencies": {
 		"@types/lodash": "^4.14.172",
 		"@types/seedrandom": "^3.0.1",
 		"@vitejs/plugin-vue": "^1.3.0",
-		"@vue/compiler-sfc": "^3.1.5",
-		"axios": "^0.21.1",
-		"firebase": "^8.8.0",
+		"@vitejs/plugin-vue-jsx": "^1.1.7",
 		"sass": "^1.36.0",
 		"seedrandom": "^3.0.5",
 		"ts-node-dev": "^1.1.8",
@@ -36,9 +32,6 @@
 		"vue": "^3.1.5",
 		"vue-class-component": "^8.0.0-rc.1",
 		"vue-router": "^4.0.10",
-		"vue-tsc": "^0.2.2",
-		"vuex": "^4.0.2",
-		"vuex-module-decorators": "^1.0.1",
-		"vuex-smart-module": "^1.0.0"
+		"vue-tsc": "^0.2.2"
 	}
 }

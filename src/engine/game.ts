@@ -159,20 +159,17 @@ export class Game {
 		const selectionCardsCount = countCards + 1
 
 		if (this.cardsDeck.length < selectionCardsCount) {
-			this.lose("Карты в колоде закончились");
+			this.lose("lose.0");
 		} else {
 			const selectionCards = this.cardsDeck.splice(0, selectionCardsCount);
 
 			for (let i = 0; i < countCards; i++) {
 				if (selectionCards.length === 0) {
-					this.lose("Карты в колоде закончились");
+					this.lose("lose.0");
 					return
 				} else {
 					const userId = i % this.users.length
-					this.render.showMessage(this.users[userId].current ?
-						'Выберите карту' :
-						'Сейчас карту выбирает другой игрок'
-					)
+					this.render.showMessage(this.users[userId].current ? 'message.0' : 'message.1')
 
 					const selectCardInd = await this.users[userId].selectCard(selectionCards)
 					selectionCards.splice(selectCardInd, 1);
@@ -184,12 +181,12 @@ export class Game {
 
 
 	private async programmingAct() {
-		this.render.showMessage('Установите выбранные карты в терминал или утилизируйте')
+		this.render.showMessage('message.2')
 
 		await Promise.all(this.users.map(user =>
 			user.programming().then(() => {
 				if (user.current)
-					this.render.showMessage('Другой пользователь ещё расставляет карты, пожалуйста подождите')
+					this.render.showMessage('message.3')
 			})
 		))
 
@@ -202,8 +199,8 @@ export class Game {
 
 		for (let user of this.users) {
 			this.render.showMessage(user.current ?
-				'Ваш ход' :
-				'Ходит другой игрок, подождите'
+				'message.4' :
+				'message.5'
 			)
 
 			for (let stack of user.stacks) {
@@ -224,10 +221,7 @@ export class Game {
 		let heroCell = this.gameMap.getAllCellHasUnits(EUnitType.Hero).filter(cell => cell.unit === user.myHero)[0]
 
 		if (card?.rotate?.length) {
-			this.render.showMessage(user.current ?
-				'Выберите, в какую сторону повернуться' :
-				'Другой игрок выбирает куда повернуться'
-			)
+			this.render.showMessage(user.current ? 'message.6' : 'message.7')
 			const rotateAngleId = card.rotate[card.rotate.length > 1 ? await user.chooseRotate(card.rotate, user.myHero.direction) : 0]
 			user.myHero.rotate(rotateAngleId);
 			this.render.updateHeroDirection(heroCell, user.myHero.direction)
@@ -267,10 +261,7 @@ export class Game {
 				} else if (sellVec.length === 1) {
 					selVect = sellVec[0];
 				} else {
-					this.render.showMessage(user.current ?
-						'Выберите клетку, в которую хотите перейти' :
-						'Другой игрок выбирает куда идти'
-					)
+					this.render.showMessage(user.current ? 'message.8' : 'message.9')
 					let moveCellIds = await user.selectCells(sellArray, EHighlight.Move, 1);
 					selVect = sellVec[moveCellIds[0]];
 				}
@@ -313,8 +304,7 @@ export class Game {
 
 		if (hookArray.length > 1) {
 			this.render.showMessage(user.current ?
-				'Выберите игрока или предмет который хотите тащить за собой' :
-				'Другой игрок выбирает цель для перемещения'
+				'message.10' : 'message.11'
 			)
 			hookSelect = hookArray[(await user.selectCells(hookArray, EHighlight.Hook, 1))[0]]
 			if (hookSelect !== thisCell) {
@@ -370,7 +360,7 @@ export class Game {
 					next.unit.attachedCell = curCell
 				}
 			}
-			this.render.showMessage('Перемещение юнитов')
+			this.render.showMessage('message.12')
 
 			recStack.push(next)
 		}
@@ -395,8 +385,8 @@ export class Game {
 		if (attArray.length > count) {
 			//если найдено больше юнитов чем нужно, спросить каких нужно бить
 			this.render.showMessage(user.current ?
-				'Выберите цель для атаки' :
-				'Другой игрок выбирает цель для атаки'
+				'message.13' :
+				'message.14'
 			)
 			let atIds = await user.selectCells(attArray, EHighlight.Attack, count)
 			for (let atId of atIds) {
@@ -419,8 +409,8 @@ export class Game {
 	}
 
 
-	private async creepsMoveAct() { // TODO: таранят бомбу или героя если они на пути
-		this.render.showMessage('Ход противников')
+	private async creepsMoveAct() { // TODO: damage unit hero if on path
+		this.render.showMessage('message.15')
 
 		let creepsCells = this.gameMap.getAllCellHasUnits(EUnitType.Creep);
 		let bombCells = this.gameMap.getAllCellHasUnits(EUnitType.Bomb);
@@ -489,7 +479,7 @@ export class Game {
 			} else if (atEv.attacked.unit.type === EUnitType.Bomb) {
 				this.render.updateBombCounter(--this.bombHP);
 				if (this.bombHP === 0) {
-					this.lose("Тортик уничтожен");
+					this.lose("lose.1");
 					return;
 				}
 			}
@@ -527,7 +517,7 @@ export class Game {
 
 	private finalAct() {
 		console.count('finalAct')
-		this.render.showMessage('Конец хода')
+		this.render.showMessage('message.16')
 		if (!this.gameMap.getAllCellHasUnits(EUnitType.Bomb).find(cell => cell.type !== ETileType.Target)) {
 			this.win();
 		} else {

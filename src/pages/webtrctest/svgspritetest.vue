@@ -10,6 +10,7 @@
 
 <script lang=ts>
 import SvgIcon from "../../components/SvgIcon.vue";
+// @ts-ignore
 import ids from 'virtual:svg-icons-names';
 
 export default {

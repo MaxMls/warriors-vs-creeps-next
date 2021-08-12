@@ -146,6 +146,8 @@ button.statCtn:enabled {
 }
 
 .handPanelCard {
+
+	width: 100%;
 	& + .handPanelCard {
 		margin-top: 10px;
 	}
@@ -271,7 +273,7 @@ button.statCtn:enabled {
 
 .headerMessageTextCtn {
 	position: relative;
-	display: inline;
+	// display: inline;
 }
 
 .headerMessageTextRepeat {

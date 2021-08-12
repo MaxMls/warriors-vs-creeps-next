@@ -849,7 +849,7 @@ export const cardsJSON: ICard[] = [
 					{
 						action: ECardAction.Move,
 						coords: [{x: 1, y: 0}],
-						desc: '1 клетка влево'
+						desc: '1 клетка вправо'
 					},
 				]
 			},
@@ -862,7 +862,7 @@ export const cardsJSON: ICard[] = [
 					{
 						action: ECardAction.Move,
 						coords: [{x: 1, y: 0}],
-						desc: '1 клетка влево'
+						desc: '1 клетка вправо'
 					},
 				]
 			},
@@ -875,7 +875,7 @@ export const cardsJSON: ICard[] = [
 					{
 						action: ECardAction.Move,
 						coords: [{x: 1, y: 0}],
-						desc: '1 клетка влево'
+						desc: '1 клетка вправо'
 					},
 				]
 			},
@@ -888,7 +888,7 @@ export const cardsJSON: ICard[] = [
 					{
 						action: ECardAction.Move,
 						coords: [{x: 1, y: 0}],
-						desc: '1 клетка влево'
+						desc: '1 клетка вправо'
 					},
 				]
 			},

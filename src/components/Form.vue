@@ -3,19 +3,19 @@
 		<h1 :class="$style.title">
 			<slot name="title"/>
 		</h1>
-		<div :class="$style.inputGroup" v-for="{name, label} in fieldsArray">
+		<div :class="$style.inputGroup" v-for="{name, label} in fields">
 			<div :class="$style.label">
 				<span>
-					{{ label }}
+					{{ $t(label) }}
 				</span>
 			</div>
 			<input :name='name' :class="$style.input" @input="e => input(name, e)" :value="form.values[name]"/>
 			<div :class="$style.error" v-if="form.errors[name]">
-				<span>{{ modelValue.errors[name] }}</span>
+				<span>{{ $t(modelValue.errors[name]) }}</span>
 			</div>
 		</div>
 		<div :class="$style.buttonsGroup">
-			<router-link :class="$style.button" to="/">Назад</router-link>
+			<router-link :class="$style.button" to="/">{{ $t('form.391') }}</router-link>
 			<button type=submit :class="$style.button">
 				<slot name="next"/>
 			</button>
@@ -26,55 +26,40 @@
 <script lang=ts>
 import cs from "../pages/common.module.scss"
 import {Options, prop, Vue} from "vue-class-component";
+import {defineComponent, PropType} from "vue";
+import {TUnitState} from "../engine/renders/vue-render";
 
-class Props {
-	public modelValue = prop<{ values: { [_: string]: string }, errors: { [_: string]: string } }>({required: true});
-	public fields = prop<[{ name: string, label: string }]>({required: true});
-}
 
-@Options({
-	data: () => ({cs})
-})
-export default class Form extends Vue.with(Props) {
-	get form() {
-		return this.modelValue
-	}
-
-	get fieldsArray() {
-		return this.fields
-	}
-
-	input(name, e) {
-		if (this.modelValue) {
-			this.modelValue.values[name] = e.target.value
-			this.$emit('update:modelValue', this.modelValue)
+export default defineComponent({
+	data: () => ({cs}),
+	props: {
+		modelValue: {type: Object, required: true},
+		fields: {type: Array as PropType<{ name: string, label: string }[]>, required: true}
+	},
+	computed: {
+		form() {
+			return this.modelValue
+		}
+	},
+	methods: {
+		input(name, e) {
+			if (this.modelValue) {
+				this.modelValue.values[name] = e.target.value
+				this.$emit('update:modelValue', this.modelValue)
+			}
+		},
+		submit(e) {
+			e.preventDefault()
+			//console.log('submit')
+			this.$emit('formSubmit')
 		}
 	}
 
-	submit(e) {
-		e.preventDefault()
-		//console.log('submit')
-		this.$emit('formSubmit')
-	}
-}/*
-export default {
-	name: "Form",
-	data() {
-		return {cs}
-	},
-	props: {
-		modelValue: Object,
-		fields: Array,
-	},
-	emits: ['update:modelValue', 'submit'],
-	methods: {
+})
 
-	}
-}*/
 </script>
 
 <style module lang=scss>
-
 .ctn {
 	padding: 40px 50px 50px;
 	background: white;

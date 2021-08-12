@@ -16,13 +16,8 @@ export enum EDirection {_0, _90, _180, _270, _length}
 
 export enum ERotation {_0, _90, _180, _270, _length}
 
-export const directionToDeg = (d: EDirection) => {
-	return {
-		[EDirection._0]: 360,
-		[EDirection._90]: 90,
-		[EDirection._180]: 180,
-		[EDirection._270]: 270,
-	}[d]
+export const directionToDeg = (d: EDirection | ERotation = EDirection._0) => {
+	return [360, 90, 180, 270][d]
 }
 export const rotateDirection = (dir: EDirection, angle: ERotation) => {
 	return (dir + angle) % ERotation._length;
