@@ -1,4 +1,6 @@
-#### Play: https://maxmls.itch.io/wvc
+#### Play:
+- on itch.io: https://maxmls.itch.io/wvc
+- on github.io: https://maxmls.github.io/warriors-vs-creeps-next/
 
 ------------
 
