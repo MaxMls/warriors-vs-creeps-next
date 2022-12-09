@@ -7,7 +7,7 @@
     "buildGit": "vue-tsc --noEmit && vite build",
     "serve": "vite preview",
     "favicons-gen": "ts-node ./favicons-gen.ts",
-    "format": "prettier-eslint \"src/**/*.ts\""
+    "format": "prettier-eslint --write \"src/**/*.{ts,vue,json,scss}\""
   },
   "devDependencies": {
     "@types/lodash": "^4.14.172",

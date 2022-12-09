@@ -19,7 +19,7 @@ export const horizontalScrollDirective = {
       // targetLeft = left
       // el.scrollTo({left, behavior: "smooth"})
       animateScrollTo([left, null], {
-        elementToScroll: el
+        elementToScroll: el,
       }).then((e) => {
         //if (e !== (el.scrollLeft === left)) console.log(e, el.scrollLeft === left)
         if (e) el.horizontalScrollDirective.sumDelta = 0;
@@ -34,10 +34,10 @@ export const horizontalScrollDirective = {
       startLeft: 0,
       onUnbind: () => {
         el.removeEventListener("wheel", wheel);
-      }
+      },
     };
   },
   beforeUnmount: (el, binding, vnode, oldVnode) => {
     el.horizontalScrollDirective.onUnbind();
-  }
+  },
 };

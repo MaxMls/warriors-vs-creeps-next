@@ -1,347 +1,239 @@
 {
-	"cards": [
-		{
-			"name": "Manövrieren"
-		},
-		{
-			"levels": [
-				[
-					"1 Zelle vorwärts",
-					"Auf jeder Seite"
-				],
-				[
-					"2 Quadrate vorwärts",
-					"Beide Seiten"
-				],
-				[
-					"3 Quadrate vorwärts",
-					"Auf jeder Seite"
-				]
-			],
-			"name": "Flamme"
-		},
-		{
-			"levels": [
-				[
-					"2 Quadrate auf der Vorderseite"
-				],
-				[
-					"4 Quadrate vorne mit T"
-				],
-				[
-					"7 Quadrate vorne mit einem T"
-				]
-			],
-			"name": "Flammenwerfer"
-		},
-		{
-			"name": "Einstellung"
-		},
-		{
-			"levels": [
-				[
-					"1 Feld vorwärts, links oder rechts"
-				],
-				[
-					"2 Quadrate vorwärts, links oder rechts"
-				],
-				[
-					"3 Quadrate vorwärts, links oder rechts"
-				]
-			],
-			"name": "Flip"
-		},
-		{
-			"levels": [
-				[
-					"1 Ziel in Radius 1"
-				],
-				[
-					"1 Ziel in Radius 2"
-				],
-				[
-					"1 Ziel in Radius 3"
-				]
-			],
-			"name": "Zielschuss"
-		},
-		{
-			"levels": [
-				[
-					null,
-					"1 Ziel in Radius 1"
-				],
-				[
-					null,
-					"2 Ziele im Radius 1"
-				],
-				[
-					null,
-					"3 Ziele innerhalb von 1 Radius"
-				]
-			],
-			"name": "Sense"
-		},
-		{
-			"levels": [
-				[
-					"1 Feld vorwärts"
-				],
-				[
-					"2 Zellen vorwärts"
-				],
-				[
-					"3 Zellen vorwärts"
-				]
-			],
-			"name": "Springen"
-		},
-		{
-			"levels": [
-				[
-					"1 Ziel vor Ihnen"
-				],
-				[
-					"2 Tore vor dir"
-				],
-				[
-					"3 vor Ihnen"
-				]
-			],
-			"name": "Schwert"
-		},
-		{
-			"levels": [
-				{
-					"1": "Auf einer Diagonale im Radius 1"
-				},
-				{
-					"1": "Auf einer Diagonale mit einem Radius von 2"
-				},
-				{
-					"1": "Diagonal im Radius 3"
-				}
-			],
-			"name": "Wildes Drehen"
-		},
-		{
-			"levels": [
-				[
-					"1 oder 2 Quadrate vorwärts"
-				],
-				[
-					"2, 3 oder 4 Zellen vorwärts"
-				],
-				[
-					"3, 4, 5 oder 6 Zellen vorwärts"
-				]
-			],
-			"name": "Geschwindigkeit"
-		},
-		{
-			"levels": [
-				[
-					"1 Ziel vor Ihnen"
-				],
-				[
-					"3 vor Ihnen"
-				],
-				[
-					"5 Ziele vor Ihnen"
-				]
-			],
-			"name": "Kugelblitz"
-		},
-		{
-			"levels": [
-				[
-					"1 Feld zu Ihrer Linken"
-				],
-				[
-					"1 Feld nach links"
-				],
-				[
-					"1 Zelle nach links"
-				],
-				[
-					"1 Zelle nach links"
-				]
-			]
-		},
-		{
-			"levels": [
-				[
-					"1 Zelle rückwärts"
-				],
-				[
-					"1 Zelle rückwärts"
-				],
-				[
-					"1 Zelle rückwärts"
-				],
-				[
-					"1 Zelle rückwärts"
-				]
-			]
-		},
-		{
-			"levels": [
-				[
-					"1 Zelle vorwärts"
-				],
-				[
-					"1 Käfig vorwärts"
-				],
-				[
-					"1 Käfig vorwärts"
-				],
-				[
-					"1 Zelle vorwärts"
-				]
-			]
-		},
-		{
-			"levels": [
-				[
-					"1 Zelle nach rechts"
-				],
-				[
-					"1 Zelle nach rechts"
-				],
-				[
-					"1 Zelle nach rechts"
-				],
-				[
-					"1 Zelle nach rechts"
-				]
-			]
-		}
-	],
-	"card": [
-		"Schaden",
-		"Keine Wirkung",
-		"Zu beiden Seiten",
-		"{values} Grad"
-	],
-	"form": {
-		"0": "Name eingeben",
-		"1": "Einladungscode eingeben",
-		"2": "Text eingeben",
-		"3": "Name ist zu lang",
-		"391": "Zurück"
-	},
-	"game": [
-		"Spiel vorbei",
-		"Sie haben verloren.",
-		"Der Kuchen ist zerstört.",
-		"Startseite",
-		"Erfolg",
-		"Sie haben gewonnen.",
-		"Unvorhergesehener Fehler"
-	],
-	"lose": [
-		"Die Karten im Stapel sind aufgebraucht.",
-		"Torte zerstört"
-	],
-	"message": [
-		"Wählen Sie eine Karte.",
-		"Ein anderer Spieler wählt nun eine Karte",
-		"Legen Sie die ausgewählten Karten in das Terminal oder werfen Sie sie ab",
-		"Der andere Benutzer entscheidet noch, bitte warten",
-		"Ihr Umzug",
-		"Ein anderer Spieler bewegt sich, bitte warten",
-		"Wählen Sie die Richtung, in die Sie abbiegen möchten",
-		"Der andere Spieler wählt die Richtung, in die er sich dreht.",
-		"Wählen Sie den gewünschten Platz",
-		"Der andere Spieler wählt, wohin er gehen möchte",
-		"Wählen Sie einen Spieler oder ein Objekt, das Sie mitziehen möchten",
-		"Der andere Spieler wählt ein Ziel, zu dem er ziehen möchte",
-		"Einheiten verschieben",
-		"Ziel zum Angriff auswählen",
-		"Der andere Spieler wählt das anzugreifende Ziel",
-		"Feindlicher Zug",
-		"Ende der Runde"
-	],
-	"pages": {
-		"create": {
-			"6548": "Raum erstellen",
-			"8803": "Spiel erstellen"
-		},
-		"game": {
-			"7101": "Richtung wählen",
-			"7310": "Spielregeln lesen",
-			"8708": "Quellcode"
-		},
-		"index": {
-			"981": "Quellcode",
-			"4706": "Dem Spiel beitreten",
-			"5920": "Lesen Sie die Spielregeln",
-			"7042": "Spiel erstellen",
-			"host": "Gastgeber ",
-			"member": "Mitglied",
-			"walfieGif": "Zeichen Animation: Walfie Gif",
-			"warriorsVsCreeps": "Warriors vs Creeps 2",
-			"warriorsVsCreeps1": "Krieger gegen Creeps 1"
-		},
-		"join": {
-			"3082": "Dem Spiel beitreten",
-			"4228": "Einloggen"
-		},
-		"room": {
-			"1172": "Löschen",
-			"2605": "Einladungscode kopieren",
-			"3553": "Freier Steckplatz",
-			"4409": "Aus der Lobby abmelden",
-			"5952": "Einen Bot erstellen",
-			"6109": "Bereit zum Spielen",
-			"9245": "Warten auf andere Spieler",
-			"9997": "Wählen Sie ein Bild"
-		},
-		"rules": {
-			"84": "Ungeheuer",
-			"288": "Schaden",
-			"367": "Ungeheuer",
-			"958": "Während der Kartenauswahl können die Befehlskarten, die Sie genommen haben, sofort entsorgt (abgelegt) werden, anstatt in die Befehlszeile programmiert zu werden.",
-			"1963": "Stapel",
-			"2651": "Spieler können Objekte und andere Spieler ziehen und schieben",
-			"3350": "Die Handlungen von Bots unterscheiden sich nicht von denen regulärer Spieler",
-			"3365": "Ziel",
-			"3469": "Nur für",
-			"3706": "Karten und Terminal",
-			"4072": "Schaden",
-			"4103": "Entfernt eine Karte und ermöglicht es Ihnen, 2 unbeschädigte Steckplätze zu tauschen oder den Stapel in einen leeren Steckplatz zu verschieben",
-			"4250": "Löscht eine Karte und ermöglicht es Ihnen, Schaden für einen Slot zu entfernen",
-			"4345": "Nachdem alle Karten ausgeteilt wurden, muss jeder Spieler die Karten in die Schlitze des Terminals legen oder sie ablegen. Ein Satz Karten in einem Schlitz wird als ",
-			"4867": "In jeder Runde erscheinen Monster auf freien Spawn-Zellen und bewegen sich eine Zelle in Richtung des Gegenstandes",
-			"4868": "Karten und Terminal",
-			"4950": "Monsterlaichplätze",
-			"5098": "Karten ablegen",
-			"5146": "Monster können 4 benachbarte Felder angreifen, in diesem Fall erhält der Gegenstand 2 Schaden und der Spieler 0.",
-			"5449": "Der erhaltene Schaden wird durch die Schadenskarten bestimmt, die aus dem Schadensdeck gezogen werden (zufällig ausgewählt). Schäden können die Kontrolle des Kriegers erschweren und das Erreichen des Ziels erschweren! Aber - keine Sorge. Du kannst nicht sterben!",
-			"5478": "In der Unterphase des Zuges eines jeden Spielers erfüllt nur die oberste Karte des Stapels die Aufgabe. Die anderen Karten auf dem Stapel werden ignoriert.",
-			"5524": "Wenn Sie mit Bots spielen, müssen Sie nicht mit dem Netzwerk verbunden sein, Sie können auch dann spielen, wenn der Server gerade nicht verfügbar ist.",
-			"5991": "Sobald die Befehlskarten in der Befehlszeile programmiert sind, sind ihr Platz und ihre Reihenfolge festgelegt. Sie können nur umprogrammiert (neu geordnet) werden, indem elektrische oder Computer-Karten während der Kartenauswahlphase entsorgt werden.",
-			"6154": "Ablegen von Karten",
-			"6701": "Stapel",
-			"6703": "Wird eine vierte Kommandokarte desselben Elements auf den Stapel gespielt, wird die unterste Kommandokarte abgeworfen, der Stapel enthält immer noch 3 Karten und die Stärke ist 3, aber die oberste Karte wird zur neuen aktiven Karte.",
-			"6794": "Die Regeln der letzten Version",
-			"7117": "Regeln",
-			"7118": "Zu Beginn des Spiels wird ein Kartenstapel mit zufälligen Karten erstellt, die Spieler wählen abwechselnd Karten aus und speichern auf dem rechten Feld",
-			"7192": "Bots können das Bestehen des Spiels erschweren, da sie eigenständig handeln und ihr Aktionsplan von dem Ihren abweichen kann.",
-			"7338": "Ihr Ziel ist es, den Gegenstand auf das Ausgangsfeld zu bringen.",
-			"7428": "Für",
-			"7471": "Entfernt eine Karte ohne Effekte.",
-			"7846": "Löscht eine Karte ohne Effekte",
-			"8106": "Eine Kommandokarte eines anderen Elements (andere Farbe) kann auf einen bestehenden Stapel gespielt werden, aber dann muss der gesamte alte Stapel abgeworfen werden, so dass nur eine neue Kommandokarte an seiner Stelle bleibt.",
-			"8365": "Ziel",
-			"8391": "Lesen Sie sie, wenn Sie an allen Feinheiten interessiert sind, sie sind bis auf einige Anmerkungen relevant",
-			"8430": "Der Stapel darf bis zu 3 Kommandokarten enthalten, solange sie alle die gleiche Farbe/ das gleiche Element haben. Je größer der Stapel ist, desto stärker ist die Wirkung der Kommandokarte. Jede Kommandokarte ist mit ihren Effekten für verschiedene Machtstufen gekennzeichnet (Stapel von 1, 2, 3 Karten). Wenn eine Karte auf den Stapel gelegt wird, darf man keine niedrigere Machtstufe wählen.",
-			"8547": "Bots",
-			"8599": "Wenn sich mehr als eine Befehlskarte im Befehlssteckplatz befindet, wird sie gestapelt.",
-			"8807": "Du darfst nur Karten von den Karten entsorgen, die du bei der Auswahl genommen hast. Karten, die sich bereits in Slots befinden, können nicht entsorgt werden.",
-			"8853": "Sie können alle Karten auf dieser Seite sehen",
-			"8930": "Index",
-			"9728": "Spielen mit Bots"
-		}
-	}
+  "cards": [
+    {
+      "name": "Manövrieren"
+    },
+    {
+      "levels": [
+        ["1 Zelle vorwärts", "Auf jeder Seite"],
+        ["2 Quadrate vorwärts", "Beide Seiten"],
+        ["3 Quadrate vorwärts", "Auf jeder Seite"]
+      ],
+      "name": "Flamme"
+    },
+    {
+      "levels": [
+        ["2 Quadrate auf der Vorderseite"],
+        ["4 Quadrate vorne mit T"],
+        ["7 Quadrate vorne mit einem T"]
+      ],
+      "name": "Flammenwerfer"
+    },
+    {
+      "name": "Einstellung"
+    },
+    {
+      "levels": [
+        ["1 Feld vorwärts, links oder rechts"],
+        ["2 Quadrate vorwärts, links oder rechts"],
+        ["3 Quadrate vorwärts, links oder rechts"]
+      ],
+      "name": "Flip"
+    },
+    {
+      "levels": [
+        ["1 Ziel in Radius 1"],
+        ["1 Ziel in Radius 2"],
+        ["1 Ziel in Radius 3"]
+      ],
+      "name": "Zielschuss"
+    },
+    {
+      "levels": [
+        [null, "1 Ziel in Radius 1"],
+        [null, "2 Ziele im Radius 1"],
+        [null, "3 Ziele innerhalb von 1 Radius"]
+      ],
+      "name": "Sense"
+    },
+    {
+      "levels": [
+        ["1 Feld vorwärts"],
+        ["2 Zellen vorwärts"],
+        ["3 Zellen vorwärts"]
+      ],
+      "name": "Springen"
+    },
+    {
+      "levels": [["1 Ziel vor Ihnen"], ["2 Tore vor dir"], ["3 vor Ihnen"]],
+      "name": "Schwert"
+    },
+    {
+      "levels": [
+        {
+          "1": "Auf einer Diagonale im Radius 1"
+        },
+        {
+          "1": "Auf einer Diagonale mit einem Radius von 2"
+        },
+        {
+          "1": "Diagonal im Radius 3"
+        }
+      ],
+      "name": "Wildes Drehen"
+    },
+    {
+      "levels": [
+        ["1 oder 2 Quadrate vorwärts"],
+        ["2, 3 oder 4 Zellen vorwärts"],
+        ["3, 4, 5 oder 6 Zellen vorwärts"]
+      ],
+      "name": "Geschwindigkeit"
+    },
+    {
+      "levels": [["1 Ziel vor Ihnen"], ["3 vor Ihnen"], ["5 Ziele vor Ihnen"]],
+      "name": "Kugelblitz"
+    },
+    {
+      "levels": [
+        ["1 Feld zu Ihrer Linken"],
+        ["1 Feld nach links"],
+        ["1 Zelle nach links"],
+        ["1 Zelle nach links"]
+      ]
+    },
+    {
+      "levels": [
+        ["1 Zelle rückwärts"],
+        ["1 Zelle rückwärts"],
+        ["1 Zelle rückwärts"],
+        ["1 Zelle rückwärts"]
+      ]
+    },
+    {
+      "levels": [
+        ["1 Zelle vorwärts"],
+        ["1 Käfig vorwärts"],
+        ["1 Käfig vorwärts"],
+        ["1 Zelle vorwärts"]
+      ]
+    },
+    {
+      "levels": [
+        ["1 Zelle nach rechts"],
+        ["1 Zelle nach rechts"],
+        ["1 Zelle nach rechts"],
+        ["1 Zelle nach rechts"]
+      ]
+    }
+  ],
+  "card": ["Schaden", "Keine Wirkung", "Zu beiden Seiten", "{values} Grad"],
+  "form": {
+    "0": "Name eingeben",
+    "1": "Einladungscode eingeben",
+    "2": "Text eingeben",
+    "3": "Name ist zu lang",
+    "391": "Zurück"
+  },
+  "game": [
+    "Spiel vorbei",
+    "Sie haben verloren.",
+    "Der Kuchen ist zerstört.",
+    "Startseite",
+    "Erfolg",
+    "Sie haben gewonnen.",
+    "Unvorhergesehener Fehler"
+  ],
+  "lose": ["Die Karten im Stapel sind aufgebraucht.", "Torte zerstört"],
+  "message": [
+    "Wählen Sie eine Karte.",
+    "Ein anderer Spieler wählt nun eine Karte",
+    "Legen Sie die ausgewählten Karten in das Terminal oder werfen Sie sie ab",
+    "Der andere Benutzer entscheidet noch, bitte warten",
+    "Ihr Umzug",
+    "Ein anderer Spieler bewegt sich, bitte warten",
+    "Wählen Sie die Richtung, in die Sie abbiegen möchten",
+    "Der andere Spieler wählt die Richtung, in die er sich dreht.",
+    "Wählen Sie den gewünschten Platz",
+    "Der andere Spieler wählt, wohin er gehen möchte",
+    "Wählen Sie einen Spieler oder ein Objekt, das Sie mitziehen möchten",
+    "Der andere Spieler wählt ein Ziel, zu dem er ziehen möchte",
+    "Einheiten verschieben",
+    "Ziel zum Angriff auswählen",
+    "Der andere Spieler wählt das anzugreifende Ziel",
+    "Feindlicher Zug",
+    "Ende der Runde"
+  ],
+  "pages": {
+    "create": {
+      "6548": "Raum erstellen",
+      "8803": "Spiel erstellen"
+    },
+    "game": {
+      "7101": "Richtung wählen",
+      "7310": "Spielregeln lesen",
+      "8708": "Quellcode"
+    },
+    "index": {
+      "981": "Quellcode",
+      "4706": "Dem Spiel beitreten",
+      "5920": "Lesen Sie die Spielregeln",
+      "7042": "Spiel erstellen",
+      "host": "Gastgeber ",
+      "member": "Mitglied",
+      "walfieGif": "Zeichen Animation: Walfie Gif",
+      "warriorsVsCreeps": "Warriors vs Creeps 2",
+      "warriorsVsCreeps1": "Krieger gegen Creeps 1"
+    },
+    "join": {
+      "3082": "Dem Spiel beitreten",
+      "4228": "Einloggen"
+    },
+    "room": {
+      "1172": "Löschen",
+      "2605": "Einladungscode kopieren",
+      "3553": "Freier Steckplatz",
+      "4409": "Aus der Lobby abmelden",
+      "5952": "Einen Bot erstellen",
+      "6109": "Bereit zum Spielen",
+      "9245": "Warten auf andere Spieler",
+      "9997": "Wählen Sie ein Bild"
+    },
+    "rules": {
+      "84": "Ungeheuer",
+      "288": "Schaden",
+      "367": "Ungeheuer",
+      "958": "Während der Kartenauswahl können die Befehlskarten, die Sie genommen haben, sofort entsorgt (abgelegt) werden, anstatt in die Befehlszeile programmiert zu werden.",
+      "1963": "Stapel",
+      "2651": "Spieler können Objekte und andere Spieler ziehen und schieben",
+      "3350": "Die Handlungen von Bots unterscheiden sich nicht von denen regulärer Spieler",
+      "3365": "Ziel",
+      "3469": "Nur für",
+      "3706": "Karten und Terminal",
+      "4072": "Schaden",
+      "4103": "Entfernt eine Karte und ermöglicht es Ihnen, 2 unbeschädigte Steckplätze zu tauschen oder den Stapel in einen leeren Steckplatz zu verschieben",
+      "4250": "Löscht eine Karte und ermöglicht es Ihnen, Schaden für einen Slot zu entfernen",
+      "4345": "Nachdem alle Karten ausgeteilt wurden, muss jeder Spieler die Karten in die Schlitze des Terminals legen oder sie ablegen. Ein Satz Karten in einem Schlitz wird als ",
+      "4867": "In jeder Runde erscheinen Monster auf freien Spawn-Zellen und bewegen sich eine Zelle in Richtung des Gegenstandes",
+      "4868": "Karten und Terminal",
+      "4950": "Monsterlaichplätze",
+      "5098": "Karten ablegen",
+      "5146": "Monster können 4 benachbarte Felder angreifen, in diesem Fall erhält der Gegenstand 2 Schaden und der Spieler 0.",
+      "5449": "Der erhaltene Schaden wird durch die Schadenskarten bestimmt, die aus dem Schadensdeck gezogen werden (zufällig ausgewählt). Schäden können die Kontrolle des Kriegers erschweren und das Erreichen des Ziels erschweren! Aber - keine Sorge. Du kannst nicht sterben!",
+      "5478": "In der Unterphase des Zuges eines jeden Spielers erfüllt nur die oberste Karte des Stapels die Aufgabe. Die anderen Karten auf dem Stapel werden ignoriert.",
+      "5524": "Wenn Sie mit Bots spielen, müssen Sie nicht mit dem Netzwerk verbunden sein, Sie können auch dann spielen, wenn der Server gerade nicht verfügbar ist.",
+      "5991": "Sobald die Befehlskarten in der Befehlszeile programmiert sind, sind ihr Platz und ihre Reihenfolge festgelegt. Sie können nur umprogrammiert (neu geordnet) werden, indem elektrische oder Computer-Karten während der Kartenauswahlphase entsorgt werden.",
+      "6154": "Ablegen von Karten",
+      "6701": "Stapel",
+      "6703": "Wird eine vierte Kommandokarte desselben Elements auf den Stapel gespielt, wird die unterste Kommandokarte abgeworfen, der Stapel enthält immer noch 3 Karten und die Stärke ist 3, aber die oberste Karte wird zur neuen aktiven Karte.",
+      "6794": "Die Regeln der letzten Version",
+      "7117": "Regeln",
+      "7118": "Zu Beginn des Spiels wird ein Kartenstapel mit zufälligen Karten erstellt, die Spieler wählen abwechselnd Karten aus und speichern auf dem rechten Feld",
+      "7192": "Bots können das Bestehen des Spiels erschweren, da sie eigenständig handeln und ihr Aktionsplan von dem Ihren abweichen kann.",
+      "7338": "Ihr Ziel ist es, den Gegenstand auf das Ausgangsfeld zu bringen.",
+      "7428": "Für",
+      "7471": "Entfernt eine Karte ohne Effekte.",
+      "7846": "Löscht eine Karte ohne Effekte",
+      "8106": "Eine Kommandokarte eines anderen Elements (andere Farbe) kann auf einen bestehenden Stapel gespielt werden, aber dann muss der gesamte alte Stapel abgeworfen werden, so dass nur eine neue Kommandokarte an seiner Stelle bleibt.",
+      "8365": "Ziel",
+      "8391": "Lesen Sie sie, wenn Sie an allen Feinheiten interessiert sind, sie sind bis auf einige Anmerkungen relevant",
+      "8430": "Der Stapel darf bis zu 3 Kommandokarten enthalten, solange sie alle die gleiche Farbe/ das gleiche Element haben. Je größer der Stapel ist, desto stärker ist die Wirkung der Kommandokarte. Jede Kommandokarte ist mit ihren Effekten für verschiedene Machtstufen gekennzeichnet (Stapel von 1, 2, 3 Karten). Wenn eine Karte auf den Stapel gelegt wird, darf man keine niedrigere Machtstufe wählen.",
+      "8547": "Bots",
+      "8599": "Wenn sich mehr als eine Befehlskarte im Befehlssteckplatz befindet, wird sie gestapelt.",
+      "8807": "Du darfst nur Karten von den Karten entsorgen, die du bei der Auswahl genommen hast. Karten, die sich bereits in Slots befinden, können nicht entsorgt werden.",
+      "8853": "Sie können alle Karten auf dieser Seite sehen",
+      "8930": "Index",
+      "9728": "Spielen mit Bots"
+    }
+  }
 }

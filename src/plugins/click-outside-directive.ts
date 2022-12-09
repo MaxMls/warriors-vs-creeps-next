@@ -34,5 +34,5 @@ export const clickOutsideDirective = {
   },
   beforeUnmount: (el: IClickOutsideElement, binding, vnode, oldVnode) => {
     el.clickOutsideDirective.free();
-  }
+  },
 };

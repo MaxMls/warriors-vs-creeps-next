@@ -12,14 +12,14 @@ import de from "./locales/de.json";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
-  routes
+  routes,
 });
 
 const i18n = createI18n({
   locale: localStorage.getItem("lang") || "ru",
   fallbackLocale: "en",
   // @ts-ignore
-  messages: { ru, ja, en, de }
+  messages: { ru, ja, en, de },
 });
 
 const app = createApp(App);

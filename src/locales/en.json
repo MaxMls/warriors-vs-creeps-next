@@ -1,350 +1,246 @@
 {
-	"card": [
-		"damage",
-		"No Effect",
-		"In any direction",
-		"{values} degrees"
-	],
-	"cards": [
-		{
-			"name": "Maneuvering"
-		},
-		{
-			"levels": [
-				[
-					"1 cell forward",
-					"On the sides"
-				],
-				[
-					"2 cells forward",
-					"On the sides"
-				],
-				[
-					"3 cells forward",
-					"On the sides"
-				]
-			],
-			"name": "Flame"
-		},
-		{
-			"levels": [
-				[
-					"2 cells in front"
-				],
-				[
-					"4 squares in front with a T"
-				],
-				[
-					"7 cells in front with a T"
-				]
-			],
-			"name": "Flamethrower"
-		},
-		{
-			"name": "Customization"
-		},
-		{
-			"levels": [
-				[
-					"1 cell forward, left or right"
-				],
-				[
-					"2 cells forward, left or right"
-				],
-				[
-					"3 cells forward, left or right"
-				]
-			],
-			"name": "Somersault"
-		},
-		{
-			"levels": [
-				[
-					"1 target within 1 radius"
-				],
-				[
-					"1 target within 2 radius"
-				],
-				[
-					"1 target within 3 radius"
-				]
-			],
-			"name": "Aimed shot"
-		},
-		{
-			"levels": [
-				[
-					null,
-					"1 target within 1 radius"
-				],
-				[
-					null,
-					"2 targets within 1 radius"
-				],
-				[
-					null,
-					"3 targets within 1 radius"
-				]
-			],
-			"name": "Scythe"
-		},
-		{
-			"levels": [
-				[
-					"1 cell forward"
-				],
-				[
-					"2 cells forward"
-				],
-				[
-					"3 cells forward"
-				]
-			],
-			"name": "Bounce"
-		},
-		{
-			"levels": [
-				[
-					"1 goal in front of you"
-				],
-				[
-					"2 goals in front of you"
-				],
-				[
-					"3 goals in front of you"
-				]
-			],
-			"name": "Sword"
-		},
-		{
-			"levels": [
-				{
-					"1": "Diagonally within a radius of 1"
-				},
-				{
-					"1": "Diagonally within a radius of 2"
-				},
-				{
-					"1": "Diagonally within a radius of 3"
-				}
-			],
-			"name": "Crazy spin"
-		},
-		{
-			"levels": [
-				[
-					"1 or 2 cells forward"
-				],
-				[
-					"2, 3 or 4 cells forward"
-				],
-				[
-					"3, 4, 5 or 6 cells forward"
-				]
-			],
-			"name": "Speed"
-		},
-		{
-			"levels": [
-				[
-					"1 goal in front of you"
-				],
-				[
-					"3 goals in front of you"
-				],
-				[
-					"5 goals in front of you"
-				]
-			],
-			"name": "Fireball"
-		},
-		{
-			"levels": [
-				[
-					"1 cell to the left"
-				],
-				[
-					"1 cell to the left"
-				],
-				[
-					"1 cell to the left"
-				],
-				[
-					"1 cell to the left"
-				]
-			]
-		},
-		{
-			"levels": [
-				[
-					"1 cell back"
-				],
-				[
-					"1 cell back"
-				],
-				[
-					"1 cell back"
-				],
-				[
-					"1 cell back"
-				]
-			]
-		},
-		{
-			"levels": [
-				[
-					"1 cell forward"
-				],
-				[
-					"1 cell forward"
-				],
-				[
-					"1 cell forward"
-				],
-				[
-					"1 cell forward"
-				]
-			]
-		},
-		{
-			"levels": [
-				[
-					"1 cell to the right"
-				],
-				[
-					"1 cell to the right"
-				],
-				[
-					"1 cell to the right"
-				],
-				[
-					"1 cell to the right"
-				]
-			]
-		}
-	],
-	"form": {
-		"0": "Name",
-		"1": "Enter invitation code",
-		"2": "Enter text",
-		"3": "Name is too long",
-		"391": "back"
-	},
-	"game": [
-		"End of the game",
-		"YOU LOST",
-		"Cake destroyed",
-		"To main",
-		"Success",
-		"YOU WON",
-		"Unexpected error"
-	],
-	"lose": [
-		"The cards in the deck are out",
-		"Cake destroyed"
-	],
-	"message": [
-		"Choose a card",
-		"Now another player chooses the card",
-		"Install the selected cards in the terminal or dispose of",
-		"Another user is still placing cards, please wait",
-		"Your turn",
-		"Another player is walking, wait",
-		"Choose which way to turn",
-		"The other player chooses where to turn",
-		"Select the cell you want to go to",
-		"Another player chooses where to go",
-		"Select the player or item you want to drag with you",
-		"Another player chooses a target to move",
-		"Moving units",
-		"Choose a target to attack",
-		"Another player chooses a target to attack",
-		"Opponents' move",
-		"End of turn"
-	],
-	"pages": {
-		"create": {
-			"6548": "Create a room",
-			"8803": "Create a game"
-		},
-		"game": {
-			"7101": "Choose direction",
-			"7310": "Read the rules of the game",
-			"8708": "Source"
-		},
-		"index": {
-			"981": "Source",
-			"4706": "Join the game",
-			"5920": "Read the rules of the game",
-			"7042": "Create a game",
-			"host": "Host",
-			"member": "member",
-			"walfieGif": "Character Animation: Walfie Gif",
-			"warriorsVsCreeps": "Warriors vs Creeps 2",
-			"warriorsVsCreeps1": "Warriors vs Creeps 1"
-		},
-		"join": {
-			"3082": "Join the game",
-			"4228": "To come in"
-		},
-		"room": {
-			"1172": "Delete",
-			"2605": "Copy invitation code",
-			"3553": "Free slot",
-			"4409": "Exit the lobby",
-			"5952": "Create a bot",
-			"6109": "Ready to start the game",
-			"9245": "We are waiting for other players",
-			"9997": "Choose an image"
-		},
-		"rules": {
-			"84": "Monsters",
-			"288": "Damage",
-			"367": "Monsters",
-			"958": "During card selection, Command cards you have taken may be immediately disposed of (discarded) instead of being programmed into the Command Line.",
-			"1963": "Stack",
-			"2651": "Players can drag and push items and other players",
-			"3350": "The actions of bots are no different from those of regular players",
-			"3365": "Target",
-			"3469": "Only for",
-			"3706": "Cards and Terminal",
-			"4072": "Damage",
-			"4103": "Removes a card and allows you to swap 2 undamaged slots or move the stack to an empty slot",
-			"4250": "Removes a card and allows you to remove damage for one slot",
-			"4345": "After all cards have been dealt, each player must place cards into slots on the terminal or dispose of them, a set of cards in a slot is called ",
-			"4867": "Each turn, monsters appear on vacant spawn cells and move one cell toward the item",
-			"4868": "Cards and Terminal",
-			"4950": "Monster Spawn Locations",
-			"5098": "Card Disposal.",
-			"5146": "Monsters can attack 4 adjacent squares, in this case the item gets 2 damage and the player gets 0",
-			"5449": "The damage received is determined by the Damage Cards that are drawn from the Damage Deck (chosen at random). Damage can make it hard to control the Warrior and make it harder to reach your goal! But - don't worry. You can't die!",
-			"5478": "In each player's turn phase, only the card at the top of the stack will be played in each slot. The other cards in the stack are ignored.",
-			"5524": "When playing with bots is not required to be connected to the network, you can play even if the server is not available at the moment.",
-			"5991": "After the Command Cards are programmed into the Command String, their place and order become fixed. They can only be reprogrammed (reordered) by disposing of electric or computer cards during the card selection phase.",
-			"6154": "Card Disposal.",
-			"6701": "Stack",
-			"6703": "If a fourth Command Card of the same element is played on the stack, the lowest Command Card is discarded.The stack still contains 3 cards and the Power is 3, but the top card becomes the new active card.",
-			"6794": "Rules of the past version",
-			"7117": "Rules",
-			"7118": "At the beginning of the game, a deck of random cards is created, players take turns choosing cards and saving on the right panel",
-			"7192": "Bots can complicate the game, as they act at their own discretion and their plan of action may differ from yours.",
-			"7338": "Your goal is to get the item to the exit square.",
-			"7428": "For",
-			"7471": "Removes a card with no effects",
-			"7846": "A Command Card of a different element (different color) can be played on an existing stack, but then the entire old stack must be discarded so that only one new Command Card remains in its place.",
-			"8106": "Target",
-			"8365": "Read them if you are interested in all the fine points, they are relevant except for some notations",
-			"8391": "The stack can contain up to 3 Command Cards, as long as they are all the same color/element. Increasing the size of the stack increases the effect of the Command Card. Each Command Card is marked with its effects for different Power levels (stack of 1, 2, 3 cards). When a card is stacked, you cannot choose a lower power level.",
-			"8430": "Bots",
-			"8547": "If there is more than one Command card in the Command slot, it is a stack.",
-			"8599": "You may only dispose of cards from the cards you took when you selected them. Cards already placed in slots cannot be disposed of.",
-			"8807": "You can see all the cards on this page",
-			"8853": "Index",
-			"8930": "Game with Bots",
-			"9728": "stack",
-			"10000": "Exit during the game",
-			"10001": "If a player quits during the game or the connection with him is broken for other reasons, instead of him the bot starts to play",
-			"10002": "You can not join a game that has already begun, in future updates this may change"
-		}
-	}
+  "card": ["damage", "No Effect", "In any direction", "{values} degrees"],
+  "cards": [
+    {
+      "name": "Maneuvering"
+    },
+    {
+      "levels": [
+        ["1 cell forward", "On the sides"],
+        ["2 cells forward", "On the sides"],
+        ["3 cells forward", "On the sides"]
+      ],
+      "name": "Flame"
+    },
+    {
+      "levels": [
+        ["2 cells in front"],
+        ["4 squares in front with a T"],
+        ["7 cells in front with a T"]
+      ],
+      "name": "Flamethrower"
+    },
+    {
+      "name": "Customization"
+    },
+    {
+      "levels": [
+        ["1 cell forward, left or right"],
+        ["2 cells forward, left or right"],
+        ["3 cells forward, left or right"]
+      ],
+      "name": "Somersault"
+    },
+    {
+      "levels": [
+        ["1 target within 1 radius"],
+        ["1 target within 2 radius"],
+        ["1 target within 3 radius"]
+      ],
+      "name": "Aimed shot"
+    },
+    {
+      "levels": [
+        [null, "1 target within 1 radius"],
+        [null, "2 targets within 1 radius"],
+        [null, "3 targets within 1 radius"]
+      ],
+      "name": "Scythe"
+    },
+    {
+      "levels": [["1 cell forward"], ["2 cells forward"], ["3 cells forward"]],
+      "name": "Bounce"
+    },
+    {
+      "levels": [
+        ["1 goal in front of you"],
+        ["2 goals in front of you"],
+        ["3 goals in front of you"]
+      ],
+      "name": "Sword"
+    },
+    {
+      "levels": [
+        {
+          "1": "Diagonally within a radius of 1"
+        },
+        {
+          "1": "Diagonally within a radius of 2"
+        },
+        {
+          "1": "Diagonally within a radius of 3"
+        }
+      ],
+      "name": "Crazy spin"
+    },
+    {
+      "levels": [
+        ["1 or 2 cells forward"],
+        ["2, 3 or 4 cells forward"],
+        ["3, 4, 5 or 6 cells forward"]
+      ],
+      "name": "Speed"
+    },
+    {
+      "levels": [
+        ["1 goal in front of you"],
+        ["3 goals in front of you"],
+        ["5 goals in front of you"]
+      ],
+      "name": "Fireball"
+    },
+    {
+      "levels": [
+        ["1 cell to the left"],
+        ["1 cell to the left"],
+        ["1 cell to the left"],
+        ["1 cell to the left"]
+      ]
+    },
+    {
+      "levels": [
+        ["1 cell back"],
+        ["1 cell back"],
+        ["1 cell back"],
+        ["1 cell back"]
+      ]
+    },
+    {
+      "levels": [
+        ["1 cell forward"],
+        ["1 cell forward"],
+        ["1 cell forward"],
+        ["1 cell forward"]
+      ]
+    },
+    {
+      "levels": [
+        ["1 cell to the right"],
+        ["1 cell to the right"],
+        ["1 cell to the right"],
+        ["1 cell to the right"]
+      ]
+    }
+  ],
+  "form": {
+    "0": "Name",
+    "1": "Enter invitation code",
+    "2": "Enter text",
+    "3": "Name is too long",
+    "391": "back"
+  },
+  "game": [
+    "End of the game",
+    "YOU LOST",
+    "Cake destroyed",
+    "To main",
+    "Success",
+    "YOU WON",
+    "Unexpected error"
+  ],
+  "lose": ["The cards in the deck are out", "Cake destroyed"],
+  "message": [
+    "Choose a card",
+    "Now another player chooses the card",
+    "Install the selected cards in the terminal or dispose of",
+    "Another user is still placing cards, please wait",
+    "Your turn",
+    "Another player is walking, wait",
+    "Choose which way to turn",
+    "The other player chooses where to turn",
+    "Select the cell you want to go to",
+    "Another player chooses where to go",
+    "Select the player or item you want to drag with you",
+    "Another player chooses a target to move",
+    "Moving units",
+    "Choose a target to attack",
+    "Another player chooses a target to attack",
+    "Opponents' move",
+    "End of turn"
+  ],
+  "pages": {
+    "create": {
+      "6548": "Create a room",
+      "8803": "Create a game"
+    },
+    "game": {
+      "7101": "Choose direction",
+      "7310": "Read the rules of the game",
+      "8708": "Source"
+    },
+    "index": {
+      "981": "Source",
+      "4706": "Join the game",
+      "5920": "Read the rules of the game",
+      "7042": "Create a game",
+      "host": "Host",
+      "member": "member",
+      "walfieGif": "Character Animation: Walfie Gif",
+      "warriorsVsCreeps": "Warriors vs Creeps 2",
+      "warriorsVsCreeps1": "Warriors vs Creeps 1"
+    },
+    "join": {
+      "3082": "Join the game",
+      "4228": "To come in"
+    },
+    "room": {
+      "1172": "Delete",
+      "2605": "Copy invitation code",
+      "3553": "Free slot",
+      "4409": "Exit the lobby",
+      "5952": "Create a bot",
+      "6109": "Ready to start the game",
+      "9245": "We are waiting for other players",
+      "9997": "Choose an image"
+    },
+    "rules": {
+      "84": "Monsters",
+      "288": "Damage",
+      "367": "Monsters",
+      "958": "During card selection, Command cards you have taken may be immediately disposed of (discarded) instead of being programmed into the Command Line.",
+      "1963": "Stack",
+      "2651": "Players can drag and push items and other players",
+      "3350": "The actions of bots are no different from those of regular players",
+      "3365": "Target",
+      "3469": "Only for",
+      "3706": "Cards and Terminal",
+      "4072": "Damage",
+      "4103": "Removes a card and allows you to swap 2 undamaged slots or move the stack to an empty slot",
+      "4250": "Removes a card and allows you to remove damage for one slot",
+      "4345": "After all cards have been dealt, each player must place cards into slots on the terminal or dispose of them, a set of cards in a slot is called ",
+      "4867": "Each turn, monsters appear on vacant spawn cells and move one cell toward the item",
+      "4868": "Cards and Terminal",
+      "4950": "Monster Spawn Locations",
+      "5098": "Card Disposal.",
+      "5146": "Monsters can attack 4 adjacent squares, in this case the item gets 2 damage and the player gets 0",
+      "5449": "The damage received is determined by the Damage Cards that are drawn from the Damage Deck (chosen at random). Damage can make it hard to control the Warrior and make it harder to reach your goal! But - don't worry. You can't die!",
+      "5478": "In each player's turn phase, only the card at the top of the stack will be played in each slot. The other cards in the stack are ignored.",
+      "5524": "When playing with bots is not required to be connected to the network, you can play even if the server is not available at the moment.",
+      "5991": "After the Command Cards are programmed into the Command String, their place and order become fixed. They can only be reprogrammed (reordered) by disposing of electric or computer cards during the card selection phase.",
+      "6154": "Card Disposal.",
+      "6701": "Stack",
+      "6703": "If a fourth Command Card of the same element is played on the stack, the lowest Command Card is discarded.The stack still contains 3 cards and the Power is 3, but the top card becomes the new active card.",
+      "6794": "Rules of the past version",
+      "7117": "Rules",
+      "7118": "At the beginning of the game, a deck of random cards is created, players take turns choosing cards and saving on the right panel",
+      "7192": "Bots can complicate the game, as they act at their own discretion and their plan of action may differ from yours.",
+      "7338": "Your goal is to get the item to the exit square.",
+      "7428": "For",
+      "7471": "Removes a card with no effects",
+      "7846": "A Command Card of a different element (different color) can be played on an existing stack, but then the entire old stack must be discarded so that only one new Command Card remains in its place.",
+      "8106": "Target",
+      "8365": "Read them if you are interested in all the fine points, they are relevant except for some notations",
+      "8391": "The stack can contain up to 3 Command Cards, as long as they are all the same color/element. Increasing the size of the stack increases the effect of the Command Card. Each Command Card is marked with its effects for different Power levels (stack of 1, 2, 3 cards). When a card is stacked, you cannot choose a lower power level.",
+      "8430": "Bots",
+      "8547": "If there is more than one Command card in the Command slot, it is a stack.",
+      "8599": "You may only dispose of cards from the cards you took when you selected them. Cards already placed in slots cannot be disposed of.",
+      "8807": "You can see all the cards on this page",
+      "8853": "Index",
+      "8930": "Game with Bots",
+      "9728": "stack",
+      "10000": "Exit during the game",
+      "10001": "If a player quits during the game or the connection with him is broken for other reasons, instead of him the bot starts to play",
+      "10002": "You can not join a game that has already begun, in future updates this may change"
+    }
+  }
 }

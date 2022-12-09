@@ -7,12 +7,11 @@ export class RequestError implements Error {
 */
 
 export abstract class AbstractNetwork {
+  abstract sendAction(actionUuid: string, payload: any): Promise<void>;
 
-	abstract sendAction(actionUuid: string, payload: any): Promise<void>
+  abstract init(): Promise<void>;
 
-	abstract init(): Promise<void>
+  abstract waitAction(fromId, actionName): Promise<any>;
 
-	abstract waitAction(fromId, actionName): Promise<any>
-
-	abstract destroy(): void
+  abstract destroy(): void;
 }

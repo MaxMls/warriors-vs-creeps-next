@@ -34,5 +34,5 @@ export const typerDirective = {
   },
   beforeUnmount: (el: ITyperDirectiveElement, binding, vnode, oldVnode) => {
     el?.typerDirective?.free();
-  }
+  },
 };

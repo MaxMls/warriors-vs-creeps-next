@@ -24,5 +24,5 @@ export const opacityDelayDirective = {
   },
   beforeUnmount: (el: ITyperDirectiveElement, binding, vnode, oldVnode) => {
     el.opacityDelayDirective.free();
-  }
+  },
 };
