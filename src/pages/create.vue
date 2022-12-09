@@ -25,8 +25,6 @@ export default defineComponent({
       errors: { name: null } as any
     });
 
-    //const {t} = useI18n()
-
     const fields = [{ name: "name", label: "form.0" }];
 
     onMounted(() => {

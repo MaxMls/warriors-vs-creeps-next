@@ -11,10 +11,7 @@ import LanguageSwitcher from "./components/LanguageSwitcher.vue";
 export default defineComponent({
   components: { LanguageSwitcher },
   setup() {
-    //const {t} = useI18n({useScope: 'global'}) // call `useI18n`, and spread `t` from  `useI18n` returning
     provide(APP_PROVIDER, {});
-
-    //return {t} // return render context that included `t`
   }
 });
 </script>

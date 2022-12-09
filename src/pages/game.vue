@@ -429,7 +429,6 @@ const useRenderGame = () => {
   }>(null);
 
   const router = useRouter();
-  //const {t} = useI18n()
   const defeat: AbstractRender["defeat"] = (text) => {
     message.value = "game.0";
     popupMessage.value = {

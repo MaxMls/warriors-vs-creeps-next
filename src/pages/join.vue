@@ -25,7 +25,6 @@ export default defineComponent({
       errors: { name: null, room: null } as any
     });
 
-    //const {t} = useI18n()
     const fields = [
       { name: "name", label: "form.0" },
       { name: "room", label: "form.1" }

@@ -16,6 +16,7 @@ const router = createRouter({
 });
 
 const i18n = createI18n({
+  legacy: false,
   locale: localStorage.getItem("lang") || "ru",
   fallbackLocale: "en",
   // @ts-ignore

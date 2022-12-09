@@ -43,15 +43,17 @@ export const getNextCellFromAToB = (a, b) => {
 //  new Array(2)]
 export const createArray = (...lengths) => {
   const length = lengths[0];
-  let arr = new Array(length || 0),
-    i = length;
+  let array = new Array(length || 0);
+  let index = length;
 
   if (lengths.length > 1) {
-    const args: any = Array.prototype.slice.call(lengths, 1);
-    while (i--) arr[length - 1 - i] = createArray.apply(this, args);
+    const args = lengths.slice(1);
+    while (index--) {
+      array[length - index - 1] = createArray(...args);
+    }
   }
 
-  return arr;
+  return array;
 };
 
 export const radius = (value: number): IVector[] => {
