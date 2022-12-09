@@ -1,24 +1,20 @@
-
 .ctn {
-	border: 1px solid #eee;
-	width: 1200px;
-	max-width: 100%;
+  border: 1px solid #eee;
+  width: 1200px;
+  max-width: 100%;
 }
 
-
-
 .link {
-	border-bottom: 1px solid #0047FF;
-	a {
-		font-size: 20px;
-		color: #0047FF;
-	}
-
+  border-bottom: 1px solid #0047ff;
+  a {
+    font-size: 20px;
+    color: #0047ff;
+  }
 }
 
 .linksGroup {
-	display: grid;
-	grid-gap: 100px;
-	justify-content: center;
-	grid-auto-flow: column;
+  display: grid;
+  grid-gap: 100px;
+  justify-content: center;
+  grid-auto-flow: column;
 }

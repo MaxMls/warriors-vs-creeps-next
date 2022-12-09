@@ -1,433 +1,427 @@
-
 .statCtn {
-	padding: 15px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	--icon-color: #6E286B;
-	color: var(--icon-color);
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  --icon-color: #6e286b;
+  color: var(--icon-color);
 }
 
 button.statCtn:enabled {
-	outline: 2px solid #f8e502;
-	outline-offset: -3px;
-	// cursor: pointer;
-	background: white;
+  outline: 2px solid #f8e502;
+  outline-offset: -3px;
+  // cursor: pointer;
+  background: white;
 
-	&:hover {
-		//	outline-color: white;
-	}
+  &:hover {
+    //	outline-color: white;
+  }
 }
 
 .statIcon {
-	min-width: 30px;
-	min-height: 30px;
-	//background: #eee;
+  min-width: 30px;
+  min-height: 30px;
+  //background: #eee;
 
-	width: 30px;
-	height: 30px;
+  width: 30px;
+  height: 30px;
 
-	& + .statValue {
-		margin-top: 5px;
-	}
+  & + .statValue {
+    margin-top: 5px;
+  }
 }
 
 .statValue {
-	font-size: 20px;
+  font-size: 20px;
 }
 
 .statsPanelCtn {
-	border: 1px solid white;
+  border: 1px solid white;
 }
 
 .statsPanel {
-	height: fit-content;
-	display: grid;
-	grid-template-columns: 1fr 1fr;
+  height: fit-content;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
 .statCtnCounter {
-	grid-column: 1/-1;
+  grid-column: 1/-1;
 
-	&:not(:last-child) {
-		border-bottom: 1px solid white;
-	}
-
+  &:not(:last-child) {
+    border-bottom: 1px solid white;
+  }
 }
 
 .statCtnCrane {
-	grid-column: 1;
+  grid-column: 1;
 
-	//border: 1px solid white;
-	border-top: none;
-	border-right: none;
-
+  //border: 1px solid white;
+  border-top: none;
+  border-right: none;
 }
 
 .statCtnTrash {
-	grid-column: 2;
+  grid-column: 2;
 
-	border-left: 1px solid white;
-	border-top: none;
+  border-left: 1px solid white;
+  border-top: none;
 }
 
 .statCtnDirection {
-	grid-column: 1/-1;
+  grid-column: 1/-1;
 
-	border: 1px solid white;
-	border-left: none;
-	border-right: none;
-	margin-bottom: -1px;
+  border: 1px solid white;
+  border-left: none;
+  border-right: none;
+  margin-bottom: -1px;
 }
 
 .ctn {
-	border: none !important;
-	position: relative;
-	display: grid;
-	grid-template-columns: 0fr 1fr 0fr;
-	grid-template-rows: auto auto 1fr;
-	//grid-gap: 1px;
-	border: none;
+  border: none !important;
+  position: relative;
+  display: grid;
+  grid-template-columns: 0fr 1fr 0fr;
+  grid-template-rows: auto auto 1fr;
+  //grid-gap: 1px;
+  border: none;
 
-	//padding: 1px;
-	height: calc(100vh - 20px);
-	margin: 20px;
-	margin-top: 0;
-	//height: 700px;
-	//height: 100vh;
+  //padding: 1px;
+  height: calc(100vh - 20px);
+  margin: 20px;
+  margin-top: 0;
+  //height: 700px;
+  //height: 100vh;
 
-	&, .statsPanel {
-		//background: #eee;
-	}
+  &,
+  .statsPanel {
+    //background: #eee;
+  }
 
-	//border-color: #eee;
+  //border-color: #eee;
 
-	overflow: hidden;
+  overflow: hidden;
 }
 
 .statsPanel {
-	grid-column: 1;
-	grid-row: span 1;
+  grid-column: 1;
+  grid-row: span 1;
 }
 
 .gamePanel {
-	// background: white;
-	grid-column: 2;
-	grid-row: span 1;
-	border: 1px solid white;
-	padding: 10px;
-	border-left: none;
-	border-right: none;
+  // background: white;
+  grid-column: 2;
+  grid-row: span 1;
+  border: 1px solid white;
+  padding: 10px;
+  border-left: none;
+  border-right: none;
 }
 
 .handPanelCtn {
-	border: 1px solid white;
-	position: relative;
+  border: 1px solid white;
+  position: relative;
 
-	grid-column: 3;
-	grid-row: span 1;
-	width: 213px;
+  grid-column: 3;
+  grid-row: span 1;
+  width: 213px;
 }
 
 .handPanel {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	//background: white;
-	padding: 15px;
-	overflow-y: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  //background: white;
+  padding: 15px;
+  overflow-y: auto;
 
-	&::-webkit-scrollbar {
-		display: none;
-	}
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .handPanelCard {
-
-	width: 100%;
-	& + .handPanelCard {
-		margin-top: 10px;
-	}
+  width: 100%;
+  & + .handPanelCard {
+    margin-top: 10px;
+  }
 }
 
 .termPanel {
-	//background: white;
-	grid-column: 1/-1;
-	grid-row: span 1;
-	//min-height: 100px;
-	border: 1px solid white;
-	border-top: none;
+  //background: white;
+  grid-column: 1/-1;
+  grid-row: span 1;
+  //min-height: 100px;
+  border: 1px solid white;
+  border-top: none;
 
-	display: grid;
-	padding: 0 40px 0 15px;
-	padding-top: 10px;
-	z-index: 1;
-	grid-auto-flow: column;
-	grid-gap: 10px;
-	grid-auto-columns: 1fr;
+  display: grid;
+  padding: 0 40px 0 15px;
+  padding-top: 10px;
+  z-index: 1;
+  grid-auto-flow: column;
+  grid-gap: 10px;
+  grid-auto-columns: 1fr;
 }
 
 .termSlot {
-	//height: 0;
-	position: relative;
+  //height: 0;
+  position: relative;
 }
 
 .termCard {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	min-height: 100%;
-	display: flex;
-	flex-direction: column;
-	transition: top .15s;
-	width: 100%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: top 0.15s;
+  width: 100%;
 
-	& > * {
-		flex: none;
-	}
+  & > * {
+    flex: none;
+  }
 
-	&:not(:hover) {
-		top: 0px !important;
-	}
+  &:not(:hover) {
+    top: 0px !important;
+  }
 }
 
 .termGradient {
-	flex: 1 1 auto;
-	background: linear-gradient(180deg, #FFFFFF 0%, rgba(255, 255, 255, 0) 100%);
-	border: 1px solid #EEEEEE;
-	border-bottom-width: 0;
+  flex: 1 1 auto;
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
+  border: 1px solid #eeeeee;
+  border-bottom-width: 0;
 }
-
 
 .termGradient_empty.termGradient_select {
-	border: 2px solid #FFE500;
-	border-bottom: 0;
+  border: 2px solid #ffe500;
+  border-bottom: 0;
 }
 
-
 .termGradient_select {
-	border-left: 2px solid #FFE500;
-	border-right: 2px solid #FFE500;
-	margin: 0 -2px;
-
+  border-left: 2px solid #ffe500;
+  border-right: 2px solid #ffe500;
+  margin: 0 -2px;
 }
 
 .termGradient_empty {
-	border-top-width: 1px;
-	border-top-left-radius: 10px;
-	border-top-right-radius: 10px;
+  border-top-width: 1px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
-
 
 .termCardCtn {
-	position: relative;
-	top: calc(100% - 208px)
+  position: relative;
+  top: calc(100% - 208px);
 }
 
-
 .message {
-	//z-index: 3;
-	padding: 15px 30px;
-	border: 1px solid #eee;
-	font-size: 18px;
-	text-align: center;
-	max-width: 100%;
-	//	position: absolute;
-	//	top: 0;
-	//	left: 50%;
-	//	transform: translateX(-50%);
-	background: white;
+  //z-index: 3;
+  padding: 15px 30px;
+  border: 1px solid #eee;
+  font-size: 18px;
+  text-align: center;
+  max-width: 100%;
+  //	position: absolute;
+  //	top: 0;
+  //	left: 50%;
+  //	transform: translateX(-50%);
+  background: white;
 
-	opacity: .7;
-	pointer-events: none;
-	grid-column: 1/-1;
-
+  opacity: 0.7;
+  pointer-events: none;
+  grid-column: 1/-1;
 }
 
 .header {
-	grid-row: span 1;
-	grid-column: 1/-1;
-	display: grid;
-	justify-content: space-between;
-	grid-template-columns: 215px 1fr 215px;
+  grid-row: span 1;
+  grid-column: 1/-1;
+  display: grid;
+  justify-content: space-between;
+  grid-template-columns: 215px 1fr 215px;
 }
 
 .headerMessage {
-	display: flex;
-	justify-content: center;
-	align-items: flex-start;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .headerMessageText {
-	font-weight: 500;
-	font-size: 16px;
-	padding: 15px 30px;
-	background: white;
-	border-radius: 0px 0px 10px 10px;
-	margin-bottom: 10px;
+  font-weight: 500;
+  font-size: 16px;
+  padding: 15px 30px;
+  background: white;
+  border-radius: 0px 0px 10px 10px;
+  margin-bottom: 10px;
 }
 
 .headerMessageTextCtn {
-	position: relative;
-	// display: inline;
+  position: relative;
+  // display: inline;
 }
 
 .headerMessageTextRepeat {
-	color: #6E286B;
-	display: block;
-	position: absolute;
-	top: -2px;
-	left: 0;
-	right: 0;
-	bottom: 0;
+  color: #6e286b;
+  display: block;
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .headerLinks {
-	padding: 15px 15px;
-	// flex: none;
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-
+  padding: 15px 15px;
+  // flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .headerLink {
-	font-size: 14px;
-	color: #367FC3;
-	border-bottom: 1px solid transparent;
+  font-size: 14px;
+  color: #367fc3;
+  border-bottom: 1px solid transparent;
 
-	&:hover {
-		border-bottom-color: #367FC3;
-	}
+  &:hover {
+    border-bottom-color: #367fc3;
+  }
 
-	& + .headerLink {
-		margin-top: 5px;
-	}
+  & + .headerLink {
+    margin-top: 5px;
+  }
 }
 
-.directionPopupCtn, .selectPopupCtn, .messagePopupCtn {
-	position: absolute;
-	z-index: 3;
+.directionPopupCtn,
+.selectPopupCtn,
+.messagePopupCtn {
+  position: absolute;
+  z-index: 3;
 
-	top: 50%;
-	max-width: 100%;
-	overflow: hidden;
-	overflow-x: auto;
+  top: 50%;
+  max-width: 100%;
+  overflow: hidden;
+  overflow-x: auto;
 
-	width: fit-content;
-	left: 50%;
-	transform: translateY(-50%) translateX(-50%);
+  width: fit-content;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
 }
 
-.directionPopupCtn, .selectPopupCtn {
-	opacity: .2;
+.directionPopupCtn,
+.selectPopupCtn {
+  opacity: 0.2;
 
-	transition: opacity .15s;
+  transition: opacity 0.15s;
 
-	&::-webkit-scrollbar {
-		display: none;
-	}
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
-	&:hover {
-		opacity: 1;
-		//margin-left: calc(0px);
-	}
+  &:hover {
+    opacity: 1;
+    //margin-left: calc(0px);
+  }
 }
 
 .directionPopup {
-	border-radius: 10px;
-	background: white;
-	border: 1px solid #eee;
-	padding: 25px 35px 35px;
+  border-radius: 10px;
+  background: white;
+  border: 1px solid #eee;
+  padding: 25px 35px 35px;
 }
 
-.directionPopupTitle, .messagePopupTitle, .messagePopupText {
-	text-align: center;
-	font-size: 18px;
-	font-weight: 500;
-	color: #333;
-	margin-bottom: 15px;
+.directionPopupTitle,
+.messagePopupTitle,
+.messagePopupText {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 15px;
 }
 
 .directionPopupChoose {
-	display: flex;
-	justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .directionPopupDirection {
-	border-radius: 7px;
-	padding: 15px;
-	border: 3px solid #2295FF;
-	display: flex;
+  border-radius: 7px;
+  padding: 15px;
+  border: 3px solid #2295ff;
+  display: flex;
 
-	cursor: pointer;
+  cursor: pointer;
 
-	&:hover {
-		border-color: #333;
-	}
+  &:hover {
+    border-color: #333;
+  }
 
-	& + .directionPopupDirection {
-		margin-left: 10px;
-	}
+  & + .directionPopupDirection {
+    margin-left: 10px;
+  }
 }
 
 .directionPopupIcon {
-	width: 30px;
-	height: 30px;
-	--icon-color: black
+  width: 30px;
+  height: 30px;
+  --icon-color: black;
 }
 
 .selectPopup {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-around;
-	width: max-content;
-	padding: 20px 20px;
-	gap: 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  width: max-content;
+  padding: 20px 20px;
+  gap: 20px;
 }
 
 .selectPopupCard {
-	width: 200px;
+  width: 200px;
 }
 
 .messagePopup {
-	background: white;
-	border: 1px solid #eee;
-	border-radius: 10px;
-	padding: 25px 40px 40px;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 25px 40px 40px;
 }
 
 .messagePopupText {
-	font-weight: 400;
-	font-size: 16px;
+  font-weight: 400;
+  font-size: 16px;
 
-	& + .messagePopupButton {
-		margin-top: 20px;
-	}
+  & + .messagePopupButton {
+    margin-top: 20px;
+  }
 }
 
 .messagePopupButton {
-	border-radius: 7px;
-	border: 1px solid #2295FF;
-	font-size: 16px;
-	color: #2295FF;
-	text-align: center;
-	display: block;
-	padding: 15px 35px;
-	width: 100%;
-	// margin: 0 auto;
+  border-radius: 7px;
+  border: 1px solid #2295ff;
+  font-size: 16px;
+  color: #2295ff;
+  text-align: center;
+  display: block;
+  padding: 15px 35px;
+  width: 100%;
+  // margin: 0 auto;
 
-	& + .messagePopupButton {
-		margin-top: 10px;
-	}
+  & + .messagePopupButton {
+    margin-top: 10px;
+  }
 
-	&:hover {
-		color: #fff;
-		background: #2295FF;
-
-	}
+  &:hover {
+    color: #fff;
+    background: #2295ff;
+  }
 }
