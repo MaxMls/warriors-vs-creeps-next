@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="$style.mainMenu">
     <h1 :class="$style.title">{{ $t("pages.index.warriorsVsCreeps") }}</h1>
     <div :class="$style.buttonsGroup">
       <router-link to="/create" :class="$style.button">{{
@@ -64,8 +64,8 @@ export default defineComponent({
 .title {
   text-align: center;
   font-size: 34px;
-  color: #000;
-  color: #de8d13;
+  color: #1894ff;
+  //color: #de8d13;
   opacity: 0.7;
 
   font-size: 66px;
@@ -74,6 +74,12 @@ export default defineComponent({
   & + .buttonsGroup {
     margin-top: 65px;
   }
+}
+.mainMenu {
+  background: #ffffff85;
+  padding: 20px;
+  padding-top: 5px;
+  border-radius: 10px;
 }
 
 .button {
@@ -113,7 +119,7 @@ export default defineComponent({
 .link {
   font-size: 20px;
 
-  border-bottom: 1px solid #366bff;
-  color: #3d71ff;
+  border-bottom: 1px solid #1894ff;
+  color: #1894ff;
 }
 </style>

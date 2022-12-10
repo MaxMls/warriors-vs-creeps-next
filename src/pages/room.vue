@@ -29,13 +29,22 @@
     </div>
     <div :class="[style.slotsGroup]">
       <div v-for="(p, i) in players" :class="[style.slotCtn]">
+        <div
+          :class="[
+            style.slotReadyIndicator,
+            { [style.slotImage_ready]: p.data.ready }
+          ]"
+        >
+          <!-- indicator -->
+        </div>
+
         <button
           :disabled="p.ownerId !== player.selfId && p.selfId !== player.selfId"
           type="button"
           :class="[style.slotImage, { [style.slotImage_ready]: p.data.ready }]"
-          :style="`background: ${
-            ['#F7AEF8', '#B388EB', '#8093F1', '#72DDF7'][i % 4]
-          }`"
+          :style="{
+            background: ['#F7AEF8', '#B388EB', '#8093F1', '#72DDF7'][i % 4]
+          }"
           @click="skinChanger.open(p.selfId)"
         >
           <UnitComponent :skin="p.data.skin" state="idle" />
@@ -86,6 +95,7 @@
     <button :class="style.popupClose" @click="skinChanger.close" />
     <div :class="style.skinSelectCtn">
       <div :class="style.skinSelectTitle">{{ $t("pages.room.9997") }}</div>
+
       <div :class="style.skinSelectItems">
         <div :class="style.skinSelectItemCtn" v-for="s in skinChanger.values">
           <button
@@ -118,7 +128,11 @@ import { useRouter } from "vue-router";
 import cs from "./common.module.scss";
 import style from "./room.module.scss";
 import UnitComponent from "../components/UnitComponent.vue";
-import { heroesSkins, TUnitSkin } from "../engine/renders/vue-render";
+import {
+  heroesSkins,
+  TUnitSkin,
+  THeroSkin
+} from "../engine/renders/vue-render";
 import { genId, IRoomPlayer, Room } from "../engine/lobby/server-events-lobby";
 import cloneDeep from "lodash/cloneDeep";
 
@@ -134,7 +148,7 @@ const useSkinChanger = (room: Room) => {
     close() {
       playerId.value = null;
     },
-    set(skin: TUnitSkin) {
+    set(skin: THeroSkin) {
       room.updatePlayerData(playerId.value!, { skin });
       playerId.value = null;
     },
@@ -153,9 +167,13 @@ export default defineComponent({
     const router = useRouter();
 
     const addBot = () => {
-      const id = genId();
+      room.players.map((player) => {
+        player.data.name;
+        player.data.skin;
+      });
+
       room.addPlayer({
-        selfId: id,
+        selfId: genId(),
         ownerId: room.player.selfId,
         data: {
           skin: "ame",

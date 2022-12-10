@@ -2,7 +2,10 @@
   <div :class="[sty.icons]">
     <SvgIcon
       v-for="e in cardIcons"
-      :class="[sty.icon, { [sty['icon_' + e.t]]: !!topCard }]"
+      :class="[
+        sty.icon,
+        { [sty['icon_' + e.t]]: !!topCard, [sty.empty]: isStackEmpty }
+      ]"
       :name="e.i"
     />
   </div>
@@ -84,7 +87,7 @@ export default defineComponent({
   setup: (props, context) => {
     const singleId = computed(() => (props.idx !== null ? props.idx : null));
     const single = computed(() =>
-      singleId.value ? cardsJSON[singleId.value] : null
+      singleId.value !== null ? cardsJSON[singleId.value] : null
     );
     const outline = computed(() => props.select);
     const outlineActive = computed(() => props.active);
@@ -194,7 +197,10 @@ export default defineComponent({
       stepIcon,
       desc,
       damageCardId,
-      noDefectCardIndex
+      noDefectCardIndex,
+      isStackEmpty: computed(
+        () => singleId.value === null && props.stack.length === 0
+      )
     };
   }
 });

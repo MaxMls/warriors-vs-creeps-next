@@ -1,9 +1,9 @@
 :root {
-  --t-electro-color: #ac1dd0;
+  --t-electro-color: #ad8d00;
   --t-metal-color: #1d4fd0;
-  --t-fire-color: #ee6e27;
-  --t-computer-color: #16a2ab;
-  --t-warning-color: #d01d3d;
+  --t-fire-color: #cf4826;
+  --t-computer-color: #1d992b;
+  --t-warning-color: #a224c9;
 }
 
 .ctn {
@@ -69,7 +69,7 @@
 .ctn_outline {
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
-  border: 2px solid #ffe500;
+  border: 2px solid #00bbff;
   margin: -2px;
 }
 
@@ -99,6 +99,7 @@
 
 .module_damaged.module_active {
   --icon-color: #808080;
+  filter: grayscale(1);
 }
 
 .module_damage,
@@ -142,4 +143,8 @@
 
 .desc {
   flex: 1 1 auto;
+}
+
+.empty {
+  filter: grayscale(1);
 }

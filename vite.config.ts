@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 //import pages from "vite-plugin-pages";
-import viteSvgIcons from "vite-plugin-svg-icons";
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 
 import * as path from "path";
 import vueJsx from "@vitejs/plugin-vue-jsx";
@@ -17,7 +17,7 @@ export default defineConfig({
     //   nuxtStyle: true,
     //   extensions: ["vue", "ts", "js", "tsx", "jsx"]
     // }),
-    viteSvgIcons({
+    createSvgIconsPlugin({
       iconDirs: [path.resolve(__dirname, "./src/assets/icons")],
       symbolId: "icon-[dir]-[name]"
     }),

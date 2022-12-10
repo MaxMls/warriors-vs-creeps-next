@@ -4,24 +4,11 @@ import { EDirection, EHighlight } from "../types";
 
 import { Unit } from "../unit";
 
-export type TUnitSkin =
-  | "ame"
-  | "cake"
-  | "cali"
-  | "greenSlime"
-  | "gura"
-  | "ina"
-  | "kiara";
+export type THeroSkin = "ame" | "cali" | "gura" | "ina" | "kiara";
 
-export enum EHeroSkin {
-  "ame",
-  "cali",
-  "gura",
-  "ina",
-  "kiara",
-  _length,
-}
-export const heroesSkins: TUnitSkin[] = ["ame", "cali", "gura", "ina", "kiara"];
+export type TUnitSkin = THeroSkin | "cake" | "greenSlime";
+
+export const heroesSkins: THeroSkin[] = ["ame", "cali", "gura", "ina", "kiara"];
 export type TUnitState = "idle" | "walk" | "attack";
 
 export interface IRenderMap {

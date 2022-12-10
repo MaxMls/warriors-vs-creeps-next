@@ -3,7 +3,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 //import routes from "virtual:generated-pages";
 import routes from "./routes";
 import App from "./App.vue";
-//import "virtual:svg-icons-register";
+import "virtual:svg-icons-register";
 import { createI18n } from "vue-i18n";
 
 import ru from "./locales/ru.json";

@@ -19,6 +19,10 @@ button.statCtn:enabled {
   }
 }
 
+button.statCtn:disabled {
+  filter: grayscale(1);
+}
+
 .statIcon {
   min-width: 30px;
   min-height: 30px;
@@ -200,13 +204,13 @@ button.statCtn:enabled {
 }
 
 .termGradient_empty.termGradient_select {
-  border: 2px solid #ffe500;
+  border: 2px solid #00bbff;
   border-bottom: 0;
 }
 
 .termGradient_select {
-  border-left: 2px solid #ffe500;
-  border-right: 2px solid #ffe500;
+  border-left: 2px solid #00bbff;
+  border-right: 2px solid #00bbff;
   margin: 0 -2px;
 }
 

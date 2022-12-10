@@ -138,7 +138,7 @@
         <p>{{ $t("pages.rules.7471") }}</p>
       </li>
       <li>
-        <SvgIcon :class="$style.icon" name="cranMove" />
+        <SvgIcon :class="$style.icon" name="fix" />
         <p>
           {{ $t("pages.rules.3469") }}
           <SvgIcon :class="$style.icon" name="types-crown" />
@@ -152,7 +152,7 @@
         </p>
       </li>
       <li>
-        <SvgIcon :class="$style.icon" name="fix" />
+        <SvgIcon :class="$style.icon" name="cranMove" />
         <p>
           {{ $t("pages.rules.7428") }}
           <SvgIcon :class="$style.icon" name="types-lightning" />

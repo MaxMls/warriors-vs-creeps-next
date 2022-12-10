@@ -151,6 +151,9 @@ export default {
       // })
       this.hideDropdown();
     }
+  },
+  mounted() {
+    //this.toggleVisibility();
   }
 };
 </script>

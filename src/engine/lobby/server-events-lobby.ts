@@ -1,6 +1,6 @@
 import { GlobalEventEmitter } from "../../common";
 import { customAlphabet } from "nanoid";
-import { TUnitSkin } from "../renders/vue-render";
+import { THeroSkin, TUnitSkin } from "../renders/vue-render";
 import EventEmitter from "events";
 
 const urlAlphabet = "abdefghijklmnqrstuvxyzABDEFGHIJKLMNQRSTUVXYZ0123456789-_";
@@ -12,7 +12,7 @@ export interface IRoomPlayer {
   data: {
     name?: string;
     ready?: boolean;
-    skin?: TUnitSkin;
+    skin?: THeroSkin;
   };
 }
 
