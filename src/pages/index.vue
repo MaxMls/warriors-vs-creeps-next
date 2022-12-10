@@ -36,18 +36,27 @@
       </div>
     </div>
   </div>
+  <SvgIcon :class="$style.icon" name="units-cake" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import SvgIcon from "../components/SvgIcon.vue";
 import cs from "./common.module.scss";
 
 export default defineComponent({
-  data: () => ({ cs })
+    data: () => ({ cs }),
+    components: { SvgIcon }
 });
 </script>
 
 <style module lang="scss">
+.icon {
+  width: 200px;
+  height: 200px;
+  margin: 40px auto 0px;
+  display: block;
+}
 .linksGroup {
   display: flex;
   justify-content: center;

@@ -1,6 +1,6 @@
 FROM node:16-alpine
 
-RUN apk add --no-cache bash g++ python3 make
+RUN apk add --no-cache bash g++ python3 make zip
 
 WORKDIR /app
 

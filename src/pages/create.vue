@@ -11,7 +11,7 @@ import { defineComponent, inject, onMounted, ref, unref, watch } from "vue";
 import { Room } from "../engine/lobby/server-events-lobby";
 import Form from "../components/Form.vue";
 import { useRouter } from "vue-router";
-import { TUnitSkin } from "../engine/renders/vue-render";
+import { THeroSkin, TUnitSkin } from "../engine/renders/vue-render";
 import { RequestError } from "../engine/lobby/request-error";
 
 export default defineComponent({
@@ -48,7 +48,7 @@ export default defineComponent({
           form.value.errors.name = "form.3";
         } else {
           try {
-            const skin = (localStorage.getItem("skin") ?? "ame") as TUnitSkin;
+            const skin = (localStorage.getItem("skin") ?? "ame") as THeroSkin;
             app.room?.destroy();
             app.room = new Room();
             app.room.setCurrentPlayerData({ skin, name });
