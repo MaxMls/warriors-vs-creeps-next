@@ -1,43 +1,43 @@
-import {defineConfig} from 'vite'
-import vue from '@vitejs/plugin-vue'
-import pages from "vite-plugin-pages";
-import viteSvgIcons from 'vite-plugin-svg-icons';
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+//import pages from "vite-plugin-pages";
+import viteSvgIcons from "vite-plugin-svg-icons";
 
 import * as path from "path";
-import vueJsx from '@vitejs/plugin-vue-jsx'
-import {VitePWA} from 'vite-plugin-pwa'
+import vueJsx from "@vitejs/plugin-vue-jsx";
+//import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	base: '',
-	plugins: [
-		VitePWA(),
-		vue({}),
-		pages({
-			nuxtStyle: true,
-			extensions: ['vue', 'ts', 'js', 'tsx', 'jsx'],
-		}),
-		viteSvgIcons({
-			iconDirs: [path.resolve(__dirname, './src/assets/icons')],
-			symbolId: 'icon-[dir]-[name]',
-		}),
-		vueJsx({
-			// options are passed on to @vue/babel-plugin-jsx
-		})
-	],
-	build: {
-		sourcemap: false,
-		//outDir: 'docs',
-		assetsInlineLimit: 0,
-	},
-	css: {
-		postcss: {
-			map: true
-		}
-	},
-	server: {
-		https: {
-			key: `-----BEGIN PRIVATE KEY-----
+  base: "",
+  plugins: [
+    //VitePWA(),
+    vue({}),
+    // pages({
+    //   nuxtStyle: true,
+    //   extensions: ["vue", "ts", "js", "tsx", "jsx"]
+    // }),
+    viteSvgIcons({
+      iconDirs: [path.resolve(__dirname, "./src/assets/icons")],
+      symbolId: "icon-[dir]-[name]"
+    }),
+    vueJsx({
+      // options are passed on to @vue/babel-plugin-jsx
+    })
+  ],
+  build: {
+    sourcemap: false,
+    //outDir: 'docs',
+    assetsInlineLimit: 0
+  },
+  css: {
+    postcss: {
+      map: true
+    }
+  },
+  server: {
+    https: {
+      key: `-----BEGIN PRIVATE KEY-----
 MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC1ejoU4LlOVapO
 gnlq1j3EmXxx0zDYjbSW/5mho6pESb+rf0FPT648X5TanAjTbfsMVLw+1DK8zGYs
 NMqbSvXH0CB+Zo2s6tvkIjWG0kcaxvSmVGi/ud6N+uF2UCYTD/oyfOBYaOcQKsdV
@@ -66,7 +66,7 @@ go31fCdvCGNePPODwm7MIg8IMhAFTPLvlyLSKhI9BagfyyhnnuwIFLH6JL4QI/F4
 WA3suDj4BiARj2T+yh0Efdk=
 -----END PRIVATE KEY-----
 `,
-			cert: `-----BEGIN CERTIFICATE-----
+      cert: `-----BEGIN CERTIFICATE-----
 MIIDCTCCAfGgAwIBAgIUZdfnAbJ57eL/6NNSpq96bo3LsEkwDQYJKoZIhvcNAQEL
 BQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTIxMDUyNTEwMTMyN1oXDTIxMDYy
 NDEwMTMyN1owFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEF
@@ -86,11 +86,11 @@ T2x94ecc9756y6rkEMjrUQAVPAZpiSiF25fTqMb9V9WzHTZMVDdPF/9tYUxJ+WbU
 5AfJKHWclIrpxEJHTg==
 -----END CERTIFICATE-----
 `
-		}
-	}
+    }
+  }
 
-	/*
+  /*
 	alias: {
 		'@': path.resolve(__dirname, './src')
 	},*/
-})
+});

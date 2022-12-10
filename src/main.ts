@@ -1,8 +1,9 @@
 import { createApp } from "vue";
 import { createRouter, createWebHashHistory } from "vue-router";
-import routes from "virtual:generated-pages";
+//import routes from "virtual:generated-pages";
+import routes from "./routes";
 import App from "./App.vue";
-import "virtual:svg-icons-register";
+//import "virtual:svg-icons-register";
 import { createI18n } from "vue-i18n";
 
 import ru from "./locales/ru.json";
@@ -12,7 +13,8 @@ import de from "./locales/de.json";
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
-  routes,
+ // routes
+ routes
 });
 
 const i18n = createI18n({
@@ -20,7 +22,7 @@ const i18n = createI18n({
   locale: localStorage.getItem("lang") || "ru",
   fallbackLocale: "en",
   // @ts-ignore
-  messages: { ru, ja, en, de },
+  messages: { ru, ja, en, de }
 });
 
 const app = createApp(App);
