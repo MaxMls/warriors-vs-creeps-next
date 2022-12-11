@@ -37,7 +37,7 @@ export class GlobalEventEmitter {
       console.log({ event });
       await new Promise<void>((resolve, reject) => {
         const source = new EventSource(this.url + event + "?id=" + this.id, {
-          withCredentials: false,
+          withCredentials: false
         });
         const eventListeners = new Set<(...args: any[]) => void>([listener]);
         this.sources.set(event as string, source);
@@ -52,12 +52,23 @@ export class GlobalEventEmitter {
             eventListeners.forEach((l) => l(payload));
           }
         };
+
         source.onerror = (e) => {
           source.close();
           this.sources.delete(event as string);
           this.events.delete(event as string);
           reject(e);
         };
+        const sourseClose = source.close.bind(source);
+
+        source.close = () => {
+          clearInterval(pingIntervalId);
+          sourseClose();
+        };
+
+        const pingIntervalId = setInterval(() => {
+          this.emit(event, "ping");
+        }, 2000);
       });
     }
     return this.id;
@@ -83,9 +94,9 @@ export class GlobalEventEmitter {
     const res = await fetch(this.url + event + "?id=" + this.id, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     });
 
     if (!res.ok) throw new Error(res.statusText);
@@ -355,11 +366,11 @@ const servers = [
   "stun3.l.google.com:19302",
   "stun4.l.google.com:19302",
   "stun.nextcloud.com:443",
-  "relay.webwormhole.io:3478",
+  "relay.webwormhole.io:3478"
 ];
 
 export const rtcConfig = {
-  iceServers: servers.map((v) => ({ urls: "stun:" + v })).slice(4, 5),
+  iceServers: servers.map((v) => ({ urls: "stun:" + v })).slice(4, 5)
 };
 
 /*

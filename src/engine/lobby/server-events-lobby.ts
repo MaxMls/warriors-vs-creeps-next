@@ -17,7 +17,8 @@ export interface IRoomPlayer {
 }
 
 //export const eventsServerUrl = 'https://localhost/e/'
-export const eventsServerUrl = "https://my-events-server.herokuapp.com/e/";
+export const eventsServerUrl = "https://events-server.owlet.dev/e/";
+//export const eventsServerUrl = "http://localhost:64634/e/";
 
 export class Room {
   public players: IRoomPlayer[] = [];
@@ -47,7 +48,7 @@ export class Room {
     this.player = {
       selfId: id,
       ownerId: id,
-      data,
+      data
     };
     this.addPlayerLocal(this.player);
   }
@@ -147,7 +148,7 @@ export class Room {
       ({
         addPlayer_NE: this.addPlayerLocal.bind(this),
         updatePlayerData_NE: this.updatePlayerDataLocal.bind(this),
-        removePlayer_NE: this.removePlayerLocal.bind(this),
+        removePlayer_NE: this.removePlayerLocal.bind(this)
       }[data.fun](...data.params));
     }
   }
